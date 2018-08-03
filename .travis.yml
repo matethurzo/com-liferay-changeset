@@ -13,23 +13,8 @@ services:
 
 sudo: required
 
-install: true
-
-before_script:
-    - ./gradlew checkSourceFormatting pmdMain pmdTest pmdTestIntegration test
-
-    #- ./gradlew buildAppDockerImage
-
-    #- ./gradlew deployDependencies
-
 script:
-    - set pipefail
-
     - sonar-scanner
-
-    #- travis_wait ./gradlew runDocker
-
-    #- ./gradlew testIntegration
 
 before_cache:
     - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -39,10 +24,4 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
-
-after_success:
-    #- ./gradlew dumpJacoco
-    #- ./gradlew coveralls
-
-after_script:
-    #- docker logs com-liferay-changeset
+  timeout: 600

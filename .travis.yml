@@ -2,9 +2,9 @@ jdk: oraclejdk8
 
 addons:
   sonarcloud:
-    organization: "matethurzo-github" # the key of the org you chose at step #3
+    organization: "liferay-hu" # the key of the org you chose at step #3
     token:
-      secure: 122a4a76e333321658ff1feb1ed71462bff09661 # encrypted value of your token
+      secure: 58fa7cbc1d69f2f96234d26b6d52e51aa4836a42 # encrypted value of your token
 
 language: java
 

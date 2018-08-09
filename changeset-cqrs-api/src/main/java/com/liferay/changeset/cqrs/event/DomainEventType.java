@@ -19,6 +19,6 @@ package com.liferay.changeset.cqrs.event;
  */
 public enum DomainEventType {
 
-	CREATED, MODIFIED, DELETED;
+	CREATED, MODIFIED, DELETED
 
 }

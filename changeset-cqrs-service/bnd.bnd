@@ -1,0 +1,3 @@
+Bundle-Name: Liferay Changeset CQRS Service
+Bundle-SymbolicName: com.liferay.changeset.cqrs.service
+Bundle-Version: 1.0.0

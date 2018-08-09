@@ -14,6 +14,8 @@
 
 package com.liferay.changeset.cqrs;
 
+import com.liferay.changeset.cqrs.event.DomainEvent;
+
 import java.util.List;
 
 /**
@@ -21,10 +23,8 @@ import java.util.List;
  */
 public interface AggregateRoot<T> {
 
-	public List<DomainEvent> apply(Command command);
+	public List<DomainEvent> apply(Command command) throws Exception;
 
 	public void apply(DomainEvent domainEvent);
-
-	public T getId();
 
 }

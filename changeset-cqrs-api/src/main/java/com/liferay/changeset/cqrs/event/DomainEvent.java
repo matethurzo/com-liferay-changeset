@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.changeset.cqrs;
+package com.liferay.changeset.cqrs.event;
 
 import java.io.Serializable;
 
@@ -20,4 +20,9 @@ import java.io.Serializable;
  * @author Daniel Kocsis
  */
 public interface DomainEvent extends Serializable {
+
+	public long getChangesetId();
+
+	public DomainEventType getType();
+
 }

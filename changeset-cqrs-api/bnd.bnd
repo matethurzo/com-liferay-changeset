@@ -1,4 +1,7 @@
 Bundle-Name: Liferay Changeset CQRS API
 Bundle-SymbolicName: com.liferay.changeset.cqrs.api
 Bundle-Version: 1.0.0
-Export-Package: com.liferay.changeset.cqrs
+Export-Package:\
+	com.liferay.changeset.cqrs,\
+	com.liferay.changeset.cqrs.event,\
+	com.liferay.changeset.cqrs.event.store

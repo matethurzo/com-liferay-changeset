@@ -1,10 +1,10 @@
-jdk: oraclejdk8
-
 addons:
-  sonarcloud:
-    organization: "liferay-hu" # the key of the org you chose at step #3
+    sonarcloud:
+        organization: "liferay-hu" # the key of the org you chose at step #3
     token:
-      secure: 58fa7cbc1d69f2f96234d26b6d52e51aa4836a42 # encrypted value of your token
+        secure: 58fa7cbc1d69f2f96234d26b6d52e51aa4836a42 # encrypted value of your token
+
+jdk: oraclejdk8
 
 language: java
 
@@ -21,7 +21,7 @@ before_cache:
     - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 
 cache:
-  directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-  timeout: 600
+    directories:
+        - $HOME/.gradle/caches/
+        - $HOME/.gradle/wrapper/
+    timeout: 600

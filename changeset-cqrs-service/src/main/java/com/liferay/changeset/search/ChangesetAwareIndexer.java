@@ -25,6 +25,6 @@ public class ChangesetAwareIndexer<T> {
 		_indexer = indexer;
 	}
 
-	private Indexer<T> _indexer;
+	private final Indexer<T> _indexer;
 
 }

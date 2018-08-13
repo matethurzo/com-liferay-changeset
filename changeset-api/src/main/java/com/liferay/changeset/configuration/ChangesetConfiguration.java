@@ -36,6 +36,8 @@ public interface ChangesetConfiguration<T, U> {
 
 	public String getIdentifier();
 
+	public Indexer<U> getIndexer();
+
 	public Class<T> getResourceEntityClass();
 
 	public Class<U> getVersionEntityClass();

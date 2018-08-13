@@ -46,6 +46,12 @@ public class ChangesetConfigurationImpl<T, U>
 	}
 
 	@Override
+	public Indexer<U> getIndexer() {
+		return _versionEntityInformation._indexerFunction.apply(
+			_versionEntityInformation._class);
+	}
+
+	@Override
 	public Class<T> getResourceEntityClass() {
 		return _resouceEntityInformation.getEntityClass();
 	}

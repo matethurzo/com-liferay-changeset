@@ -16,9 +16,23 @@ package com.liferay.changeset.internal.manager;
 
 import com.liferay.changeset.configuration.ChangesetConfiguration;
 import com.liferay.changeset.manager.ChangesetManager;
+import com.liferay.changeset.model.ChangesetCollection;
+import com.liferay.changeset.model.ChangesetEntry;
+import com.liferay.changeset.service.ChangesetCollectionLocalService;
+import com.liferay.changeset.service.ChangesetEntryLocalService;
+import com.liferay.portal.kernel.dao.orm.Conjunction;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Property;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.util.Portal;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -30,6 +44,47 @@ import org.osgi.service.component.annotations.ReferencePolicy;
  */
 @Component(immediate = true, service = ChangesetManager.class)
 public class ChangesetManagerImpl implements ChangesetManager {
+
+	@Override
+	public Optional<ChangesetCollection> getChangesetCollection(
+		long classNameId, long classPK) {
+
+		DynamicQuery dynamicQuery = _changesetEntryLocalService.dynamicQuery();
+
+		Property classNameIdProperty = PropertyFactoryUtil.forName(
+			"classNameId");
+		Property classPKProperty = PropertyFactoryUtil.forName("classPK");
+
+		Conjunction conjunction = RestrictionsFactoryUtil.conjunction();
+
+		conjunction.add(classNameIdProperty.eq(classNameId));
+		conjunction.add(classPKProperty.eq(classPK));
+
+		dynamicQuery.add(conjunction);
+
+		List<ChangesetEntry> changesetEntries =
+			_changesetEntryLocalService.dynamicQuery(dynamicQuery);
+
+		Stream<ChangesetEntry> stream = changesetEntries.stream();
+
+		return stream.filter(
+			Objects::nonNull
+		).findFirst(
+		).map(
+			changesetEntry ->
+				_changesetCollectionLocalService.fetchChangesetCollection(
+					changesetEntry.getChangesetCollectionId())
+		);
+	}
+
+	@Override
+	public Optional<ChangesetCollection> getChangesetCollection(
+		String className, long classPK) {
+
+		long classNameId = _portal.getClassNameId(className);
+
+		return getChangesetCollection(classNameId, classPK);
+	}
 
 	@Override
 	public boolean isChangesetSupported(Class<?> clazz) {
@@ -74,11 +129,20 @@ public class ChangesetManagerImpl implements ChangesetManager {
 			changesetConfiguration.getVersionEntityClass());
 	}
 
+	@Reference
+	private ChangesetCollectionLocalService _changesetCollectionLocalService;
+
+	@Reference
+	private ChangesetEntryLocalService _changesetEntryLocalService;
+
 	private final Map<String, ChangesetConfiguration<?, ?>>
 		_configurationsByIdentifier = new HashMap<>();
 	private final Map<Class<?>, ChangesetConfiguration<?, ?>>
 		_configurationsByResourceClass = new HashMap<>();
 	private final Map<Class<?>, ChangesetConfiguration<?, ?>>
 		_configurationsByVersionClass = new HashMap<>();
+
+	@Reference
+	private Portal _portal;
 
 }

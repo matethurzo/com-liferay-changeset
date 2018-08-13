@@ -14,6 +14,10 @@
 
 package com.liferay.changeset.manager;
 
+import com.liferay.changeset.model.ChangesetCollection;
+
+import java.util.Optional;
+
 /**
  * @author Mate Thurzo
  */
@@ -43,6 +47,18 @@ public class ChangesetManagerUtil {
 		}
 
 		_changesetManager = changesetManager;
+	}
+
+	public Optional<ChangesetCollection> getChangesetCollection(
+		long classNameId, long classPK) {
+
+		return _changesetManager.getChangesetCollection(classNameId, classPK);
+	}
+
+	public Optional<ChangesetCollection> getChangesetCollection(
+		String className, long classPK) {
+
+		return _changesetManager.getChangesetCollection(className, classPK);
 	}
 
 	private static ChangesetManager _changesetManager;

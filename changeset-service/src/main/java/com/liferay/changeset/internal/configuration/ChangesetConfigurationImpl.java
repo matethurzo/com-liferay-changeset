@@ -40,6 +40,21 @@ public class ChangesetConfigurationImpl<T, U>
 		return _baseliningSuppliers;
 	}
 
+	@Override
+	public String getIdentifier() {
+		return _identifier;
+	}
+
+	@Override
+	public Class<T> getResourceEntityClass() {
+		return _resouceEntityInformation.getEntityClass();
+	}
+
+	@Override
+	public Class<U> getVersionEntityClass() {
+		return _versionEntityInformation.getEntityClass();
+	}
+
 	public static class BuilderImpl<T, U> implements Builder<T, U> {
 
 		public BuilderImpl() {
@@ -79,6 +94,9 @@ public class ChangesetConfigurationImpl<T, U>
 			public BuildStep indexer(
 				Function<Class<U>, Indexer<U>> indexerFunction) {
 
+				_changesetConfiguration._versionEntityInformation.
+					setIndexerFunction(indexerFunction);
+
 				return new BuildStepImpl();
 			}
 
@@ -91,6 +109,11 @@ public class ChangesetConfigurationImpl<T, U>
 				Class<T> resourceEntityClass,
 				Function<T, Long> resourceEntityIdFunction,
 				BaseLocalService resourceEntityLocalService) {
+
+				_changesetConfiguration._resouceEntityInformation =
+					new EntityInformation<>(
+						resourceEntityClass, resourceEntityIdFunction,
+						resourceEntityLocalService);
 
 				return new VersionEntityStepImpl<>();
 			}
@@ -107,6 +130,14 @@ public class ChangesetConfigurationImpl<T, U>
 					versionEntityVersionFunction,
 				BaseLocalService versionEntityLocalService) {
 
+				_changesetConfiguration._versionEntityInformation =
+					new EntityInformation<>(
+						versionEntityClass, versionEntityIdSupplier,
+						versionEntityLocalService);
+
+				_changesetConfiguration._versionEntityInformation.
+					setVersionFunction(versionEntityVersionFunction);
+
 				return new BaseliningStepImpl<>();
 			}
 
@@ -122,5 +153,58 @@ public class ChangesetConfigurationImpl<T, U>
 	private final List<Supplier<? extends Collection<U>>> _baseliningSuppliers =
 		new ArrayList<>();
 	private String _identifier;
+	private EntityInformation<T> _resouceEntityInformation;
+	private EntityInformation<U> _versionEntityInformation;
+
+	private static class EntityInformation<T> {
+
+		public EntityInformation(
+			Class<T> entityClass, Function<T, Long> entityIdSupplier,
+			BaseLocalService entityLocalService) {
+
+			_class = entityClass;
+			_idSupplier = entityIdSupplier;
+			_baseLocalService = entityLocalService;
+		}
+
+		public BaseLocalService getBaseLocalService() {
+			return _baseLocalService;
+		}
+
+		public Class<T> getEntityClass() {
+			return _class;
+		}
+
+		public Function<T, Long> getIdSupplier() {
+			return _idSupplier;
+		}
+
+		public Function<Class<T>, Indexer<T>> getIndexerFunction() {
+			return _indexerFunction;
+		}
+
+		public Function<T, ? extends Serializable> getVersionFunction() {
+			return _versionFunction;
+		}
+
+		public void setIndexerFunction(
+			Function<Class<T>, Indexer<T>> indexerFunction) {
+
+			_indexerFunction = indexerFunction;
+		}
+
+		public void setVersionFunction(
+			Function<T, ? extends Serializable> versionFunction) {
+
+			_versionFunction = versionFunction;
+		}
+
+		private final BaseLocalService _baseLocalService;
+		private final Class<T> _class;
+		private final Function<T, Long> _idSupplier;
+		private Function<Class<T>, Indexer<T>> _indexerFunction;
+		private Function<T, ? extends Serializable> _versionFunction;
+
+	}
 
 }

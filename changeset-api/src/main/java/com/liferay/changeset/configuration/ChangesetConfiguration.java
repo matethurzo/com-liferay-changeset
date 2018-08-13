@@ -34,6 +34,12 @@ public interface ChangesetConfiguration<T, U> {
 
 	public List<Supplier<? extends Collection<U>>> getBaselining();
 
+	public String getIdentifier();
+
+	public Class<T> getResourceEntityClass();
+
+	public Class<U> getVersionEntityClass();
+
 	public interface BaseliningStep<T, U> {
 
 		public IndexerStep<T, U> baselining(

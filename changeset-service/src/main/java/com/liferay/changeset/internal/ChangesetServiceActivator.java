@@ -81,7 +81,7 @@ public class ChangesetServiceActivator implements BundleActivator {
 
 					bundleContext.registerService(
 						IndexerPostProcessor.class,
-						new ChangesetIndexerPostProcessor(), properties);
+						_CHANGESET_INDEXER_POST_PROCESSOR, properties);
 
 					return changesetConfiguration;
 				}
@@ -115,6 +115,9 @@ public class ChangesetServiceActivator implements BundleActivator {
 
 		_changesetConfigurationServiceTracker.close();
 	}
+
+	private static final ChangesetIndexerPostProcessor
+		_CHANGESET_INDEXER_POST_PROCESSOR = new ChangesetIndexerPostProcessor();
 
 	private ServiceTracker<ChangesetConfiguration, ChangesetConfiguration>
 		_changesetConfigurationServiceTracker;

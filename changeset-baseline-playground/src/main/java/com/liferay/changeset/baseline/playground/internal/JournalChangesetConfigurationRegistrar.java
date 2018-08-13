@@ -28,8 +28,8 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Mate Thurzo
  */
-@Component(immediate = true, service = ChangesetConfiguration.class)
-public class ConfigurationCheck
+@Component(immediate = true, service = ChangesetConfigurationRegistrar.class)
+public class JournalChangesetConfigurationRegistrar
 	implements ChangesetConfigurationRegistrar
 		<JournalArticleResource, JournalArticle> {
 

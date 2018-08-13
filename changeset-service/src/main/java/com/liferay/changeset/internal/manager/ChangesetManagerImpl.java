@@ -23,6 +23,7 @@ import java.util.Map;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 /**
  * @author Mate Thurzo
@@ -45,8 +46,11 @@ public class ChangesetManagerImpl implements ChangesetManager {
 		return _configurationsByIdentifier.containsKey(identifier);
 	}
 
-	@Reference(cardinality = ReferenceCardinality.MULTIPLE, unbind = "-")
-	private void addChangesetConfiguration(
+	@Reference(
+		cardinality = ReferenceCardinality.MULTIPLE,
+		policy = ReferencePolicy.DYNAMIC
+	)
+	protected void setChangesetConfiguration(
 		ChangesetConfiguration<?, ?> changesetConfiguration) {
 
 		_configurationsByIdentifier.put(
@@ -57,6 +61,17 @@ public class ChangesetManagerImpl implements ChangesetManager {
 		_configurationsByVersionClass.put(
 			changesetConfiguration.getVersionEntityClass(),
 			changesetConfiguration);
+	}
+
+	protected void unsetChangesetConfiguration(
+		ChangesetConfiguration<?, ?> changesetConfiguration) {
+
+		_configurationsByIdentifier.remove(
+			changesetConfiguration.getIdentifier());
+		_configurationsByResourceClass.remove(
+			changesetConfiguration.getResourceEntityClass());
+		_configurationsByVersionClass.remove(
+			changesetConfiguration.getVersionEntityClass());
 	}
 
 	private final Map<String, ChangesetConfiguration<?, ?>>

@@ -1,0 +1,4 @@
+Bundle-Name: Liferay Changeset Baseline Playground
+Bundle-SymbolicName: com.liferay.changeset.baseline.playground
+Bundle-Version: 1.0.0
+Export-Package:

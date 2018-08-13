@@ -1,0 +1,7 @@
+Bundle-Activator: com.liferay.changeset.baseline.internal.ChangesetBaselineServiceActivator
+Bundle-Name: Liferay Changeset Baseline Service
+Bundle-SymbolicName: com.liferay.changeset.baseline.service
+Bundle-Version: 1.0.0
+Liferay-Require-SchemaVersion: 1.0.0
+Liferay-Service: true
+-includeresource: @jgrapht-core-[0-9]*.jar

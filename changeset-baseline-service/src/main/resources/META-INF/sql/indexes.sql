@@ -1,0 +1,1 @@
+create index IX_5CCE418C on BaselineInformation (name[$COLUMN_LENGTH:75$]);

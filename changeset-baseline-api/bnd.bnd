@@ -1,0 +1,10 @@
+Bundle-Name: Liferay Changeset Baseline API
+Bundle-SymbolicName: com.liferay.changeset.baseline.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.liferay.changeset.baseline.configuration,\
+	com.liferay.changeset.baseline.exception,\
+	com.liferay.changeset.baseline.manager,\
+	com.liferay.changeset.baseline.model,\
+	com.liferay.changeset.baseline.service,\
+	com.liferay.changeset.baseline.service.persistence

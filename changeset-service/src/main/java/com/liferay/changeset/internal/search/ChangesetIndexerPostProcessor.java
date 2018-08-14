@@ -14,6 +14,8 @@
 
 package com.liferay.changeset.internal.search;
 
+import com.liferay.changeset.manager.ChangesetManagerUtil;
+import com.liferay.changeset.model.ChangesetEntry;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
@@ -24,6 +26,7 @@ import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.util.GetterUtil;
 
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * @author Daniel Kocsis
@@ -43,21 +46,23 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 	}
 
 	@Override
-	public void postProcessDocument(Document document, Object obj)
-		throws Exception {
-
+	public void postProcessDocument(Document document, Object obj) {
 		String entryClassName = document.get(Field.ENTRY_CLASS_NAME);
 		long entryClassPK = GetterUtil.getLong(
 			document.get(Field.ENTRY_CLASS_PK));
 
-		long changesetId = _getChangesetId(entryClassName, entryClassPK);
+		Optional<Long> changesetIdOptional = _getChangesetId(
+			entryClassName, entryClassPK);
 
-		document.addKeyword(_CHANGESET_ID_FIELD, changesetId);
+		changesetIdOptional.ifPresent(
+			changesetId -> document.addKeyword(
+				_CHANGESET_ID_FIELD, changesetId));
 	}
 
 	@Override
 	public void postProcessFullQuery(
-		BooleanQuery fullQuery, SearchContext searchContext) throws Exception {
+			BooleanQuery fullQuery, SearchContext searchContext)
+		throws Exception {
 	}
 
 	@Override
@@ -78,8 +83,11 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 		Summary summary, Document document, Locale locale, String snippet) {
 	}
 
-	private long _getChangesetId(String className, long classPK) {
-		return 0;
+	private Optional<Long> _getChangesetId(String className, long classPK) {
+		Optional<ChangesetEntry> changesetEntryOptional =
+			ChangesetManagerUtil.getChangesetEntry(className, classPK);
+
+		return changesetEntryOptional.map(ChangesetEntry::getChangesetEntryId);
 	}
 
 	private static final String _CHANGESET_ID_FIELD = "changesetId";

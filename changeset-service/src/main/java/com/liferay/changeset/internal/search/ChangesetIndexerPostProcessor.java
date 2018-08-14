@@ -76,8 +76,13 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 		long entryClassPK = GetterUtil.getLong(
 			searchContext.getAttribute(Field.ENTRY_CLASS_PK));
 
-		searchQuery.addRequiredTerm(
-			_CHANGESET_ID_FIELD, _getChangesetId(entryClassName, entryClassPK));
+		Optional<Long> changesetIdOptional = _getChangesetId(
+			entryClassName, entryClassPK);
+
+		changesetIdOptional.ifPresent(
+			changesetEntry -> searchQuery.addRequiredTerm(
+				_CHANGESET_ID_FIELD, changesetEntry)
+		);
 	}
 
 	@Override

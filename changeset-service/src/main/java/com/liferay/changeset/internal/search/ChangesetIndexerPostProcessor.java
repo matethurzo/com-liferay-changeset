@@ -70,6 +70,14 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 			BooleanQuery searchQuery, BooleanFilter booleanFilter,
 			SearchContext searchContext)
 		throws Exception {
+
+		String entryClassName = GetterUtil.getString(
+			searchContext.getAttribute(Field.ENTRY_CLASS_NAME));
+		long entryClassPK = GetterUtil.getLong(
+			searchContext.getAttribute(Field.ENTRY_CLASS_PK));
+
+		searchQuery.addRequiredTerm(
+			_CHANGESET_ID_FIELD, _getChangesetId(entryClassName, entryClassPK));
 	}
 
 	@Override

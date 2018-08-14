@@ -41,6 +41,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 /**
  * @author Mate Thurzo
+ * @author Daniel Kocsis
  */
 @Component(immediate = true, service = ChangesetManager.class)
 public class ChangesetManagerImpl implements ChangesetManager {
@@ -84,6 +85,36 @@ public class ChangesetManagerImpl implements ChangesetManager {
 		long classNameId = _portal.getClassNameId(className);
 
 		return getChangesetCollection(classNameId, classPK);
+	}
+
+	@Override
+	public Optional<ChangesetEntry> getChangesetEntry(
+		long classNameId, long classPK) {
+
+		Optional<ChangesetCollection> changesetCollectionOptional =
+			getChangesetCollection(classNameId, classPK);
+
+		ChangesetEntry changesetEntry = null;
+
+		if (changesetCollectionOptional.isPresent()) {
+			ChangesetCollection changesetCollection =
+				changesetCollectionOptional.get();
+
+			changesetEntry = _changesetEntryLocalService.fetchChangesetEntry(
+				changesetCollection.getChangesetCollectionId(), classNameId,
+				classPK);
+		}
+
+		return Optional.ofNullable(changesetEntry);
+	}
+
+	@Override
+	public Optional<ChangesetEntry> getChangesetEntry(
+		String className, long classPK) {
+
+		long classNameId = _portal.getClassNameId(className);
+
+		return getChangesetEntry(classNameId, classPK);
 	}
 
 	@Override

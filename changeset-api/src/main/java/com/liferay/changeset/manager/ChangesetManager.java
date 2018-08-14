@@ -15,11 +15,13 @@
 package com.liferay.changeset.manager;
 
 import com.liferay.changeset.model.ChangesetCollection;
+import com.liferay.changeset.model.ChangesetEntry;
 
 import java.util.Optional;
 
 /**
  * @author Mate Thurzo
+ * @author Daniel Kocsis
  */
 public interface ChangesetManager {
 
@@ -27,6 +29,12 @@ public interface ChangesetManager {
 		long classNameId, long classPK);
 
 	public Optional<ChangesetCollection> getChangesetCollection(
+		String className, long classPK);
+
+	public Optional<ChangesetEntry> getChangesetEntry(
+		long classNameId, long classPK);
+
+	public Optional<ChangesetEntry> getChangesetEntry(
 		String className, long classPK);
 
 	public boolean isChangesetSupported(Class<?> clazz);

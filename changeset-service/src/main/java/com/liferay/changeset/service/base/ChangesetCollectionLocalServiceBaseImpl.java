@@ -18,6 +18,8 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.service.ChangesetCollectionLocalService;
+import com.liferay.changeset.service.persistence.ChangesetBaselineCollectionPersistence;
+import com.liferay.changeset.service.persistence.ChangesetBaselineEntryPersistence;
 import com.liferay.changeset.service.persistence.ChangesetCollectionPersistence;
 import com.liferay.changeset.service.persistence.ChangesetEntryPersistence;
 
@@ -326,6 +328,82 @@ public abstract class ChangesetCollectionLocalServiceBaseImpl
 	}
 
 	/**
+	 * Returns the changeset baseline collection local service.
+	 *
+	 * @return the changeset baseline collection local service
+	 */
+	public com.liferay.changeset.service.ChangesetBaselineCollectionLocalService getChangesetBaselineCollectionLocalService() {
+		return changesetBaselineCollectionLocalService;
+	}
+
+	/**
+	 * Sets the changeset baseline collection local service.
+	 *
+	 * @param changesetBaselineCollectionLocalService the changeset baseline collection local service
+	 */
+	public void setChangesetBaselineCollectionLocalService(
+		com.liferay.changeset.service.ChangesetBaselineCollectionLocalService changesetBaselineCollectionLocalService) {
+		this.changesetBaselineCollectionLocalService = changesetBaselineCollectionLocalService;
+	}
+
+	/**
+	 * Returns the changeset baseline collection persistence.
+	 *
+	 * @return the changeset baseline collection persistence
+	 */
+	public ChangesetBaselineCollectionPersistence getChangesetBaselineCollectionPersistence() {
+		return changesetBaselineCollectionPersistence;
+	}
+
+	/**
+	 * Sets the changeset baseline collection persistence.
+	 *
+	 * @param changesetBaselineCollectionPersistence the changeset baseline collection persistence
+	 */
+	public void setChangesetBaselineCollectionPersistence(
+		ChangesetBaselineCollectionPersistence changesetBaselineCollectionPersistence) {
+		this.changesetBaselineCollectionPersistence = changesetBaselineCollectionPersistence;
+	}
+
+	/**
+	 * Returns the changeset baseline entry local service.
+	 *
+	 * @return the changeset baseline entry local service
+	 */
+	public com.liferay.changeset.service.ChangesetBaselineEntryLocalService getChangesetBaselineEntryLocalService() {
+		return changesetBaselineEntryLocalService;
+	}
+
+	/**
+	 * Sets the changeset baseline entry local service.
+	 *
+	 * @param changesetBaselineEntryLocalService the changeset baseline entry local service
+	 */
+	public void setChangesetBaselineEntryLocalService(
+		com.liferay.changeset.service.ChangesetBaselineEntryLocalService changesetBaselineEntryLocalService) {
+		this.changesetBaselineEntryLocalService = changesetBaselineEntryLocalService;
+	}
+
+	/**
+	 * Returns the changeset baseline entry persistence.
+	 *
+	 * @return the changeset baseline entry persistence
+	 */
+	public ChangesetBaselineEntryPersistence getChangesetBaselineEntryPersistence() {
+		return changesetBaselineEntryPersistence;
+	}
+
+	/**
+	 * Sets the changeset baseline entry persistence.
+	 *
+	 * @param changesetBaselineEntryPersistence the changeset baseline entry persistence
+	 */
+	public void setChangesetBaselineEntryPersistence(
+		ChangesetBaselineEntryPersistence changesetBaselineEntryPersistence) {
+		this.changesetBaselineEntryPersistence = changesetBaselineEntryPersistence;
+	}
+
+	/**
 	 * Returns the changeset collection local service.
 	 *
 	 * @return the changeset collection local service
@@ -603,6 +681,14 @@ public abstract class ChangesetCollectionLocalServiceBaseImpl
 		}
 	}
 
+	@BeanReference(type = com.liferay.changeset.service.ChangesetBaselineCollectionLocalService.class)
+	protected com.liferay.changeset.service.ChangesetBaselineCollectionLocalService changesetBaselineCollectionLocalService;
+	@BeanReference(type = ChangesetBaselineCollectionPersistence.class)
+	protected ChangesetBaselineCollectionPersistence changesetBaselineCollectionPersistence;
+	@BeanReference(type = com.liferay.changeset.service.ChangesetBaselineEntryLocalService.class)
+	protected com.liferay.changeset.service.ChangesetBaselineEntryLocalService changesetBaselineEntryLocalService;
+	@BeanReference(type = ChangesetBaselineEntryPersistence.class)
+	protected ChangesetBaselineEntryPersistence changesetBaselineEntryPersistence;
 	@BeanReference(type = ChangesetCollectionLocalService.class)
 	protected ChangesetCollectionLocalService changesetCollectionLocalService;
 	@BeanReference(type = ChangesetCollectionPersistence.class)

@@ -7,6 +7,10 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
 >
+	<bean class="com.liferay.changeset.service.impl.ChangesetBaselineCollectionLocalServiceImpl" id="com.liferay.changeset.service.ChangesetBaselineCollectionLocalService" />
+	<bean class="com.liferay.changeset.service.persistence.impl.ChangesetBaselineCollectionPersistenceImpl" id="com.liferay.changeset.service.persistence.ChangesetBaselineCollectionPersistence" parent="basePersistence" />
+	<bean class="com.liferay.changeset.service.impl.ChangesetBaselineEntryLocalServiceImpl" id="com.liferay.changeset.service.ChangesetBaselineEntryLocalService" />
+	<bean class="com.liferay.changeset.service.persistence.impl.ChangesetBaselineEntryPersistenceImpl" id="com.liferay.changeset.service.persistence.ChangesetBaselineEntryPersistence" parent="basePersistence" />
 	<bean class="com.liferay.changeset.service.impl.ChangesetCollectionLocalServiceImpl" id="com.liferay.changeset.service.ChangesetCollectionLocalService" />
 	<bean class="com.liferay.changeset.service.persistence.impl.ChangesetCollectionPersistenceImpl" id="com.liferay.changeset.service.persistence.ChangesetCollectionPersistence" parent="basePersistence" />
 	<bean class="com.liferay.changeset.service.impl.ChangesetEntryLocalServiceImpl" id="com.liferay.changeset.service.ChangesetEntryLocalService" />

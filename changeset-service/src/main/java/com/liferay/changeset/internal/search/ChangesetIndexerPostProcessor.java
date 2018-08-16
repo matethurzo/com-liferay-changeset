@@ -61,12 +61,12 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 				_CHANGESET_COLLECTION_ID_FIELD, chanegetCollectionId)
 		);
 
-		Optional<Long> changesetIdOptional = _getChangesetId(
+		Optional<Long> changesetIdOptional = _getChangesetEntryId(
 			entryClassName, entryClassPK);
 
 		changesetIdOptional.ifPresent(
 			changesetId -> document.addKeyword(
-				_CHANGESET_ID_FIELD, changesetId));
+				_CHANGESET_ENTRY_ID_FIELD, changesetId));
 	}
 
 	@Override
@@ -94,12 +94,12 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 				_CHANGESET_COLLECTION_ID_FIELD, chanegetCollectionId)
 		);
 
-		Optional<Long> changesetIdOptional = _getChangesetId(
+		Optional<Long> changesetIdOptional = _getChangesetEntryId(
 			entryClassName, entryClassPK);
 
 		changesetIdOptional.ifPresent(
 			changesetEntryId -> searchQuery.addRequiredTerm(
-				_CHANGESET_ID_FIELD, changesetEntryId)
+				_CHANGESET_ENTRY_ID_FIELD, changesetEntryId)
 		);
 	}
 
@@ -120,14 +120,14 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 		ChangesetManager changesetManager =
 			ChangesetManagerUtil.getChangesetManager();
 
-		Optional<ChangesetCollection> changesetEntryOptional =
+		Optional<ChangesetCollection> changesetColectionOptional =
 			changesetManager.getChangesetCollection(className, classPK);
 
-		return changesetEntryOptional.map(
+		return changesetColectionOptional.map(
 			ChangesetCollection::getChangesetCollectionId);
 	}
 
-	private Optional<Long> _getChangesetId(String className, long classPK) {
+	private Optional<Long> _getChangesetEntryId(String className, long classPK) {
 		ChangesetManager changesetManager =
 			ChangesetManagerUtil.getChangesetManager();
 
@@ -140,6 +140,6 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 	private static final String _CHANGESET_COLLECTION_ID_FIELD =
 		"changesetCollectionId";
 
-	private static final String _CHANGESET_ID_FIELD = "changesetId";
+	private static final String _CHANGESET_ENTRY_ID_FIELD = "changesetEntryId";
 
 }

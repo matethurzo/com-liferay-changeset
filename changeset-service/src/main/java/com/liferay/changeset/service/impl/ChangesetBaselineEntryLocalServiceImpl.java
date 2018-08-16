@@ -20,6 +20,7 @@ import com.liferay.changeset.service.base.ChangesetBaselineEntryLocalServiceBase
 import com.liferay.portal.kernel.model.User;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * The implementation of the changeset baseline entry local service.
@@ -72,6 +73,14 @@ public class ChangesetBaselineEntryLocalServiceImpl
 		changesetBaselineEntryPersistence.update(changesetBaselineEntry);
 
 		return changesetBaselineEntry;
+	}
+
+	@Override
+	public List<ChangesetBaselineEntry> getChangesetBaselineEntries(
+		long changesetBaselineCollectionId) {
+
+		return changesetBaselineEntryPersistence.
+			findByChangesetBaselineCollectionId(changesetBaselineCollectionId);
 	}
 
 }

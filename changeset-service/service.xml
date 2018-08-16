@@ -53,6 +53,9 @@
 
 		<!-- Finder methods -->
 
+		<finder name="ChangesetBaselineCollectionId" return-type="Collection">
+			<finder-column name="changesetBaselineCollectionId" />
+		</finder>
 	</entity>
 	<entity local-service="true" name="ChangesetCollection" remote-service="false" trash-enabled="false" uuid="false">
 

@@ -47,6 +47,11 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class ChangesetManagerImpl implements ChangesetManager {
 
 	@Override
+	public ChangesetCollection create() {
+		return null;
+	}
+
+	@Override
 	public Optional<ChangesetCollection> getChangesetCollection(
 		long classNameId, long classPK) {
 
@@ -130,6 +135,18 @@ public class ChangesetManagerImpl implements ChangesetManager {
 
 	public boolean isChangesetSupported(String identifier) {
 		return _configurationsByIdentifier.containsKey(identifier);
+	}
+
+	@Override
+	public void publish(long changesetCollectionId) {
+	}
+
+	@Override
+	public void remove(long changesetCollectionId) {
+	}
+
+	@Override
+	public void rollback(long changesetCollectionId) {
 	}
 
 	@Reference(

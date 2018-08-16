@@ -25,6 +25,8 @@ import java.util.Optional;
  */
 public interface ChangesetManager {
 
+	public ChangesetCollection create();
+
 	public Optional<ChangesetCollection> getChangesetCollection(
 		long classNameId, long classPK);
 
@@ -40,5 +42,11 @@ public interface ChangesetManager {
 	public boolean isChangesetSupported(Class<?> clazz);
 
 	public boolean isChangesetSupported(String identifier);
+
+	public void publish(long changesetCollectionId);
+
+	public void remove(long changesetCollectionId);
+
+	public void rollback(long changesetCollectionId);
 
 }

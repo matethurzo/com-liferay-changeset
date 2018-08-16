@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Query;
+import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.log.Log;
@@ -89,6 +90,540 @@ public class ChangesetBaselineEntryPersistenceImpl extends BasePersistenceImpl<C
 	public static final FinderPath FINDER_PATH_COUNT_ALL = new FinderPath(ChangesetBaselineEntryModelImpl.ENTITY_CACHE_ENABLED,
 			ChangesetBaselineEntryModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll", new String[0]);
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_CHANGESETBASELINECOLLECTIONID =
+		new FinderPath(ChangesetBaselineEntryModelImpl.ENTITY_CACHE_ENABLED,
+			ChangesetBaselineEntryModelImpl.FINDER_CACHE_ENABLED,
+			ChangesetBaselineEntryImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByChangesetBaselineCollectionId",
+			new String[] {
+				Long.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CHANGESETBASELINECOLLECTIONID =
+		new FinderPath(ChangesetBaselineEntryModelImpl.ENTITY_CACHE_ENABLED,
+			ChangesetBaselineEntryModelImpl.FINDER_CACHE_ENABLED,
+			ChangesetBaselineEntryImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByChangesetBaselineCollectionId",
+			new String[] { Long.class.getName() },
+			ChangesetBaselineEntryModelImpl.CHANGESETBASELINECOLLECTIONID_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_CHANGESETBASELINECOLLECTIONID =
+		new FinderPath(ChangesetBaselineEntryModelImpl.ENTITY_CACHE_ENABLED,
+			ChangesetBaselineEntryModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByChangesetBaselineCollectionId",
+			new String[] { Long.class.getName() });
+
+	/**
+	 * Returns all the changeset baseline entries where changesetBaselineCollectionId = &#63;.
+	 *
+	 * @param changesetBaselineCollectionId the changeset baseline collection ID
+	 * @return the matching changeset baseline entries
+	 */
+	@Override
+	public List<ChangesetBaselineEntry> findByChangesetBaselineCollectionId(
+		long changesetBaselineCollectionId) {
+		return findByChangesetBaselineCollectionId(changesetBaselineCollectionId,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the changeset baseline entries where changesetBaselineCollectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ChangesetBaselineEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param changesetBaselineCollectionId the changeset baseline collection ID
+	 * @param start the lower bound of the range of changeset baseline entries
+	 * @param end the upper bound of the range of changeset baseline entries (not inclusive)
+	 * @return the range of matching changeset baseline entries
+	 */
+	@Override
+	public List<ChangesetBaselineEntry> findByChangesetBaselineCollectionId(
+		long changesetBaselineCollectionId, int start, int end) {
+		return findByChangesetBaselineCollectionId(changesetBaselineCollectionId,
+			start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the changeset baseline entries where changesetBaselineCollectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ChangesetBaselineEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param changesetBaselineCollectionId the changeset baseline collection ID
+	 * @param start the lower bound of the range of changeset baseline entries
+	 * @param end the upper bound of the range of changeset baseline entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching changeset baseline entries
+	 */
+	@Override
+	public List<ChangesetBaselineEntry> findByChangesetBaselineCollectionId(
+		long changesetBaselineCollectionId, int start, int end,
+		OrderByComparator<ChangesetBaselineEntry> orderByComparator) {
+		return findByChangesetBaselineCollectionId(changesetBaselineCollectionId,
+			start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the changeset baseline entries where changesetBaselineCollectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ChangesetBaselineEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param changesetBaselineCollectionId the changeset baseline collection ID
+	 * @param start the lower bound of the range of changeset baseline entries
+	 * @param end the upper bound of the range of changeset baseline entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching changeset baseline entries
+	 */
+	@Override
+	public List<ChangesetBaselineEntry> findByChangesetBaselineCollectionId(
+		long changesetBaselineCollectionId, int start, int end,
+		OrderByComparator<ChangesetBaselineEntry> orderByComparator,
+		boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CHANGESETBASELINECOLLECTIONID;
+			finderArgs = new Object[] { changesetBaselineCollectionId };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_CHANGESETBASELINECOLLECTIONID;
+			finderArgs = new Object[] {
+					changesetBaselineCollectionId,
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<ChangesetBaselineEntry> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<ChangesetBaselineEntry>)finderCache.getResult(finderPath,
+					finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (ChangesetBaselineEntry changesetBaselineEntry : list) {
+					if ((changesetBaselineCollectionId != changesetBaselineEntry.getChangesetBaselineCollectionId())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(3 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(3);
+			}
+
+			query.append(_SQL_SELECT_CHANGESETBASELINEENTRY_WHERE);
+
+			query.append(_FINDER_COLUMN_CHANGESETBASELINECOLLECTIONID_CHANGESETBASELINECOLLECTIONID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(ChangesetBaselineEntryModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(changesetBaselineCollectionId);
+
+				if (!pagination) {
+					list = (List<ChangesetBaselineEntry>)QueryUtil.list(q,
+							getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<ChangesetBaselineEntry>)QueryUtil.list(q,
+							getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first changeset baseline entry in the ordered set where changesetBaselineCollectionId = &#63;.
+	 *
+	 * @param changesetBaselineCollectionId the changeset baseline collection ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching changeset baseline entry
+	 * @throws NoSuchBaselineEntryException if a matching changeset baseline entry could not be found
+	 */
+	@Override
+	public ChangesetBaselineEntry findByChangesetBaselineCollectionId_First(
+		long changesetBaselineCollectionId,
+		OrderByComparator<ChangesetBaselineEntry> orderByComparator)
+		throws NoSuchBaselineEntryException {
+		ChangesetBaselineEntry changesetBaselineEntry = fetchByChangesetBaselineCollectionId_First(changesetBaselineCollectionId,
+				orderByComparator);
+
+		if (changesetBaselineEntry != null) {
+			return changesetBaselineEntry;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("changesetBaselineCollectionId=");
+		msg.append(changesetBaselineCollectionId);
+
+		msg.append("}");
+
+		throw new NoSuchBaselineEntryException(msg.toString());
+	}
+
+	/**
+	 * Returns the first changeset baseline entry in the ordered set where changesetBaselineCollectionId = &#63;.
+	 *
+	 * @param changesetBaselineCollectionId the changeset baseline collection ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching changeset baseline entry, or <code>null</code> if a matching changeset baseline entry could not be found
+	 */
+	@Override
+	public ChangesetBaselineEntry fetchByChangesetBaselineCollectionId_First(
+		long changesetBaselineCollectionId,
+		OrderByComparator<ChangesetBaselineEntry> orderByComparator) {
+		List<ChangesetBaselineEntry> list = findByChangesetBaselineCollectionId(changesetBaselineCollectionId,
+				0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last changeset baseline entry in the ordered set where changesetBaselineCollectionId = &#63;.
+	 *
+	 * @param changesetBaselineCollectionId the changeset baseline collection ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching changeset baseline entry
+	 * @throws NoSuchBaselineEntryException if a matching changeset baseline entry could not be found
+	 */
+	@Override
+	public ChangesetBaselineEntry findByChangesetBaselineCollectionId_Last(
+		long changesetBaselineCollectionId,
+		OrderByComparator<ChangesetBaselineEntry> orderByComparator)
+		throws NoSuchBaselineEntryException {
+		ChangesetBaselineEntry changesetBaselineEntry = fetchByChangesetBaselineCollectionId_Last(changesetBaselineCollectionId,
+				orderByComparator);
+
+		if (changesetBaselineEntry != null) {
+			return changesetBaselineEntry;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("changesetBaselineCollectionId=");
+		msg.append(changesetBaselineCollectionId);
+
+		msg.append("}");
+
+		throw new NoSuchBaselineEntryException(msg.toString());
+	}
+
+	/**
+	 * Returns the last changeset baseline entry in the ordered set where changesetBaselineCollectionId = &#63;.
+	 *
+	 * @param changesetBaselineCollectionId the changeset baseline collection ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching changeset baseline entry, or <code>null</code> if a matching changeset baseline entry could not be found
+	 */
+	@Override
+	public ChangesetBaselineEntry fetchByChangesetBaselineCollectionId_Last(
+		long changesetBaselineCollectionId,
+		OrderByComparator<ChangesetBaselineEntry> orderByComparator) {
+		int count = countByChangesetBaselineCollectionId(changesetBaselineCollectionId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<ChangesetBaselineEntry> list = findByChangesetBaselineCollectionId(changesetBaselineCollectionId,
+				count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the changeset baseline entries before and after the current changeset baseline entry in the ordered set where changesetBaselineCollectionId = &#63;.
+	 *
+	 * @param changesetBaselineEntryId the primary key of the current changeset baseline entry
+	 * @param changesetBaselineCollectionId the changeset baseline collection ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next changeset baseline entry
+	 * @throws NoSuchBaselineEntryException if a changeset baseline entry with the primary key could not be found
+	 */
+	@Override
+	public ChangesetBaselineEntry[] findByChangesetBaselineCollectionId_PrevAndNext(
+		long changesetBaselineEntryId, long changesetBaselineCollectionId,
+		OrderByComparator<ChangesetBaselineEntry> orderByComparator)
+		throws NoSuchBaselineEntryException {
+		ChangesetBaselineEntry changesetBaselineEntry = findByPrimaryKey(changesetBaselineEntryId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			ChangesetBaselineEntry[] array = new ChangesetBaselineEntryImpl[3];
+
+			array[0] = getByChangesetBaselineCollectionId_PrevAndNext(session,
+					changesetBaselineEntry, changesetBaselineCollectionId,
+					orderByComparator, true);
+
+			array[1] = changesetBaselineEntry;
+
+			array[2] = getByChangesetBaselineCollectionId_PrevAndNext(session,
+					changesetBaselineEntry, changesetBaselineCollectionId,
+					orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected ChangesetBaselineEntry getByChangesetBaselineCollectionId_PrevAndNext(
+		Session session, ChangesetBaselineEntry changesetBaselineEntry,
+		long changesetBaselineCollectionId,
+		OrderByComparator<ChangesetBaselineEntry> orderByComparator,
+		boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(3);
+		}
+
+		query.append(_SQL_SELECT_CHANGESETBASELINEENTRY_WHERE);
+
+		query.append(_FINDER_COLUMN_CHANGESETBASELINECOLLECTIONID_CHANGESETBASELINECOLLECTIONID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(ChangesetBaselineEntryModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(changesetBaselineCollectionId);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(changesetBaselineEntry);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<ChangesetBaselineEntry> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the changeset baseline entries where changesetBaselineCollectionId = &#63; from the database.
+	 *
+	 * @param changesetBaselineCollectionId the changeset baseline collection ID
+	 */
+	@Override
+	public void removeByChangesetBaselineCollectionId(
+		long changesetBaselineCollectionId) {
+		for (ChangesetBaselineEntry changesetBaselineEntry : findByChangesetBaselineCollectionId(
+				changesetBaselineCollectionId, QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS, null)) {
+			remove(changesetBaselineEntry);
+		}
+	}
+
+	/**
+	 * Returns the number of changeset baseline entries where changesetBaselineCollectionId = &#63;.
+	 *
+	 * @param changesetBaselineCollectionId the changeset baseline collection ID
+	 * @return the number of matching changeset baseline entries
+	 */
+	@Override
+	public int countByChangesetBaselineCollectionId(
+		long changesetBaselineCollectionId) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_CHANGESETBASELINECOLLECTIONID;
+
+		Object[] finderArgs = new Object[] { changesetBaselineCollectionId };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(2);
+
+			query.append(_SQL_COUNT_CHANGESETBASELINEENTRY_WHERE);
+
+			query.append(_FINDER_COLUMN_CHANGESETBASELINECOLLECTIONID_CHANGESETBASELINECOLLECTIONID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(changesetBaselineCollectionId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_CHANGESETBASELINECOLLECTIONID_CHANGESETBASELINECOLLECTIONID_2 =
+		"changesetBaselineEntry.changesetBaselineCollectionId = ?";
 
 	public ChangesetBaselineEntryPersistenceImpl() {
 		setModelClass(ChangesetBaselineEntry.class);
@@ -347,10 +882,46 @@ public class ChangesetBaselineEntryPersistenceImpl extends BasePersistenceImpl<C
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 
-		if (isNew) {
+		if (!ChangesetBaselineEntryModelImpl.COLUMN_BITMASK_ENABLED) {
+			finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+		}
+		else
+		 if (isNew) {
+			Object[] args = new Object[] {
+					changesetBaselineEntryModelImpl.getChangesetBaselineCollectionId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_CHANGESETBASELINECOLLECTIONID,
+				args);
+			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CHANGESETBASELINECOLLECTIONID,
+				args);
+
 			finderCache.removeResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY);
 			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL,
 				FINDER_ARGS_EMPTY);
+		}
+
+		else {
+			if ((changesetBaselineEntryModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CHANGESETBASELINECOLLECTIONID.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						changesetBaselineEntryModelImpl.getOriginalChangesetBaselineCollectionId()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_CHANGESETBASELINECOLLECTIONID,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CHANGESETBASELINECOLLECTIONID,
+					args);
+
+				args = new Object[] {
+						changesetBaselineEntryModelImpl.getChangesetBaselineCollectionId()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_CHANGESETBASELINECOLLECTIONID,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CHANGESETBASELINECOLLECTIONID,
+					args);
+			}
 		}
 
 		entityCache.putResult(ChangesetBaselineEntryModelImpl.ENTITY_CACHE_ENABLED,
@@ -772,8 +1343,11 @@ public class ChangesetBaselineEntryPersistenceImpl extends BasePersistenceImpl<C
 	protected FinderCache finderCache;
 	private static final String _SQL_SELECT_CHANGESETBASELINEENTRY = "SELECT changesetBaselineEntry FROM ChangesetBaselineEntry changesetBaselineEntry";
 	private static final String _SQL_SELECT_CHANGESETBASELINEENTRY_WHERE_PKS_IN = "SELECT changesetBaselineEntry FROM ChangesetBaselineEntry changesetBaselineEntry WHERE changesetBaselineEntryId IN (";
+	private static final String _SQL_SELECT_CHANGESETBASELINEENTRY_WHERE = "SELECT changesetBaselineEntry FROM ChangesetBaselineEntry changesetBaselineEntry WHERE ";
 	private static final String _SQL_COUNT_CHANGESETBASELINEENTRY = "SELECT COUNT(changesetBaselineEntry) FROM ChangesetBaselineEntry changesetBaselineEntry";
+	private static final String _SQL_COUNT_CHANGESETBASELINEENTRY_WHERE = "SELECT COUNT(changesetBaselineEntry) FROM ChangesetBaselineEntry changesetBaselineEntry WHERE ";
 	private static final String _ORDER_BY_ENTITY_ALIAS = "changesetBaselineEntry.";
 	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY = "No ChangesetBaselineEntry exists with the primary key ";
+	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No ChangesetBaselineEntry exists with the key {";
 	private static final Log _log = LogFactoryUtil.getLog(ChangesetBaselineEntryPersistenceImpl.class);
 }

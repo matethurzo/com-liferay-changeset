@@ -211,6 +211,12 @@ public class ChangesetBaselineEntryLocalServiceUtil {
 		return getService().getChangesetBaselineEntries(start, end);
 	}
 
+	public static java.util.List<com.liferay.changeset.model.ChangesetBaselineEntry> getChangesetBaselineEntries(
+		long changesetBaselineCollectionId) {
+		return getService()
+				   .getChangesetBaselineEntries(changesetBaselineCollectionId);
+	}
+
 	/**
 	* Returns the number of changeset baseline entries.
 	*

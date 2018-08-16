@@ -106,7 +106,11 @@ public class ChangesetBaselineEntryModelImpl extends BaseModelImpl<ChangesetBase
 	public static final boolean FINDER_CACHE_ENABLED = GetterUtil.getBoolean(com.liferay.changeset.service.util.ServiceProps.get(
 				"value.object.finder.cache.enabled.com.liferay.changeset.model.ChangesetBaselineEntry"),
 			true);
-	public static final boolean COLUMN_BITMASK_ENABLED = false;
+	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.changeset.service.util.ServiceProps.get(
+				"value.object.column.bitmask.enabled.com.liferay.changeset.model.ChangesetBaselineEntry"),
+			true);
+	public static final long CHANGESETBASELINECOLLECTIONID_COLUMN_BITMASK = 1L;
+	public static final long CHANGESETBASELINEENTRYID_COLUMN_BITMASK = 2L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.changeset.service.util.ServiceProps.get(
 				"lock.expiration.time.com.liferay.changeset.model.ChangesetBaselineEntry"));
 
@@ -325,7 +329,19 @@ public class ChangesetBaselineEntryModelImpl extends BaseModelImpl<ChangesetBase
 	@Override
 	public void setChangesetBaselineCollectionId(
 		long changesetBaselineCollectionId) {
+		_columnBitmask |= CHANGESETBASELINECOLLECTIONID_COLUMN_BITMASK;
+
+		if (!_setOriginalChangesetBaselineCollectionId) {
+			_setOriginalChangesetBaselineCollectionId = true;
+
+			_originalChangesetBaselineCollectionId = _changesetBaselineCollectionId;
+		}
+
 		_changesetBaselineCollectionId = changesetBaselineCollectionId;
+	}
+
+	public long getOriginalChangesetBaselineCollectionId() {
+		return _originalChangesetBaselineCollectionId;
 	}
 
 	@Override
@@ -376,6 +392,10 @@ public class ChangesetBaselineEntryModelImpl extends BaseModelImpl<ChangesetBase
 	@Override
 	public void setVersion(double version) {
 		_version = version;
+	}
+
+	public long getColumnBitmask() {
+		return _columnBitmask;
 	}
 
 	@Override
@@ -478,6 +498,12 @@ public class ChangesetBaselineEntryModelImpl extends BaseModelImpl<ChangesetBase
 		ChangesetBaselineEntryModelImpl changesetBaselineEntryModelImpl = this;
 
 		changesetBaselineEntryModelImpl._setModifiedDate = false;
+
+		changesetBaselineEntryModelImpl._originalChangesetBaselineCollectionId = changesetBaselineEntryModelImpl._changesetBaselineCollectionId;
+
+		changesetBaselineEntryModelImpl._setOriginalChangesetBaselineCollectionId = false;
+
+		changesetBaselineEntryModelImpl._columnBitmask = 0;
 	}
 
 	@Override
@@ -622,8 +648,11 @@ public class ChangesetBaselineEntryModelImpl extends BaseModelImpl<ChangesetBase
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
 	private long _changesetBaselineCollectionId;
+	private long _originalChangesetBaselineCollectionId;
+	private boolean _setOriginalChangesetBaselineCollectionId;
 	private long _classNameId;
 	private long _classPK;
 	private double _version;
+	private long _columnBitmask;
 	private ChangesetBaselineEntry _escapedModel;
 }

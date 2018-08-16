@@ -194,6 +194,10 @@ public interface ChangesetBaselineEntryLocalService extends BaseLocalService,
 	public List<ChangesetBaselineEntry> getChangesetBaselineEntries(int start,
 		int end);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<ChangesetBaselineEntry> getChangesetBaselineEntries(
+		long changesetBaselineCollectionId);
+
 	/**
 	* Returns the number of changeset baseline entries.
 	*

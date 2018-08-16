@@ -115,6 +115,186 @@ public class ChangesetBaselineEntryUtil {
 	}
 
 	/**
+	* Returns all the changeset baseline entries where changesetBaselineCollectionId = &#63;.
+	*
+	* @param changesetBaselineCollectionId the changeset baseline collection ID
+	* @return the matching changeset baseline entries
+	*/
+	public static List<ChangesetBaselineEntry> findByChangesetBaselineCollectionId(
+		long changesetBaselineCollectionId) {
+		return getPersistence()
+				   .findByChangesetBaselineCollectionId(changesetBaselineCollectionId);
+	}
+
+	/**
+	* Returns a range of all the changeset baseline entries where changesetBaselineCollectionId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ChangesetBaselineEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param changesetBaselineCollectionId the changeset baseline collection ID
+	* @param start the lower bound of the range of changeset baseline entries
+	* @param end the upper bound of the range of changeset baseline entries (not inclusive)
+	* @return the range of matching changeset baseline entries
+	*/
+	public static List<ChangesetBaselineEntry> findByChangesetBaselineCollectionId(
+		long changesetBaselineCollectionId, int start, int end) {
+		return getPersistence()
+				   .findByChangesetBaselineCollectionId(changesetBaselineCollectionId,
+			start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the changeset baseline entries where changesetBaselineCollectionId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ChangesetBaselineEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param changesetBaselineCollectionId the changeset baseline collection ID
+	* @param start the lower bound of the range of changeset baseline entries
+	* @param end the upper bound of the range of changeset baseline entries (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching changeset baseline entries
+	*/
+	public static List<ChangesetBaselineEntry> findByChangesetBaselineCollectionId(
+		long changesetBaselineCollectionId, int start, int end,
+		OrderByComparator<ChangesetBaselineEntry> orderByComparator) {
+		return getPersistence()
+				   .findByChangesetBaselineCollectionId(changesetBaselineCollectionId,
+			start, end, orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the changeset baseline entries where changesetBaselineCollectionId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ChangesetBaselineEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param changesetBaselineCollectionId the changeset baseline collection ID
+	* @param start the lower bound of the range of changeset baseline entries
+	* @param end the upper bound of the range of changeset baseline entries (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching changeset baseline entries
+	*/
+	public static List<ChangesetBaselineEntry> findByChangesetBaselineCollectionId(
+		long changesetBaselineCollectionId, int start, int end,
+		OrderByComparator<ChangesetBaselineEntry> orderByComparator,
+		boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByChangesetBaselineCollectionId(changesetBaselineCollectionId,
+			start, end, orderByComparator, retrieveFromCache);
+	}
+
+	/**
+	* Returns the first changeset baseline entry in the ordered set where changesetBaselineCollectionId = &#63;.
+	*
+	* @param changesetBaselineCollectionId the changeset baseline collection ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching changeset baseline entry
+	* @throws NoSuchBaselineEntryException if a matching changeset baseline entry could not be found
+	*/
+	public static ChangesetBaselineEntry findByChangesetBaselineCollectionId_First(
+		long changesetBaselineCollectionId,
+		OrderByComparator<ChangesetBaselineEntry> orderByComparator)
+		throws com.liferay.changeset.exception.NoSuchBaselineEntryException {
+		return getPersistence()
+				   .findByChangesetBaselineCollectionId_First(changesetBaselineCollectionId,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the first changeset baseline entry in the ordered set where changesetBaselineCollectionId = &#63;.
+	*
+	* @param changesetBaselineCollectionId the changeset baseline collection ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching changeset baseline entry, or <code>null</code> if a matching changeset baseline entry could not be found
+	*/
+	public static ChangesetBaselineEntry fetchByChangesetBaselineCollectionId_First(
+		long changesetBaselineCollectionId,
+		OrderByComparator<ChangesetBaselineEntry> orderByComparator) {
+		return getPersistence()
+				   .fetchByChangesetBaselineCollectionId_First(changesetBaselineCollectionId,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last changeset baseline entry in the ordered set where changesetBaselineCollectionId = &#63;.
+	*
+	* @param changesetBaselineCollectionId the changeset baseline collection ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching changeset baseline entry
+	* @throws NoSuchBaselineEntryException if a matching changeset baseline entry could not be found
+	*/
+	public static ChangesetBaselineEntry findByChangesetBaselineCollectionId_Last(
+		long changesetBaselineCollectionId,
+		OrderByComparator<ChangesetBaselineEntry> orderByComparator)
+		throws com.liferay.changeset.exception.NoSuchBaselineEntryException {
+		return getPersistence()
+				   .findByChangesetBaselineCollectionId_Last(changesetBaselineCollectionId,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last changeset baseline entry in the ordered set where changesetBaselineCollectionId = &#63;.
+	*
+	* @param changesetBaselineCollectionId the changeset baseline collection ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching changeset baseline entry, or <code>null</code> if a matching changeset baseline entry could not be found
+	*/
+	public static ChangesetBaselineEntry fetchByChangesetBaselineCollectionId_Last(
+		long changesetBaselineCollectionId,
+		OrderByComparator<ChangesetBaselineEntry> orderByComparator) {
+		return getPersistence()
+				   .fetchByChangesetBaselineCollectionId_Last(changesetBaselineCollectionId,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the changeset baseline entries before and after the current changeset baseline entry in the ordered set where changesetBaselineCollectionId = &#63;.
+	*
+	* @param changesetBaselineEntryId the primary key of the current changeset baseline entry
+	* @param changesetBaselineCollectionId the changeset baseline collection ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next changeset baseline entry
+	* @throws NoSuchBaselineEntryException if a changeset baseline entry with the primary key could not be found
+	*/
+	public static ChangesetBaselineEntry[] findByChangesetBaselineCollectionId_PrevAndNext(
+		long changesetBaselineEntryId, long changesetBaselineCollectionId,
+		OrderByComparator<ChangesetBaselineEntry> orderByComparator)
+		throws com.liferay.changeset.exception.NoSuchBaselineEntryException {
+		return getPersistence()
+				   .findByChangesetBaselineCollectionId_PrevAndNext(changesetBaselineEntryId,
+			changesetBaselineCollectionId, orderByComparator);
+	}
+
+	/**
+	* Removes all the changeset baseline entries where changesetBaselineCollectionId = &#63; from the database.
+	*
+	* @param changesetBaselineCollectionId the changeset baseline collection ID
+	*/
+	public static void removeByChangesetBaselineCollectionId(
+		long changesetBaselineCollectionId) {
+		getPersistence()
+			.removeByChangesetBaselineCollectionId(changesetBaselineCollectionId);
+	}
+
+	/**
+	* Returns the number of changeset baseline entries where changesetBaselineCollectionId = &#63;.
+	*
+	* @param changesetBaselineCollectionId the changeset baseline collection ID
+	* @return the number of matching changeset baseline entries
+	*/
+	public static int countByChangesetBaselineCollectionId(
+		long changesetBaselineCollectionId) {
+		return getPersistence()
+				   .countByChangesetBaselineCollectionId(changesetBaselineCollectionId);
+	}
+
+	/**
 	* Caches the changeset baseline entry in the entity cache if it is enabled.
 	*
 	* @param changesetBaselineEntry the changeset baseline entry

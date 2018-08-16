@@ -171,6 +171,14 @@ public class ChangesetBaselineEntryPersistenceTest {
 	}
 
 	@Test
+	public void testCountByChangesetBaselineCollectionId()
+		throws Exception {
+		_persistence.countByChangesetBaselineCollectionId(RandomTestUtil.nextLong());
+
+		_persistence.countByChangesetBaselineCollectionId(0L);
+	}
+
+	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		ChangesetBaselineEntry newChangesetBaselineEntry = addChangesetBaselineEntry();
 

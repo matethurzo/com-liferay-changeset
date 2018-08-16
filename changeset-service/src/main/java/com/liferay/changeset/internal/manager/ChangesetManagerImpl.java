@@ -216,6 +216,15 @@ public class ChangesetManagerImpl implements ChangesetManager {
 
 	@Override
 	public void publish(long changesetCollectionId) {
+		for (ChangesetEntry changesetEntry :
+				_changesetEntryLocalService.getChangesetEntries(
+					changesetCollectionId)) {
+
+			changesetEntry.setChangesetCollectionId(
+				ChangesetConstants.PRODUCTION_CHANGESET_COLLECTION_ID);
+
+			// TODO Reindex entity of changesetEntry to get the collection ID updated in the index
+		}
 	}
 
 	@Override

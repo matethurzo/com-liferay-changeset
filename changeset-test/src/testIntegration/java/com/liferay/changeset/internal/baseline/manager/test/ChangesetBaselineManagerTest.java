@@ -12,18 +12,18 @@
  * details.
  */
 
-package com.liferay.changeset.baseline.internal;
+package com.liferay.changeset.internal.baseline.manager.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.blogs.service.BlogsEntryLocalServiceUtil;
 import com.liferay.blogs.test.util.BlogsTestUtil;
-import com.liferay.changeset.baseline.manager.ChangesetBaselineManager;
-import com.liferay.changeset.baseline.manager.ChangesetBaselineManagerUtil;
-import com.liferay.changeset.baseline.model.BaselineEntry;
-import com.liferay.changeset.baseline.model.BaselineInformation;
-import com.liferay.changeset.baseline.service.BaselineEntryLocalServiceUtil;
-import com.liferay.changeset.baseline.service.BaselineInformationLocalServiceUtil;
+import com.liferay.changeset.manager.ChangesetBaselineManager;
+import com.liferay.changeset.manager.ChangesetBaselineManagerUtil;
+import com.liferay.changeset.model.ChangesetBaselineCollection;
+import com.liferay.changeset.model.ChangesetBaselineEntry;
+import com.liferay.changeset.service.ChangesetBaselineCollectionLocalServiceUtil;
+import com.liferay.changeset.service.ChangesetBaselineEntryLocalServiceUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.User;
@@ -60,20 +60,26 @@ public class ChangesetBaselineManagerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		List<BaselineInformation> baselineInformations =
-			BaselineInformationLocalServiceUtil.getBaselineInformations(-1, -1);
+		List<ChangesetBaselineCollection> changesetBaselineCollections =
+			ChangesetBaselineCollectionLocalServiceUtil.
+				getChangesetBaselineCollections(-1, -1);
 
-		for (BaselineInformation baselineInformation : baselineInformations) {
-			BaselineInformationLocalServiceUtil.deleteBaselineInformation(
-				baselineInformation.getBaselineInformationId());
+		for (ChangesetBaselineCollection changesetBaselineCollection :
+				changesetBaselineCollections) {
+
+			ChangesetBaselineCollectionLocalServiceUtil.
+				deleteChangesetBaselineCollection(
+					changesetBaselineCollection.
+						getChangesetBaselineCollectionId());
 		}
 
-		List<BaselineEntry> baselineEntries =
-			BaselineEntryLocalServiceUtil.getBaselineEntries(-1, -1);
+		List<ChangesetBaselineEntry> baselineEntries =
+			ChangesetBaselineEntryLocalServiceUtil.getChangesetBaselineEntries(
+				-1, -1);
 
-		for (BaselineEntry baselineEntry : baselineEntries) {
-			BaselineEntryLocalServiceUtil.deleteBaselineEntry(
-				baselineEntry.getBaselineEntryId());
+		for (ChangesetBaselineEntry baselineEntry : baselineEntries) {
+			ChangesetBaselineEntryLocalServiceUtil.deleteChangesetBaselineEntry(
+				baselineEntry.getChangesetBaselineEntryId());
 		}
 	}
 
@@ -101,15 +107,18 @@ public class ChangesetBaselineManagerTest {
 
 		changesetBaselineManager.createBaseline(baselineIdSupplier);
 
-		BaselineInformation baselineInformation =
-			changesetBaselineManager.getBaselineInformation(baselineIdSupplier);
+		ChangesetBaselineCollection baselineInformation =
+			changesetBaselineManager.getChangesetBaselineCollection(
+				baselineIdSupplier);
 
 		Assert.assertNotNull(baselineInformation);
 		Assert.assertEquals(
 			String.valueOf(baselineIdSupplier.get()),
 			baselineInformation.getName());
 
-		int count = BaselineEntryLocalServiceUtil.getBaselineEntriesCount();
+		int count =
+			ChangesetBaselineEntryLocalServiceUtil.
+				getChangesetBaselineEntriesCount();
 
 		Assert.assertEquals(1, count);
 

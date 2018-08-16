@@ -40,16 +40,16 @@ public interface ChangesetManager {
 	public Optional<ChangesetCollection> getChangesetCollection(
 		String className, long classPK);
 
-	public ChangesetConfiguration<?, ?> getChangesetConfigurationByIdentifier(
-		String identifier);
+	public Optional<ChangesetConfiguration<?, ?>>
+		getChangesetConfigurationByIdentifier(String identifier);
 
-	public ChangesetConfiguration<?, ?>
+	public Optional<ChangesetConfiguration<?, ?>>
 		getChangesetConfigurationByResourceClass(Class<?> clazz);
 
-	public ChangesetConfiguration<?, ?> getChangesetConfigurationByVersionClass(
-		Class<?> clazz);
+	public Optional<ChangesetConfiguration<?, ?>>
+		getChangesetConfigurationByVersionClass(Class<?> clazz);
 
-	public ChangesetConfiguration<?, ?>
+	public Optional<ChangesetConfiguration<?, ?>>
 		getChangesetConfigurationByVersionClassName(String className);
 
 	public List<ChangesetEntry> getChangesetEntries(long changesetCollectionId);

@@ -144,26 +144,26 @@ public class ChangesetManagerImpl implements ChangesetManager {
 		return getChangesetCollection(classNameId, classPK);
 	}
 
-	public ChangesetConfiguration<?, ?> getChangesetConfigurationByIdentifier(
-		String identifier) {
+	public Optional<ChangesetConfiguration<?, ?>>
+		getChangesetConfigurationByIdentifier(String identifier) {
 
-		return _configurationsByIdentifier.get(identifier);
+		return Optional.ofNullable(_configurationsByIdentifier.get(identifier));
 	}
 
-	public ChangesetConfiguration<?, ?>
+	public Optional<ChangesetConfiguration<?, ?>>
 		getChangesetConfigurationByResourceClass(Class<?> clazz) {
 
-		return _configurationsByResourceClass.get(clazz);
+		return Optional.ofNullable(_configurationsByResourceClass.get(clazz));
 	}
 
-	public ChangesetConfiguration<?, ?> getChangesetConfigurationByVersionClass(
-		Class<?> clazz) {
+	public Optional<ChangesetConfiguration<?, ?>>
+		getChangesetConfigurationByVersionClass(Class<?> clazz) {
 
-		return _configurationsByVersionClass.get(clazz);
+		return Optional.ofNullable(_configurationsByVersionClass.get(clazz));
 	}
 
 	@Override
-	public ChangesetConfiguration<?, ?>
+	public Optional<ChangesetConfiguration<?, ?>>
 		getChangesetConfigurationByVersionClassName(String className) {
 
 		Set<Class<?>> keySet = _configurationsByVersionClass.keySet();
@@ -172,7 +172,8 @@ public class ChangesetManagerImpl implements ChangesetManager {
 			String name = key.getName();
 
 			if (name.equals(className)) {
-				return _configurationsByVersionClass.get(key);
+				return Optional.ofNullable(
+					_configurationsByVersionClass.get(key));
 			}
 		}
 
@@ -243,20 +244,28 @@ public class ChangesetManagerImpl implements ChangesetManager {
 			String className = _portal.getClassName(
 				changesetEntry.getClassNameId());
 
-			// TODO Make it possible to get configuration by className
+			Optional<ChangesetConfiguration<?, ?>>
+				changesetConfigurationOptional =
+					getChangesetConfigurationByVersionClassName(className);
 
-			ChangesetConfiguration changesetConfiguration =
-				getChangesetConfigurationByVersionClassName(className);
+			Optional<Indexer> indexerOptional =
+				changesetConfigurationOptional.map(
+					ChangesetConfiguration::getIndexer);
 
-			Indexer indexer = changesetConfiguration.getIndexer();
+			if (indexerOptional.isPresent()) {
+				Indexer indexer = indexerOptional.get();
 
-			try {
-				indexer.reindex(className, changesetEntry.getClassPK());
+				try {
+					indexer.reindex(className, changesetEntry.getClassPK());
+				}
+				catch (SearchException se) {
+					_log.error(
+						"Unable to reindex ChangesetEntry: " +
+							changesetEntry.toString());
+				}
 			}
-			catch (SearchException se) {
-				_log.error(
-					"Unable to reindex ChangesetEntry: " +
-						changesetEntry.toString());
+			else {
+				_log.error("No indexer registered for " + className);
 			}
 		}
 	}

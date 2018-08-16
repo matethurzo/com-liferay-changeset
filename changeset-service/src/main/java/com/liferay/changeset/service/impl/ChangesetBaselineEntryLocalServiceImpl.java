@@ -76,6 +76,14 @@ public class ChangesetBaselineEntryLocalServiceImpl
 	}
 
 	@Override
+	public void deleteChangesetBaselineEntries(
+		long changesetBaselineCollectionId) {
+
+		changesetBaselineEntryPersistence.removeByChangesetBaselineCollectionId(
+			changesetBaselineCollectionId);
+	}
+
+	@Override
 	public List<ChangesetBaselineEntry> getChangesetBaselineEntries(
 		long changesetBaselineCollectionId) {
 

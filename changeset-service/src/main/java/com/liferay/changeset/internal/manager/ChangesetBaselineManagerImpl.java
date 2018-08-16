@@ -77,6 +77,13 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 				"Unable to determine default user", pe);
 		}
 
+		Optional<ChangesetBaselineCollection> baselineCollectionOptional =
+			getChangesetBaselineCollection(baselineIdSupplier);
+
+		if (baselineCollectionOptional.isPresent()) {
+			return baselineCollectionOptional;
+		}
+
 		final ChangesetBaselineCollection changesetBaselineCollection =
 			_changesetBaselineCollectionLocalService.
 				addChangesetBaselineCollection(
@@ -148,6 +155,28 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 	@Override
 	public void removeBaseline(
 		Supplier<? extends Serializable> baselineIdSupplier) {
+
+		Optional<ChangesetBaselineCollection> baselineCollectionOptional =
+			_changesetBaselineCollectionLocalService.
+				getChangesetBaselineCollectionByName(
+					String.valueOf(baselineIdSupplier.get()));
+
+		baselineCollectionOptional.ifPresent(
+			baselineCollection -> {
+				_changesetBaselineEntryLocalService.
+					deleteChangesetBaselineEntries(
+						baselineCollection.getChangesetBaselineCollectionId());
+
+				try {
+					_changesetBaselineCollectionLocalService.
+						deleteChangesetBaselineCollection(
+							baselineCollection.
+								getChangesetBaselineCollectionId());
+				}
+				catch (PortalException pe) {
+					_log.error("Unable to remove baseline collection", pe);
+				}
+			});
 	}
 
 	@Reference(cardinality = ReferenceCardinality.MULTIPLE, unbind = "-")

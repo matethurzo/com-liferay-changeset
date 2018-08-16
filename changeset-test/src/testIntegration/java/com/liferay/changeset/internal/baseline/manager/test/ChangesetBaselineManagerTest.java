@@ -15,24 +15,19 @@
 package com.liferay.changeset.internal.baseline.manager.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.blogs.model.BlogsEntry;
-import com.liferay.blogs.service.BlogsEntryLocalServiceUtil;
-import com.liferay.blogs.test.util.BlogsTestUtil;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.manager.ChangesetBaselineManagerUtil;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.changeset.model.ChangesetBaselineEntry;
 import com.liferay.changeset.service.ChangesetBaselineCollectionLocalServiceUtil;
 import com.liferay.changeset.service.ChangesetBaselineEntryLocalServiceUtil;
+import com.liferay.journal.model.JournalArticle;
+import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
-import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
-import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.io.Serializable;
@@ -85,19 +80,11 @@ public class ChangesetBaselineManagerTest {
 
 	@Test
 	public void testCreateBaseline() throws Exception {
-		User user = UserLocalServiceUtil.getDefaultUser(
-			CompanyThreadLocal.getCompanyId());
-
 		Group group = GroupLocalServiceUtil.getGroup(
 			CompanyThreadLocal.getCompanyId(), GroupConstants.GUEST);
 
-		ServiceContext serviceContext = new ServiceContext();
-
-		serviceContext.setScopeGroupId(group.getGroupId());
-
-		BlogsEntry blogsEntry = BlogsTestUtil.addEntryWithWorkflow(
-			user.getUserId(), RandomTestUtil.randomString(), true,
-			serviceContext);
+		JournalArticle journalArticle = JournalTestUtil.addArticle(
+			group.getGroupId(), 0);
 
 		Supplier<? extends Serializable> baselineIdSupplier =
 			() -> "Test baseline";
@@ -122,7 +109,8 @@ public class ChangesetBaselineManagerTest {
 
 		Assert.assertEquals(1, count);
 
-		BlogsEntryLocalServiceUtil.deleteBlogsEntry(blogsEntry.getEntryId());
+		JournalArticleLocalServiceUtil.deleteJournalArticle(
+			journalArticle.getId());
 	}
 
 }

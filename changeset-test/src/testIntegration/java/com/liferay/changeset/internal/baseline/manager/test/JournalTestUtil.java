@@ -25,9 +25,15 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.xml.Document;
+import com.liferay.portal.kernel.xml.Element;
+import com.liferay.portal.kernel.xml.SAXReaderUtil;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -45,7 +51,9 @@ public class JournalTestUtil {
 		serviceContext.setCommand(Constants.ADD);
 		serviceContext.setLayoutFullURL("http://localhost");
 
-		String content = RandomTestUtil.randomString();
+		String content = getSampleStructuredContent(
+			_getLocalizedMap(RandomTestUtil.randomString()),
+			LocaleUtil.toLanguageId(LocaleUtil.getSiteDefault()));
 
 		boolean neverExpire = true;
 
@@ -68,6 +76,66 @@ public class JournalTestUtil {
 			displayDateDay, displayDateYear, displayDateHour, displayDateMinute,
 			0, 0, 0, 0, 0, neverExpire, 0, 0, 0, 0, 0, true, true, false, null,
 			null, null, null, serviceContext);
+	}
+
+	public static String getSampleStructuredContent(
+		Map<Locale, String> contents, String defaultLocale) {
+
+		return getSampleStructuredContent(
+			"name", Collections.singletonList(contents), defaultLocale);
+	}
+
+	public static String getSampleStructuredContent(
+		String name, List<Map<Locale, String>> contents, String defaultLocale) {
+
+		StringBundler sb = new StringBundler();
+
+		for (Map<Locale, String> map : contents) {
+			for (Locale locale : map.keySet()) {
+				sb.append(LocaleUtil.toLanguageId(locale));
+				sb.append(StringPool.COMMA);
+			}
+
+			sb.setIndex(sb.index() - 1);
+		}
+
+		Document document = createDocumentContent(sb.toString(), defaultLocale);
+
+		Element rootElement = document.getRootElement();
+
+		for (Map<Locale, String> map : contents) {
+			Element dynamicElementElement = rootElement.addElement(
+				"dynamic-element");
+
+			dynamicElementElement.addAttribute("index-type", "keyword");
+			dynamicElementElement.addAttribute("name", name);
+			dynamicElementElement.addAttribute("type", "text");
+
+			for (Map.Entry<Locale, String> entry : map.entrySet()) {
+				Element element = dynamicElementElement.addElement(
+					"dynamic-content");
+
+				element.addAttribute(
+					"language-id", LocaleUtil.toLanguageId(entry.getKey()));
+				element.addCDATA(entry.getValue());
+			}
+		}
+
+		return document.asXML();
+	}
+
+	protected static Document createDocumentContent(
+		String availableLocales, String defaultLocale) {
+
+		Document document = SAXReaderUtil.createDocument();
+
+		Element rootElement = document.addElement("root");
+
+		rootElement.addAttribute("available-locales", availableLocales);
+		rootElement.addAttribute("default-locale", defaultLocale);
+		rootElement.addElement("request");
+
+		return document;
 	}
 
 	private static Map<Locale, String> _getLocalizedMap(String value) {

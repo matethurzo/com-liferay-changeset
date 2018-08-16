@@ -17,6 +17,7 @@ package com.liferay.changeset.internal.manager;
 import static com.liferay.changeset.constants.ChangesetConstants.PRODUCTION_BASELINE_NAME;
 
 import com.liferay.changeset.configuration.ChangesetConfiguration;
+import com.liferay.changeset.constants.ChangesetConstants;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
@@ -139,6 +140,24 @@ public class ChangesetManagerImpl implements ChangesetManager {
 		long classNameId = _portal.getClassNameId(className);
 
 		return getChangesetCollection(classNameId, classPK);
+	}
+
+	public ChangesetConfiguration<?, ?> getChangesetConfigurationByIdentifier(
+		String identifier) {
+
+		return _configurationsByIdentifier.get(identifier);
+	}
+
+	public ChangesetConfiguration<?, ?>
+		getChangesetConfigurationByResourceClass(Class<?> clazz) {
+
+		return _configurationsByResourceClass.get(clazz);
+	}
+
+	public ChangesetConfiguration<?, ?> getChangesetConfigurationByVersionClass(
+			Class<?> clazz) {
+
+		return _configurationsByVersionClass.get(clazz);
 	}
 
 	@Override

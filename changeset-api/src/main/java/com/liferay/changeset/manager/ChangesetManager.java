@@ -14,6 +14,7 @@
 
 package com.liferay.changeset.manager;
 
+import com.liferay.changeset.configuration.ChangesetConfiguration;
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.model.ChangesetEntry;
 
@@ -38,6 +39,15 @@ public interface ChangesetManager {
 
 	public Optional<ChangesetCollection> getChangesetCollection(
 		String className, long classPK);
+
+	public ChangesetConfiguration<?, ?> getChangesetConfigurationByIdentifier(
+		String identifier);
+
+	public ChangesetConfiguration<?, ?>
+		getChangesetConfigurationByResourceClass(Class<?> clazz);
+
+	public ChangesetConfiguration<?, ?> getChangesetConfigurationByVersionClass(
+		Class<?> clazz);
 
 	public List<ChangesetEntry> getChangesetEntries(long changesetCollectionId);
 

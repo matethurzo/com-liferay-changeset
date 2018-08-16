@@ -15,6 +15,7 @@
 package com.liferay.changeset.internal.search;
 
 import com.liferay.changeset.manager.ChangesetManagerUtil;
+import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.model.ChangesetEntry;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
@@ -51,6 +52,14 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 		long entryClassPK = GetterUtil.getLong(
 			document.get(Field.ENTRY_CLASS_PK));
 
+		Optional<Long> chanegetCollectionIdOptional = _getChangesetCollectionId(
+			entryClassName, entryClassPK);
+
+		chanegetCollectionIdOptional.ifPresent(
+			chanegetCollectionId -> document.addKeyword(
+				_CHANGESET_COLLECTION_ID_FIELD, chanegetCollectionId)
+		);
+
 		Optional<Long> changesetIdOptional = _getChangesetId(
 			entryClassName, entryClassPK);
 
@@ -76,12 +85,20 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 		long entryClassPK = GetterUtil.getLong(
 			searchContext.getAttribute(Field.ENTRY_CLASS_PK));
 
+		Optional<Long> chanegetCollectionIdOptional = _getChangesetCollectionId(
+			entryClassName, entryClassPK);
+
+		chanegetCollectionIdOptional.ifPresent(
+			chanegetCollectionId -> searchQuery.addRequiredTerm(
+				_CHANGESET_COLLECTION_ID_FIELD, chanegetCollectionId)
+		);
+
 		Optional<Long> changesetIdOptional = _getChangesetId(
 			entryClassName, entryClassPK);
 
 		changesetIdOptional.ifPresent(
-			changesetEntry -> searchQuery.addRequiredTerm(
-				_CHANGESET_ID_FIELD, changesetEntry)
+			changesetEntryId -> searchQuery.addRequiredTerm(
+				_CHANGESET_ID_FIELD, changesetEntryId)
 		);
 	}
 
@@ -96,12 +113,25 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 		Summary summary, Document document, Locale locale, String snippet) {
 	}
 
+	private Optional<Long> _getChangesetCollectionId(
+		String className, long classPK) {
+
+		Optional<ChangesetCollection> changesetEntryOptional =
+			ChangesetManagerUtil.getChangesetCollection(className, classPK);
+
+		return changesetEntryOptional.map(
+			ChangesetCollection::getChangesetCollectionId);
+	}
+
 	private Optional<Long> _getChangesetId(String className, long classPK) {
 		Optional<ChangesetEntry> changesetEntryOptional =
 			ChangesetManagerUtil.getChangesetEntry(className, classPK);
 
 		return changesetEntryOptional.map(ChangesetEntry::getChangesetEntryId);
 	}
+
+	private static final String _CHANGESET_COLLECTION_ID_FIELD =
+		"changesetCollectionId";
 
 	private static final String _CHANGESET_ID_FIELD = "changesetId";
 

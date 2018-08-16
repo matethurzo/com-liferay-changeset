@@ -167,7 +167,7 @@ public class ChangesetManagerImpl implements ChangesetManager {
 		long changesetCollectionId) {
 
 		return _changesetEntryLocalService.getChangesetEntries(
-			changesetCollectionId)
+			changesetCollectionId);
 	}
 
 	@Override

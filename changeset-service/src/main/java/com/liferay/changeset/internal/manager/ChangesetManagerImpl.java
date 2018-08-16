@@ -39,12 +39,12 @@ import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.util.Portal;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
@@ -157,7 +157,7 @@ public class ChangesetManagerImpl implements ChangesetManager {
 	}
 
 	public ChangesetConfiguration<?, ?> getChangesetConfigurationByVersionClass(
-			Class<?> clazz) {
+		Class<?> clazz) {
 
 		return _configurationsByVersionClass.get(clazz);
 	}
@@ -237,8 +237,9 @@ public class ChangesetManagerImpl implements ChangesetManager {
 				indexer.reindex(className, changesetEntry.getClassPK());
 			}
 			catch (SearchException se) {
-				_log.error("Unable to reindex ChangesetEntry: " +
-					changesetEntry.toString());
+				_log.error(
+					"Unable to reindex ChangesetEntry: " +
+						changesetEntry.toString());
 			}
 		}
 	}

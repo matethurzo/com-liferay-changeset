@@ -127,7 +127,9 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 			ChangesetCollection::getChangesetCollectionId);
 	}
 
-	private Optional<Long> _getChangesetEntryId(String className, long classPK) {
+	private Optional<Long> _getChangesetEntryId(
+		String className, long classPK) {
+
 		ChangesetManager changesetManager =
 			ChangesetManagerUtil.getChangesetManager();
 

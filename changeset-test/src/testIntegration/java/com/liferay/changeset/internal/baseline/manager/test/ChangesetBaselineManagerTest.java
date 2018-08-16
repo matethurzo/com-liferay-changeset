@@ -33,6 +33,7 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import java.io.Serializable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.junit.Assert;
@@ -94,20 +95,23 @@ public class ChangesetBaselineManagerTest {
 
 		changesetBaselineManager.createBaseline(baselineIdSupplier);
 
-		ChangesetBaselineCollection baselineInformation =
+		Optional<ChangesetBaselineCollection> baselineInformation =
 			changesetBaselineManager.getChangesetBaselineCollection(
 				baselineIdSupplier);
 
-		Assert.assertNotNull(baselineInformation);
-		Assert.assertEquals(
+		Assert.assertTrue(
+			"Baseline not found", baselineInformation.isPresent());
+
+		Assert.assertEquals("Baseline name does not match",
 			String.valueOf(baselineIdSupplier.get()),
-			baselineInformation.getName());
+			baselineInformation.get().getName());
 
 		int count =
 			ChangesetBaselineEntryLocalServiceUtil.
 				getChangesetBaselineEntriesCount();
 
-		Assert.assertEquals(1, count);
+		Assert.assertEquals(
+			"Baseline contains different than 1 entry", 1, count);
 
 		JournalArticleLocalServiceUtil.deleteJournalArticle(
 			journalArticle.getId());

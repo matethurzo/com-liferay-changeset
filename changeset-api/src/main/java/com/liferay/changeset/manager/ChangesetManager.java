@@ -17,6 +17,7 @@ package com.liferay.changeset.manager;
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.model.ChangesetEntry;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -25,13 +26,20 @@ import java.util.Optional;
  */
 public interface ChangesetManager {
 
-	public ChangesetCollection create();
+	public Optional<ChangesetCollection> create(
+		String name, String description);
+
+	public void disableChangesets();
+
+	public void enableChangesets();
 
 	public Optional<ChangesetCollection> getChangesetCollection(
 		long classNameId, long classPK);
 
 	public Optional<ChangesetCollection> getChangesetCollection(
 		String className, long classPK);
+
+	public List<ChangesetEntry> getChangesetEntries(long changesetCollectionId);
 
 	public Optional<ChangesetEntry> getChangesetEntry(
 		long classNameId, long classPK);

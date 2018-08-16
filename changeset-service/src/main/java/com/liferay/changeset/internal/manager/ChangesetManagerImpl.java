@@ -14,8 +14,12 @@
 
 package com.liferay.changeset.internal.manager;
 
+import static com.liferay.changeset.constants.ChangesetConstants.PRODUCTION_BASELINE_NAME;
+
 import com.liferay.changeset.configuration.ChangesetConfiguration;
+import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.manager.ChangesetManager;
+import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.model.ChangesetEntry;
 import com.liferay.changeset.service.ChangesetCollectionLocalService;
@@ -25,6 +29,11 @@ import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.util.Portal;
 
 import java.util.HashMap;
@@ -47,8 +56,47 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class ChangesetManagerImpl implements ChangesetManager {
 
 	@Override
-	public ChangesetCollection create() {
-		return null;
+	public Optional<ChangesetCollection> create(
+		String name, String description) {
+
+		// todo: resolve groupId, userId!!!
+
+		ChangesetCollection changesetCollection = null;
+
+		try {
+			changesetCollection =
+				_changesetCollectionLocalService.addChangesetCollection(
+					PrincipalThreadLocal.getUserId(),
+					CompanyThreadLocal.getCompanyId(), name, description);
+
+			Optional<ChangesetBaselineCollection>
+				productionChangesetBaselineCollection =
+					_changesetBaselineManager.getChangesetBaselineCollection(
+						() -> PRODUCTION_BASELINE_NAME);
+
+			_changesetBaselineManager.createBaseline(
+				() -> name,
+				productionChangesetBaselineCollection.orElseThrow(
+					() -> new IllegalStateException(
+						"Unable to determine production baseline")));
+		}
+		catch (PortalException pe) {
+			_log.error("Unable to create new ChangesetCollection", pe);
+		}
+
+		return Optional.ofNullable(changesetCollection);
+	}
+
+	@Override
+	public void disableChangesets() {
+		_changesetBaselineManager.removeBaseline(
+			() -> PRODUCTION_BASELINE_NAME);
+	}
+
+	@Override
+	public void enableChangesets() {
+		_changesetBaselineManager.createBaseline(
+			() -> PRODUCTION_BASELINE_NAME);
 	}
 
 	@Override
@@ -90,6 +138,14 @@ public class ChangesetManagerImpl implements ChangesetManager {
 		long classNameId = _portal.getClassNameId(className);
 
 		return getChangesetCollection(classNameId, classPK);
+	}
+
+	@Override
+	public List<ChangesetEntry> getChangesetEntries(
+		long changesetCollectionId) {
+
+		return _changesetEntryLocalService.getChangesetEntries(
+			changesetCollectionId);
 	}
 
 	@Override
@@ -176,6 +232,12 @@ public class ChangesetManagerImpl implements ChangesetManager {
 		_configurationsByVersionClass.remove(
 			changesetConfiguration.getVersionEntityClass());
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		ChangesetManagerImpl.class);
+
+	@Reference
+	private ChangesetBaselineManager _changesetBaselineManager;
 
 	@Reference
 	private ChangesetCollectionLocalService _changesetCollectionLocalService;

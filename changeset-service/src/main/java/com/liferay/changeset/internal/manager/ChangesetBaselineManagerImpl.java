@@ -15,8 +15,10 @@
 package com.liferay.changeset.internal.manager;
 
 import com.liferay.changeset.configuration.ChangesetConfiguration;
+import com.liferay.changeset.constants.ChangesetConstants;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
+import com.liferay.changeset.model.ChangesetBaselineEntry;
 import com.liferay.changeset.service.ChangesetBaselineCollectionLocalService;
 import com.liferay.changeset.service.ChangesetBaselineEntryLocalService;
 import com.liferay.petra.reflect.ReflectionUtil;
@@ -24,6 +26,8 @@ import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ClassedModel;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -63,6 +67,14 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 	public void createBaseline(
 		Supplier<? extends Serializable> baselineIdSupplier) {
 
+		createBaseline(baselineIdSupplier, null);
+	}
+
+	@Override
+	public void createBaseline(
+		Supplier<? extends Serializable> baselineIdSupplier,
+		ChangesetBaselineCollection copyChangesetBaselineCollection) {
+
 		User defaultUser = null;
 
 		try {
@@ -70,7 +82,10 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 				CompanyThreadLocal.getCompanyId());
 		}
 		catch (PortalException pe) {
-			pe.printStackTrace();
+			_log.error("Unable to get default user", pe);
+
+			throw new IllegalStateException(
+				"Unable to determine default user", pe);
 		}
 
 		final ChangesetBaselineCollection changesetBaselineCollection =
@@ -79,8 +94,69 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 					defaultUser.getUserId(),
 					String.valueOf(baselineIdSupplier.get()));
 
+		if (copyChangesetBaselineCollection == null) {
+			_addDefaultBaselineVersions(changesetBaselineCollection);
+		}
+		else {
+			List<ChangesetBaselineEntry> changesetBaselineEntries =
+				_changesetBaselineEntryLocalService.getChangesetBaselineEntries(
+					copyChangesetBaselineCollection.
+						getChangesetBaselineCollectionId());
+
+			changesetBaselineEntries.forEach(
+				changesetBaselineEntry ->
+					_changesetBaselineEntryLocalService.
+						addChangesetBaselineEntry(
+							changesetBaselineCollection.
+								getChangesetBaselineCollectionId(),
+							changesetBaselineEntry.getClassNameId(),
+							changesetBaselineEntry.getClassPK(),
+							changesetBaselineEntry.getVersion()));
+		}
+	}
+
+	@Override
+	public void getBaselineState(long changesetBaselineId) {
+	}
+
+	public double getBaselineVersion(
+		long changesetBaselineId, long classNameId, long classPK) {
+
+		return 0;
+	}
+
+	@Override
+	public Optional<ChangesetBaselineCollection> getChangesetBaselineCollection(
+		Supplier<? extends Serializable> baselineIdSupplier) {
+
+		return _changesetBaselineCollectionLocalService.
+			getChangesetBaselineCollectionByName(
+				String.valueOf(baselineIdSupplier.get()));
+	}
+
+	@Override
+	public Optional<ChangesetBaselineCollection> getProductionBaseline() {
+		return getChangesetBaselineCollection(
+			() -> ChangesetConstants.PRODUCTION_BASELINE_NAME);
+	}
+
+	@Override
+	public void removeBaseline(
+		Supplier<? extends Serializable> baselineIdSupplier) {
+	}
+
+	@Reference(cardinality = ReferenceCardinality.MULTIPLE, unbind = "-")
+	protected void addChangesetConfiguration(
+		ChangesetConfiguration changesetConfiguration) {
+
+		_changesetConfigurations.add(changesetConfiguration);
+	}
+
+	private void _addDefaultBaselineVersions(
+		ChangesetBaselineCollection changesetBaselineCollection) {
+
 		Stream<ChangesetConfiguration<?, ?>> stream =
-			_changesetConfigurations.stream();
+			_changesetConfigurations.parallelStream();
 
 		stream.filter(
 			Objects::nonNull
@@ -102,44 +178,6 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 					_portal.getClassNameId(classedModel.getModelClassName()),
 					(long)classedModel.getPrimaryKeyObj(), 1.0D)
 		);
-	}
-
-	@Override
-	public void getBaselineState(long changesetBaselineId) {
-	}
-
-	public double getBaselineVersion(
-		long changesetBaselineId, long classNameId, long classPK) {
-
-		return 0;
-	}
-
-	@Override
-	public ChangesetBaselineCollection getChangesetBaselineCollection(
-		Supplier<? extends Serializable> baselineIdSupplier) {
-
-		Optional<ChangesetBaselineCollection> baselineInformationOptional =
-			_changesetBaselineCollectionLocalService.
-				getChangesetBaselineCollectionByName(
-					String.valueOf(baselineIdSupplier.get()));
-
-		if (baselineInformationOptional.isPresent()) {
-			return baselineInformationOptional.get();
-		}
-
-		return null;
-	}
-
-	@Override
-	public void removeBaseline(
-		Supplier<? extends Serializable> baselineIdSupplier) {
-	}
-
-	@Reference(cardinality = ReferenceCardinality.MULTIPLE, unbind = "-")
-	protected void addChangesetConfiguration(
-		ChangesetConfiguration changesetConfiguration) {
-
-		_changesetConfigurations.add(changesetConfiguration);
 	}
 
 	private Stream<?> _getBaseLocalServiceModels(
@@ -169,13 +207,16 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 			return list.stream();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			_log.error("Unable to get baseline models", e);
 
 			List<?> emptyList = Collections.emptyList();
 
 			return emptyList.stream();
 		}
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		ChangesetBaselineManagerImpl.class);
 
 	@Reference
 	private ChangesetBaselineCollectionLocalService

@@ -14,40 +14,11 @@
 
 package com.liferay.changeset.manager;
 
-import com.liferay.changeset.model.ChangesetCollection;
-import com.liferay.changeset.model.ChangesetEntry;
-
-import java.util.Optional;
-
 /**
  * @author Mate Thurzo
  * @author Daniel Kocsis
  */
 public class ChangesetManagerUtil {
-
-	public static Optional<ChangesetCollection> getChangesetCollection(
-		long classNameId, long classPK) {
-
-		return _changesetManager.getChangesetCollection(classNameId, classPK);
-	}
-
-	public static Optional<ChangesetCollection> getChangesetCollection(
-		String className, long classPK) {
-
-		return _changesetManager.getChangesetCollection(className, classPK);
-	}
-
-	public static Optional<ChangesetEntry> getChangesetEntry(
-		long classNameId, long classPK) {
-
-		return _changesetManager.getChangesetEntry(classNameId, classPK);
-	}
-
-	public static Optional<ChangesetEntry> getChangesetEntry(
-		String className, long classPK) {
-
-		return _changesetManager.getChangesetEntry(className, classPK);
-	}
 
 	public static ChangesetManager getChangesetManager() {
 		if (_changesetManager != null) {
@@ -55,14 +26,6 @@ public class ChangesetManagerUtil {
 		}
 
 		throw new NullPointerException("Changeset manager is null");
-	}
-
-	public static boolean isChangesetSupported(Class<?> clazz) {
-		return _changesetManager.isChangesetSupported(clazz);
-	}
-
-	public static boolean isChangesetSupported(String identifier) {
-		return _changesetManager.isChangesetSupported(identifier);
 	}
 
 	public static void setChangesetManager(ChangesetManager changesetManager) {

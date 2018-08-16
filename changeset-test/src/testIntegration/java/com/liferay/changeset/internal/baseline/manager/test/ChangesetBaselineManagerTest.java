@@ -102,7 +102,8 @@ public class ChangesetBaselineManagerTest {
 		Assert.assertTrue(
 			"Baseline not found", baselineInformation.isPresent());
 
-		Assert.assertEquals("Baseline name does not match",
+		Assert.assertEquals(
+			"Baseline name does not match",
 			String.valueOf(baselineIdSupplier.get()),
 			baselineInformation.get().getName());
 

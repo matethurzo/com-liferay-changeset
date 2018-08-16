@@ -241,6 +241,11 @@ public class ChangesetEntryLocalServiceUtil {
 	}
 
 	public static java.util.List<com.liferay.changeset.model.ChangesetEntry> getChangesetEntries(
+		long changesetCollectionId) {
+		return getService().getChangesetEntries(changesetCollectionId);
+	}
+
+	public static java.util.List<com.liferay.changeset.model.ChangesetEntry> getChangesetEntries(
 		long changesetCollectionId, long classNameId) {
 		return getService()
 				   .getChangesetEntries(changesetCollectionId, classNameId);

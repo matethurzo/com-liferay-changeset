@@ -79,12 +79,11 @@ public interface ChangesetConfiguration<T, U> {
 
 	public interface VersionEntityStep<T, U> {
 
-			public BaseliningStep<T, U> addVersionEntity(
-				Class<U> versionEntityClass,
-				Function<U, Long> versionEntityIdSupplier,
-				Function<U, ? extends Serializable>
-					versionEntityVersionFunction,
-				BaseLocalService versionEntityLocalService);
+		public BaseliningStep<T, U> addVersionEntity(
+			Class<U> versionEntityClass,
+			Function<U, Long> versionEntityIdSupplier,
+			Function<U, ? extends Serializable> versionEntityVersionFunction,
+			BaseLocalService versionEntityLocalService);
 
 	}
 

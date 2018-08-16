@@ -14,6 +14,7 @@
 
 package com.liferay.changeset.internal.search;
 
+import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.manager.ChangesetManagerUtil;
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.model.ChangesetEntry;
@@ -116,16 +117,22 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 	private Optional<Long> _getChangesetCollectionId(
 		String className, long classPK) {
 
+		ChangesetManager changesetManager =
+			ChangesetManagerUtil.getChangesetManager();
+
 		Optional<ChangesetCollection> changesetEntryOptional =
-			ChangesetManagerUtil.getChangesetCollection(className, classPK);
+			changesetManager.getChangesetCollection(className, classPK);
 
 		return changesetEntryOptional.map(
 			ChangesetCollection::getChangesetCollectionId);
 	}
 
 	private Optional<Long> _getChangesetId(String className, long classPK) {
+		ChangesetManager changesetManager =
+			ChangesetManagerUtil.getChangesetManager();
+
 		Optional<ChangesetEntry> changesetEntryOptional =
-			ChangesetManagerUtil.getChangesetEntry(className, classPK);
+			changesetManager.getChangesetEntry(className, classPK);
 
 		return changesetEntryOptional.map(ChangesetEntry::getChangesetEntryId);
 	}

@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.util.Portal;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -144,8 +145,9 @@ public class ChangesetManagerImpl implements ChangesetManager {
 	public List<ChangesetEntry> getChangesetEntries(
 		long changesetCollectionId) {
 
-		return _changesetEntryLocalService.getChangesetEntries(
-			changesetCollectionId);
+		// TODO implement
+
+		return Collections.emptyList();
 	}
 
 	@Override

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.changeset.baseline.manager;
+package com.liferay.changeset.manager;
 
 /**
  * @author Mate Thurzo

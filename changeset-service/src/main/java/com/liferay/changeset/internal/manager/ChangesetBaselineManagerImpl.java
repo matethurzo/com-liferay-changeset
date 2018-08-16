@@ -12,13 +12,13 @@
  * details.
  */
 
-package com.liferay.changeset.baseline.internal.manager;
+package com.liferay.changeset.internal.manager;
 
-import com.liferay.changeset.baseline.manager.ChangesetBaselineManager;
-import com.liferay.changeset.baseline.model.BaselineInformation;
-import com.liferay.changeset.baseline.service.BaselineEntryLocalService;
-import com.liferay.changeset.baseline.service.BaselineInformationLocalService;
 import com.liferay.changeset.configuration.ChangesetConfiguration;
+import com.liferay.changeset.manager.ChangesetBaselineManager;
+import com.liferay.changeset.model.ChangesetBaselineCollection;
+import com.liferay.changeset.service.ChangesetBaselineCollectionLocalService;
+import com.liferay.changeset.service.ChangesetBaselineEntryLocalService;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
@@ -73,10 +73,11 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 			pe.printStackTrace();
 		}
 
-		final BaselineInformation baselineInformation =
-			_baselineInformationLocalService.addBaselineInformation(
-				defaultUser.getUserId(),
-				String.valueOf(baselineIdSupplier.get()));
+		final ChangesetBaselineCollection changesetBaselineCollection =
+			_changesetBaselineCollectionLocalService.
+				addChangesetBaselineCollection(
+					defaultUser.getUserId(),
+					String.valueOf(baselineIdSupplier.get()));
 
 		Stream<ChangesetConfiguration<?, ?>> stream =
 			_changesetConfigurations.stream();
@@ -94,26 +95,13 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 		).map(
 			object -> (ClassedModel)object
 		).forEach(
-			classedModel -> _baselineEntryLocalService.addBaselineEntry(
-				baselineInformation.getBaselineInformationId(),
-				_portal.getClassNameId(classedModel.getModelClassName()),
-				(long)classedModel.getPrimaryKeyObj(), 1.0D)
+			classedModel -> _changesetBaselineEntryLocalService.
+				addChangesetBaselineEntry(
+					changesetBaselineCollection.
+						getChangesetBaselineCollectionId(),
+					_portal.getClassNameId(classedModel.getModelClassName()),
+					(long)classedModel.getPrimaryKeyObj(), 1.0D)
 		);
-	}
-
-	@Override
-	public BaselineInformation getBaselineInformation(
-		Supplier<? extends Serializable> baselineIdSupplier) {
-
-		Optional<BaselineInformation> baselineInformationOptional =
-			_baselineInformationLocalService.getBaseLineInformationByName(
-				String.valueOf(baselineIdSupplier.get()));
-
-		if (baselineInformationOptional.isPresent()) {
-			return baselineInformationOptional.get();
-		}
-
-		return null;
 	}
 
 	@Override
@@ -124,6 +112,22 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 		long changesetBaselineId, long classNameId, long classPK) {
 
 		return 0;
+	}
+
+	@Override
+	public ChangesetBaselineCollection getChangesetBaselineCollection(
+		Supplier<? extends Serializable> baselineIdSupplier) {
+
+		Optional<ChangesetBaselineCollection> baselineInformationOptional =
+			_changesetBaselineCollectionLocalService.
+				getChangesetBaselineCollectionByName(
+					String.valueOf(baselineIdSupplier.get()));
+
+		if (baselineInformationOptional.isPresent()) {
+			return baselineInformationOptional.get();
+		}
+
+		return null;
 	}
 
 	@Override
@@ -174,10 +178,12 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 	}
 
 	@Reference
-	private BaselineEntryLocalService _baselineEntryLocalService;
+	private ChangesetBaselineCollectionLocalService
+		_changesetBaselineCollectionLocalService;
 
 	@Reference
-	private BaselineInformationLocalService _baselineInformationLocalService;
+	private ChangesetBaselineEntryLocalService
+		_changesetBaselineEntryLocalService;
 
 	private final List<ChangesetConfiguration<?, ?>> _changesetConfigurations =
 		new ArrayList<>();

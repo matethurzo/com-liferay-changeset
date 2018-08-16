@@ -3,6 +3,57 @@
 
 <service-builder auto-namespace-tables="false" package-path="com.liferay.changeset">
 	<namespace>Changeset</namespace>
+	<entity local-service="true" name="ChangesetBaselineCollection" remote-service="false" trash-enabled="false" uuid="false">
+
+		<!-- PK fields -->
+
+		<column name="changesetBaselineCollectionId" primary="true" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="name" type="String" />
+
+		<!-- Finder methods -->
+
+		<finder name="Name" return-type="ChangesetBaselineCollection">
+			<finder-column name="name" />
+		</finder>
+
+		<!-- References -->
+
+	</entity>
+	<entity local-service="true" name="ChangesetBaselineEntry" remote-service="false" trash-enabled="false" uuid="false">
+
+		<!-- PK fields -->
+
+		<column name="changesetBaselineEntryId" primary="true" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="changesetBaselineCollectionId" type="long" />
+		<column name="classNameId" type="long" />
+		<column name="classPK" type="long" />
+		<column name="version" type="double" />
+
+		<!-- Finder methods -->
+
+	</entity>
 	<entity local-service="true" name="ChangesetCollection" remote-service="false" trash-enabled="false" uuid="false">
 
 		<!-- PK fields -->

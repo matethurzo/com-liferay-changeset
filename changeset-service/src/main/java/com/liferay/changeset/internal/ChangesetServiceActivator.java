@@ -16,6 +16,8 @@ package com.liferay.changeset.internal;
 
 import com.liferay.changeset.configuration.ChangesetConfiguration;
 import com.liferay.changeset.internal.search.ChangesetIndexerPostProcessor;
+import com.liferay.changeset.manager.ChangesetBaselineManager;
+import com.liferay.changeset.manager.ChangesetBaselineManagerUtil;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.manager.ChangesetManagerUtil;
 import com.liferay.portal.kernel.search.Indexer;
@@ -36,7 +38,30 @@ public class ChangesetServiceActivator implements BundleActivator {
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-		_serviceTracker =
+		_changesetBaselineManagerServiceTracker =
+			new ServiceTracker
+				<ChangesetBaselineManager, ChangesetBaselineManager>(
+				bundleContext, ChangesetBaselineManager.class.getName(), null) {
+
+				@Override
+				public ChangesetBaselineManager addingService(
+					ServiceReference<ChangesetBaselineManager>
+						serviceReference) {
+
+					ChangesetBaselineManager changesetManager =
+						bundleContext.getService(serviceReference);
+
+					ChangesetBaselineManagerUtil.setChangesetBaselineManager(
+						changesetManager);
+
+					return changesetManager;
+				}
+
+			};
+
+		_changesetBaselineManagerServiceTracker.open();
+
+		_changesetManagerServiceTracker =
 			new ServiceTracker<ChangesetManager, ChangesetManager>(
 				bundleContext, ChangesetManager.class.getName(), null) {
 
@@ -54,7 +79,7 @@ public class ChangesetServiceActivator implements BundleActivator {
 
 			};
 
-		_serviceTracker.open();
+		_changesetManagerServiceTracker.open();
 
 		_changesetConfigurationServiceTracker =
 			new ServiceTracker<ChangesetConfiguration, ChangesetConfiguration>(
@@ -111,7 +136,8 @@ public class ChangesetServiceActivator implements BundleActivator {
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
-		_serviceTracker.close();
+		_changesetBaselineManagerServiceTracker.close();
+		_changesetManagerServiceTracker.close();
 
 		_changesetConfigurationServiceTracker.close();
 	}
@@ -119,8 +145,11 @@ public class ChangesetServiceActivator implements BundleActivator {
 	private static final ChangesetIndexerPostProcessor
 		_CHANGESET_INDEXER_POST_PROCESSOR = new ChangesetIndexerPostProcessor();
 
+	private ServiceTracker<ChangesetBaselineManager, ChangesetBaselineManager>
+		_changesetBaselineManagerServiceTracker;
 	private ServiceTracker<ChangesetConfiguration, ChangesetConfiguration>
 		_changesetConfigurationServiceTracker;
-	private ServiceTracker<ChangesetManager, ChangesetManager> _serviceTracker;
+	private ServiceTracker<ChangesetManager, ChangesetManager>
+		_changesetManagerServiceTracker;
 
 }

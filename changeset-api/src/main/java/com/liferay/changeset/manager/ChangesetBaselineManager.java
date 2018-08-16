@@ -12,9 +12,9 @@
  * details.
  */
 
-package com.liferay.changeset.baseline.manager;
+package com.liferay.changeset.manager;
 
-import com.liferay.changeset.baseline.model.BaselineInformation;
+import com.liferay.changeset.model.ChangesetBaselineCollection;
 
 import java.io.Serializable;
 
@@ -30,10 +30,10 @@ public interface ChangesetBaselineManager {
 	public void createBaseline(
 		Supplier<? extends Serializable> baselineIdSupplier);
 
-	public BaselineInformation getBaselineInformation(
-		Supplier<? extends Serializable> baselineIdSupplier);
-
 	public void getBaselineState(long changesetBaselineId);
+
+	public ChangesetBaselineCollection getChangesetBaselineCollection(
+		Supplier<? extends Serializable> baselineIdSupplier);
 
 	public void removeBaseline(
 		Supplier<? extends Serializable> baselineIdSupplier);

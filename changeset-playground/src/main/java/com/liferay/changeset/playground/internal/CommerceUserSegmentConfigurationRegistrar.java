@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.changeset.baseline.playground.internal;
+package com.liferay.changeset.playground.internal;
 
 import com.liferay.changeset.configuration.ChangesetConfiguration;
 import com.liferay.changeset.configuration.ChangesetConfigurationRegistrar;

@@ -150,6 +150,14 @@ public class ChangesetEntryLocalServiceImpl
 			user.getUserId(), changesetCollectionId, classNameId, classPK);
 	}
 
+	@Override
+	public List<ChangesetEntry> getChangesetEntries(
+		long changesetCollectionId) {
+
+		return changesetEntryPersistence.findByChangesetCollectionId(
+			changesetCollectionId);
+	}
+
 	public List<ChangesetEntry> getChangesetEntries(
 		long changesetCollectionId, long classNameId) {
 

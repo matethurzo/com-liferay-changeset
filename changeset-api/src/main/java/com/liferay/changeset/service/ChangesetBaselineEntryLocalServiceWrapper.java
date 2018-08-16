@@ -66,6 +66,12 @@ public class ChangesetBaselineEntryLocalServiceWrapper
 		return _changesetBaselineEntryLocalService.createChangesetBaselineEntry(changesetBaselineEntryId);
 	}
 
+	@Override
+	public void deleteChangesetBaselineEntries(
+		long changesetBaselineCollectionId) {
+		_changesetBaselineEntryLocalService.deleteChangesetBaselineEntries(changesetBaselineCollectionId);
+	}
+
 	/**
 	* Deletes the changeset baseline entry from the database. Also notifies the appropriate model listeners.
 	*

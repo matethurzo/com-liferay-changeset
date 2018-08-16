@@ -74,6 +74,12 @@ public class ChangesetBaselineEntryLocalServiceUtil {
 				   .createChangesetBaselineEntry(changesetBaselineEntryId);
 	}
 
+	public static void deleteChangesetBaselineEntries(
+		long changesetBaselineCollectionId) {
+		getService()
+			.deleteChangesetBaselineEntries(changesetBaselineCollectionId);
+	}
+
 	/**
 	* Deletes the changeset baseline entry from the database. Also notifies the appropriate model listeners.
 	*

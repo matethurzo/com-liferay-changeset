@@ -85,6 +85,9 @@ public interface ChangesetBaselineEntryLocalService extends BaseLocalService,
 	public ChangesetBaselineEntry createChangesetBaselineEntry(
 		long changesetBaselineEntryId);
 
+	public void deleteChangesetBaselineEntries(
+		long changesetBaselineCollectionId);
+
 	/**
 	* Deletes the changeset baseline entry from the database. Also notifies the appropriate model listeners.
 	*

@@ -33,6 +33,8 @@ import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.util.Portal;
@@ -164,9 +166,8 @@ public class ChangesetManagerImpl implements ChangesetManager {
 	public List<ChangesetEntry> getChangesetEntries(
 		long changesetCollectionId) {
 
-		// TODO implement
-
-		return Collections.emptyList();
+		return _changesetEntryLocalService.getChangesetEntries(
+			changesetCollectionId)
 	}
 
 	@Override
@@ -217,13 +218,28 @@ public class ChangesetManagerImpl implements ChangesetManager {
 	@Override
 	public void publish(long changesetCollectionId) {
 		for (ChangesetEntry changesetEntry :
-				_changesetEntryLocalService.getChangesetEntries(
-					changesetCollectionId)) {
+				getChangesetEntries(changesetCollectionId)) {
 
 			changesetEntry.setChangesetCollectionId(
 				ChangesetConstants.PRODUCTION_CHANGESET_COLLECTION_ID);
 
-			// TODO Reindex entity of changesetEntry to get the collection ID updated in the index
+			String className = _portal.getClassName(
+				changesetEntry.getClassNameId());
+
+			// TODO Make it possible to get configuration by className
+
+			ChangesetConfiguration changesetConfiguration =
+				getChangesetConfigurationByVersionClass(className);
+
+			Indexer indexer = changesetConfiguration.getIndexer();
+
+			try {
+				indexer.reindex(className, changesetEntry.getClassPK());
+			}
+			catch (SearchException se) {
+				_log.error("Unable to reindex ChangesetEntry: " +
+					changesetEntry.toString());
+			}
 		}
 	}
 

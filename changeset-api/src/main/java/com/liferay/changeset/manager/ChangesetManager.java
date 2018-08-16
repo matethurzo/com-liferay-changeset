@@ -49,6 +49,9 @@ public interface ChangesetManager {
 	public ChangesetConfiguration<?, ?> getChangesetConfigurationByVersionClass(
 		Class<?> clazz);
 
+	public ChangesetConfiguration<?, ?>
+		getChangesetConfigurationByVersionClassName(String className);
+
 	public List<ChangesetEntry> getChangesetEntries(long changesetCollectionId);
 
 	public Optional<ChangesetEntry> getChangesetEntry(

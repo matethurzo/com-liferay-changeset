@@ -163,6 +163,23 @@ public class ChangesetManagerImpl implements ChangesetManager {
 	}
 
 	@Override
+	public ChangesetConfiguration<?, ?>
+		getChangesetConfigurationByVersionClassName(String className) {
+
+		Set<Class<?>> keySet = _configurationsByVersionClass.keySet();
+
+		for (Class<?> key : keySet) {
+			String name = key.getName();
+
+			if (name.equals(className)) {
+				return _configurationsByVersionClass.get(key);
+			}
+		}
+
+		return null;
+	}
+
+	@Override
 	public List<ChangesetEntry> getChangesetEntries(
 		long changesetCollectionId) {
 
@@ -229,7 +246,7 @@ public class ChangesetManagerImpl implements ChangesetManager {
 			// TODO Make it possible to get configuration by className
 
 			ChangesetConfiguration changesetConfiguration =
-				getChangesetConfigurationByVersionClass(className);
+				getChangesetConfigurationByVersionClassName(className);
 
 			Indexer indexer = changesetConfiguration.getIndexer();
 

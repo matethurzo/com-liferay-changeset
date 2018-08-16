@@ -15,9 +15,11 @@
 package com.liferay.changeset.manager;
 
 import com.liferay.changeset.model.ChangesetBaselineCollection;
+import com.liferay.changeset.model.ChangesetBaselineEntry;
 
 import java.io.Serializable;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -26,16 +28,15 @@ import java.util.function.Supplier;
  */
 public interface ChangesetBaselineManager {
 
-	public boolean containsSnapshot();
-
-	public void createBaseline(
+	public Optional<ChangesetBaselineCollection> createBaseline(
 		Supplier<? extends Serializable> baselineIdSupplier);
 
-	public void createBaseline(
+	public Optional<ChangesetBaselineCollection> createBaseline(
 		Supplier<? extends Serializable> baselineIdSupplier,
 		ChangesetBaselineCollection copyChangesetBaselineCollection);
 
-	public void getBaselineState(long changesetBaselineId);
+	public List<ChangesetBaselineEntry> getBaselineEntries(
+		Supplier<? extends Serializable> baselineIdSupplier);
 
 	public Optional<ChangesetBaselineCollection> getChangesetBaselineCollection(
 		Supplier<? extends Serializable> baselineIdSupplier);

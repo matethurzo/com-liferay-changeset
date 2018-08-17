@@ -16,6 +16,7 @@ package com.liferay.changeset.internal.manager;
 
 import com.liferay.changeset.configuration.ChangesetConfiguration;
 import com.liferay.changeset.constants.ChangesetConstants;
+import com.liferay.changeset.exception.NoSuchBaselineEntryException;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.changeset.model.ChangesetBaselineEntry;
@@ -78,13 +79,6 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 				"Unable to determine default user", pe);
 		}
 
-		Optional<ChangesetBaselineCollection> baselineCollectionOptional =
-			getChangesetBaselineCollection(baselineIdSupplier);
-
-		if (baselineCollectionOptional.isPresent()) {
-			return baselineCollectionOptional;
-		}
-
 		final ChangesetBaselineCollection changesetBaselineCollection =
 			_changesetBaselineCollectionLocalService.
 				addChangesetBaselineCollection(
@@ -128,11 +122,40 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 		}
 
 		long collectionId = baselineCollectionOptional.map(
-			ChangesetBaselineCollection::getChangesetBaselineCollectionId)
-			.orElse(0L);
+			ChangesetBaselineCollection::getChangesetBaselineCollectionId).
+				orElse(0L);
 
 		return _changesetBaselineEntryLocalService.getChangesetBaselineEntries(
 			collectionId);
+	}
+
+	@Override
+	public Optional<ChangesetBaselineEntry> getBaselineEntry(
+		long baselineId, long classNameId, long classPK) {
+
+		try {
+			ChangesetBaselineEntry changesetBaselineEntries =
+				_changesetBaselineEntryLocalService.getChangesetBaselineEntry(
+					baselineId, classNameId, classPK);
+
+			return Optional.of(changesetBaselineEntries);
+		}
+		catch (NoSuchBaselineEntryException nsbee) {
+			if (_log.isDebugEnabled()) {
+				_log.debug("Unable to find changeset baseline entry", nsbee);
+			}
+
+			return Optional.empty();
+		}
+	}
+
+	@Override
+	public Optional<ChangesetBaselineEntry> getBaselineEntry(
+		long baselineId, String className, long classPK) {
+
+		long classNameId = _portal.getClassNameId(className);
+
+		return getBaselineEntry(baselineId, classNameId, classPK);
 	}
 
 	public double getBaselineVersion(

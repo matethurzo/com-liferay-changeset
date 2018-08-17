@@ -38,6 +38,12 @@ public interface ChangesetBaselineManager {
 	public List<ChangesetBaselineEntry> getBaselineEntries(
 		Supplier<? extends Serializable> baselineIdSupplier);
 
+	public Optional<ChangesetBaselineEntry> getBaselineEntry(
+		long baselineId, long classNameId, long classPK);
+
+	public Optional<ChangesetBaselineEntry> getBaselineEntry(
+		long baselineId, String className, long classPK);
+
 	public Optional<ChangesetBaselineCollection> getChangesetBaselineCollection(
 		Supplier<? extends Serializable> baselineIdSupplier);
 

@@ -14,8 +14,6 @@
 
 package com.liferay.changeset.internal.manager;
 
-import static com.liferay.changeset.constants.ChangesetConstants.PRODUCTION_BASELINE_NAME;
-
 import com.liferay.changeset.configuration.ChangesetConfiguration;
 import com.liferay.changeset.constants.ChangesetConstants;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
@@ -29,6 +27,7 @@ import com.liferay.portal.kernel.dao.orm.Conjunction;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -75,7 +74,7 @@ public class ChangesetManagerImpl implements ChangesetManager {
 			Optional<ChangesetBaselineCollection>
 				productionChangesetBaselineCollection =
 					_changesetBaselineManager.getChangesetBaselineCollection(
-						() -> PRODUCTION_BASELINE_NAME);
+						() -> ChangesetConstants.PRODUCTION_BASELINE_NAME);
 
 			_changesetBaselineManager.createBaseline(
 				() -> name,
@@ -92,14 +91,29 @@ public class ChangesetManagerImpl implements ChangesetManager {
 
 	@Override
 	public void disableChangesets() {
-		_changesetBaselineManager.removeBaseline(
-			() -> PRODUCTION_BASELINE_NAME);
+		_changesetBaselineManager.removeAllBaselines();
+
+		List<ChangesetCollection> changesetCollections =
+			_changesetCollectionLocalService.getChangesetCollections(
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+		for (ChangesetCollection changesetCollection : changesetCollections) {
+			List<ChangesetEntry> changesetEntries =
+				_changesetEntryLocalService.getChangesetEntries(
+					changesetCollection.getChangesetCollectionId());
+
+			changesetEntries.forEach(
+				_changesetEntryLocalService::deleteChangesetEntry);
+
+			_changesetCollectionLocalService.deleteChangesetCollection(
+				changesetCollection);
+		}
 	}
 
 	@Override
 	public void enableChangesets() {
 		_changesetBaselineManager.createBaseline(
-			() -> PRODUCTION_BASELINE_NAME);
+			() -> ChangesetConstants.PRODUCTION_BASELINE_NAME);
 	}
 
 	@Override

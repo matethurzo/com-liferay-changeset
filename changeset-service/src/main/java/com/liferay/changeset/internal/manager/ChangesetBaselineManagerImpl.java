@@ -22,6 +22,7 @@ import com.liferay.changeset.model.ChangesetBaselineEntry;
 import com.liferay.changeset.service.ChangesetBaselineCollectionLocalService;
 import com.liferay.changeset.service.ChangesetBaselineEntryLocalService;
 import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -147,9 +148,41 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 	}
 
 	@Override
+	public List<ChangesetBaselineEntry> getChangesetBaselineEntries(
+		Supplier<Long> baselineCollectionIdSupplier) {
+
+		return _changesetBaselineEntryLocalService.getChangesetBaselineEntries(
+			baselineCollectionIdSupplier.get());
+	}
+
+	@Override
 	public Optional<ChangesetBaselineCollection> getProductionBaseline() {
 		return getChangesetBaselineCollection(
 			() -> ChangesetConstants.PRODUCTION_BASELINE_NAME);
+	}
+
+	@Override
+	public void removeAllBaselines() {
+		List<ChangesetBaselineCollection> changesetBaselineCollections =
+			_changesetBaselineCollectionLocalService.
+				getChangesetBaselineCollections(
+					QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+		for (ChangesetBaselineCollection changesetBaselineCollection :
+				changesetBaselineCollections) {
+
+			List<ChangesetBaselineEntry> changesetBaselineEntries =
+				_changesetBaselineEntryLocalService.getChangesetBaselineEntries(
+					changesetBaselineCollection.
+						getChangesetBaselineCollectionId());
+
+			changesetBaselineEntries.forEach(
+				_changesetBaselineEntryLocalService::
+					deleteChangesetBaselineEntry);
+
+			_changesetBaselineCollectionLocalService.
+				deleteChangesetBaselineCollection(changesetBaselineCollection);
+		}
 	}
 
 	@Override

@@ -41,7 +41,12 @@ public interface ChangesetBaselineManager {
 	public Optional<ChangesetBaselineCollection> getChangesetBaselineCollection(
 		Supplier<? extends Serializable> baselineIdSupplier);
 
+	public List<ChangesetBaselineEntry> getChangesetBaselineEntries(
+		Supplier<Long> baselineCollectionIdSupplier);
+
 	public Optional<ChangesetBaselineCollection> getProductionBaseline();
+
+	public void removeAllBaselines();
 
 	public void removeBaseline(
 		Supplier<? extends Serializable> baselineIdSupplier);

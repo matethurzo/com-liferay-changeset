@@ -15,7 +15,9 @@
 package com.liferay.changeset.internal.manager;
 
 import com.liferay.changeset.configuration.ChangesetConfiguration;
+import com.liferay.changeset.configuration.ChangesetConfigurationRegistrar;
 import com.liferay.changeset.constants.ChangesetConstants;
+import com.liferay.changeset.internal.configuration.ChangesetConfigurationImpl;
 import com.liferay.changeset.exception.NoSuchBaselineEntryException;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
@@ -122,8 +124,10 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 		}
 
 		long collectionId = baselineCollectionOptional.map(
-			ChangesetBaselineCollection::getChangesetBaselineCollectionId).
-				orElse(0L);
+			ChangesetBaselineCollection::getChangesetBaselineCollectionId
+		).orElse(
+			0L
+		);
 
 		return _changesetBaselineEntryLocalService.getChangesetBaselineEntries(
 			collectionId);
@@ -210,17 +214,35 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 	}
 
 	@Reference(cardinality = ReferenceCardinality.MULTIPLE, unbind = "-")
-	protected void addChangesetConfiguration(
-		ChangesetConfiguration changesetConfiguration) {
+	protected void addChangesetConfigurationRegistrar(
+		ChangesetConfigurationRegistrar<?, ?> changesetConfigurationRegistrar) {
 
-		_changesetConfigurations.add(changesetConfiguration);
+		_changesetConfigurationRegistrars.add(changesetConfigurationRegistrar);
 	}
 
 	private void _addDefaultBaselineVersions(
 		ChangesetBaselineCollection changesetBaselineCollection) {
 
+		List<ChangesetConfiguration<?, ?>> changesetConfigurations =
+			new ArrayList<>();
+
+		Stream<ChangesetConfigurationRegistrar<?, ?>> registrarStream =
+			_changesetConfigurationRegistrars.stream();
+
+		registrarStream.filter(
+			Objects::nonNull
+		).forEach(
+			registrar -> {
+				ChangesetConfiguration<?, ?> changesetConfiguration =
+					registrar.changesetConfiguration(
+						new ChangesetConfigurationImpl.BuilderImpl<>());
+
+				changesetConfigurations.add(changesetConfiguration);
+			}
+		);
+
 		Stream<ChangesetConfiguration<?, ?>> stream =
-			_changesetConfigurations.parallelStream();
+			changesetConfigurations.parallelStream();
 
 		stream.filter(
 			Objects::nonNull
@@ -272,8 +294,8 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 	private ChangesetBaselineEntryLocalService
 		_changesetBaselineEntryLocalService;
 
-	private final List<ChangesetConfiguration<?, ?>> _changesetConfigurations =
-		new ArrayList<>();
+	private final List<ChangesetConfigurationRegistrar<?, ?>>
+		_changesetConfigurationRegistrars = new ArrayList<>();
 
 	@Reference
 	private Portal _portal;

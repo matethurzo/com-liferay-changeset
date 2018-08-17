@@ -14,6 +14,7 @@
 
 package com.liferay.changeset.service.impl;
 
+import com.liferay.changeset.exception.NoSuchBaselineEntryException;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.changeset.model.ChangesetBaselineEntry;
 import com.liferay.changeset.service.base.ChangesetBaselineEntryLocalServiceBaseImpl;
@@ -89,6 +90,15 @@ public class ChangesetBaselineEntryLocalServiceImpl
 
 		return changesetBaselineEntryPersistence.
 			findByChangesetBaselineCollectionId(changesetBaselineCollectionId);
+	}
+
+	@Override
+	public ChangesetBaselineEntry getChangesetBaselineEntry(
+			long changesetBaselineCollectionId, long classNameId, long classPK)
+		throws NoSuchBaselineEntryException {
+
+		return changesetBaselineEntryPersistence.findByC_C_C(
+			changesetBaselineCollectionId, classNameId, classPK);
 	}
 
 }

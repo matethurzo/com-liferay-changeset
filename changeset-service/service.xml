@@ -56,6 +56,11 @@
 		<finder name="ChangesetBaselineCollectionId" return-type="Collection">
 			<finder-column name="changesetBaselineCollectionId" />
 		</finder>
+		<finder name="C_C_C" return-type="ChangesetBaselineEntry" unique="true">
+			<finder-column name="changesetBaselineCollectionId" />
+			<finder-column name="classNameId" />
+			<finder-column name="classPK" />
+		</finder>
 	</entity>
 	<entity local-service="true" name="ChangesetCollection" remote-service="false" trash-enabled="false" uuid="false">
 

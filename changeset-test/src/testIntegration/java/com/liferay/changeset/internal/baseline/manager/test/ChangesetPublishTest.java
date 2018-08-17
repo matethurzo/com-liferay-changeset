@@ -90,6 +90,7 @@ public class ChangesetPublishTest {
 			validChangesetEntry);
 
 		// TODO Test that the index got updated properly when Journal supports CQRS
+
 	}
 
 	private ChangesetCollection _changesetCollection;

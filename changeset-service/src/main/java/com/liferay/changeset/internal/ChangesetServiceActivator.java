@@ -41,7 +41,8 @@ public class ChangesetServiceActivator implements BundleActivator {
 		_changesetBaselineManagerServiceTracker =
 			new ServiceTracker
 				<ChangesetBaselineManager, ChangesetBaselineManager>(
-				bundleContext, ChangesetBaselineManager.class.getName(), null) {
+					bundleContext, ChangesetBaselineManager.class.getName(),
+					null) {
 
 				@Override
 				public ChangesetBaselineManager addingService(

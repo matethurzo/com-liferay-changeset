@@ -26,6 +26,7 @@ import com.liferay.changeset.model.ChangesetBaselineEntry;
 import com.liferay.changeset.service.ChangesetBaselineEntryLocalService;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalService;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -75,6 +76,21 @@ public class ChangesetEnableTest {
 
 	@Test
 	public void testEnableChangeset() throws Exception {
+
+		// Clean up articles for changeset enabling
+
+		List<JournalArticle> journalArticles =
+			_journalArticleLocalService.getArticles();
+
+		journalArticles.forEach(journalArticle -> {
+			try {
+				_journalArticleLocalService.deleteJournalArticle(
+					journalArticle.getId());
+			}
+			catch (PortalException pe) {
+			}
+		});
+
 		_changesetManager.enableChangesets();
 
 		Optional<ChangesetBaselineCollection> productionBaselineOptional =
@@ -97,7 +113,7 @@ public class ChangesetEnableTest {
 
 		// Create data first for baseline
 
-		JournalArticle journalArticle = JournalTestUtil.addArticle(
+		_journalArticle = JournalTestUtil.addArticle(
 			TestPropsValues.getGroupId(), 0);
 
 		_changesetManager.enableChangesets();
@@ -120,7 +136,7 @@ public class ChangesetEnableTest {
 
 		for (ChangesetBaselineEntry baselineEntry : baselineEntries) {
 			if ((baselineEntry.getClassNameId() == journalArticleClassNameId) &&
-				(baselineEntry.getClassPK() == journalArticle.getId())) {
+				(baselineEntry.getClassPK() == _journalArticle.getId())) {
 
 				found = true;
 

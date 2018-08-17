@@ -19,7 +19,7 @@
 
 		<!-- Other fields -->
 
-		<column name="name" type="String" />
+		<column filter-primary="true" name="name" type="String" />
 
 		<!-- Finder methods -->
 

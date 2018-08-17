@@ -23,17 +23,24 @@ import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.changeset.model.ChangesetBaselineEntry;
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.model.ChangesetEntry;
-import com.liferay.journal.model.JournalArticle;
+import com.liferay.changeset.service.ChangesetAwareServiceContext;
+import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntry;
+import com.liferay.commerce.user.segment.service.CommerceUserSegmentEntryLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.After;
@@ -59,9 +66,13 @@ public class ChangesetCreationTest {
 	public void setUp() throws Exception {
 		ServiceTestUtil.setUser(TestPropsValues.getUser());
 
-		_serviceContext = new ServiceContext();
+		_serviceContext = new ChangesetAwareServiceContext(
+			new ServiceContext());
 
 		_serviceContext.setScopeGroupId(TestPropsValues.getGroupId());
+		_serviceContext.setUserId(TestPropsValues.getUserId());
+
+		ServiceContextThreadLocal.pushServiceContext(_serviceContext);
 
 		_changesetManager.enableChangesets();
 
@@ -72,17 +83,76 @@ public class ChangesetCreationTest {
 	@After
 	public void tearDown() throws Exception {
 		_changesetManager.disableChangesets();
+
+		ServiceContextThreadLocal.popServiceContext();
 	}
 
 	@Test
-	public void testCreateChangesetWithSupportedEntities() {
+	public void testCreateChangesetWithSupportedEntities() throws Exception {
+		Assert.assertTrue(
+			"Entity must support changeset feature",
+			_changesetManager.isChangesetSupported(
+				CommerceUserSegmentEntry.class));
+
+		final String name = RandomTestUtil.randomString();
+		final String descrtiption = RandomTestUtil.randomString();
+
+		Optional<ChangesetCollection> changesetCollectionOptional =
+			_changesetManager.create(name, descrtiption);
+
+		long changesetCollectionId = changesetCollectionOptional.map(
+			ChangesetCollection::getChangesetCollectionId).orElse(0L);
+
+		List<ChangesetEntry> changesetEntries =
+			_changesetManager.getChangesetEntries(changesetCollectionId);
+
+		Assert.assertEquals(
+			"Changes number must be 0", 0, changesetEntries.size());
+
+		try {
+			_serviceContext.setChangesetCollectionId(changesetCollectionId);
+
+			ServiceContextThreadLocal.pushServiceContext(_serviceContext);
+
+			final Map<Locale, String> nameMap = new HashMap<>();
+
+			nameMap.put(LocaleUtil.HUNGARY, RandomTestUtil.randomString());
+
+			final String key = RandomTestUtil.randomString();
+
+			_commerceUserSegmentEntry =
+				_commerceUserSegmentEntryLocalService.
+					addCommerceUserSegmentEntry(
+						nameMap, key, true, false, 1.0D, _serviceContext);
+		}
+		finally {
+			ServiceContextThreadLocal.popServiceContext();
+
+			_serviceContext.setChangesetCollectionId(0);
+		}
+
+		changesetEntries = _changesetManager.getChangesetEntries(
+			changesetCollectionId);
+
+		Assert.assertEquals(
+			"Changes number must be 1", 1, changesetEntries.size());
+
+		Optional<ChangesetBaselineEntry> baselineEntry =
+			_changesetBaselineManager.getBaselineEntry(
+				_productionChangsetBaselineCollection.
+					getChangesetBaselineCollectionId(),
+				CommerceUserSegmentEntry.class.getName(),
+				_commerceUserSegmentEntry.getPrimaryKey());
+
+		Assert.assertFalse(
+			"Baseline entry must be null", baselineEntry.isPresent());
 	}
 
 	@Test
 	public void testCreateChangesetWithUnsupportedEntities() throws Exception {
 		Assert.assertFalse(
-			"Entity must not support chnageset feature",
-			_changesetManager.isChangesetSupported(JournalArticle.class));
+			"Entity must not support changeset feature",
+			_changesetManager.isChangesetSupported(BlogsEntry.class));
 
 		final String name = RandomTestUtil.randomString();
 		final String descrtiption = RandomTestUtil.randomString();
@@ -172,7 +242,14 @@ public class ChangesetCreationTest {
 	@Inject
 	private ChangesetManager _changesetManager;
 
+	@DeleteAfterTestRun
+	private CommerceUserSegmentEntry _commerceUserSegmentEntry;
+
+	@Inject
+	private CommerceUserSegmentEntryLocalService
+		_commerceUserSegmentEntryLocalService;
+
 	private ChangesetBaselineCollection _productionChangsetBaselineCollection;
-	private ServiceContext _serviceContext;
+	private ChangesetAwareServiceContext _serviceContext;
 
 }

@@ -15,7 +15,9 @@
 package com.liferay.changeset.internal.manager;
 
 import com.liferay.changeset.configuration.ChangesetConfiguration;
+import com.liferay.changeset.configuration.ChangesetConfigurationRegistrar;
 import com.liferay.changeset.constants.ChangesetConstants;
+import com.liferay.changeset.internal.configuration.ChangesetConfigurationImpl;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
@@ -190,7 +192,7 @@ public class ChangesetManagerImpl implements ChangesetManager {
 			}
 		}
 
-		return null;
+		return Optional.empty();
 	}
 
 	@Override
@@ -289,9 +291,30 @@ public class ChangesetManagerImpl implements ChangesetManager {
 
 	@Reference(
 		cardinality = ReferenceCardinality.MULTIPLE,
-		policy = ReferencePolicy.DYNAMIC
+		policy = ReferencePolicy.DYNAMIC,
+		unbind = "removeChangesetConfigurationRegistrar"
 	)
-	protected void setChangesetConfiguration(
+	protected void addChangesetConfigurationRegistrar(
+		ChangesetConfigurationRegistrar<?, ?> changesetConfigurationRegistrar) {
+
+		ChangesetConfiguration<?, ?> changesetConfiguration =
+			changesetConfigurationRegistrar.changesetConfiguration(
+				new ChangesetConfigurationImpl.BuilderImpl<>());
+
+		_addChangesetConfiguration(changesetConfiguration);
+	}
+
+	protected void removeChangesetConfigurationRegistrar(
+		ChangesetConfigurationRegistrar<?, ?> changesetConfigurationRegistrar) {
+
+		ChangesetConfiguration<?, ?> changesetConfiguration =
+			changesetConfigurationRegistrar.changesetConfiguration(
+				new ChangesetConfigurationImpl.BuilderImpl<>());
+
+		_removeChangesetConfiguration(changesetConfiguration);
+	}
+
+	private void _addChangesetConfiguration(
 		ChangesetConfiguration<?, ?> changesetConfiguration) {
 
 		_configurationsByIdentifier.put(
@@ -304,7 +327,7 @@ public class ChangesetManagerImpl implements ChangesetManager {
 			changesetConfiguration);
 	}
 
-	protected void unsetChangesetConfiguration(
+	private void _removeChangesetConfiguration(
 		ChangesetConfiguration<?, ?> changesetConfiguration) {
 
 		_configurationsByIdentifier.remove(

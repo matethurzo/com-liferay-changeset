@@ -123,13 +123,16 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 				getChangesetBaselineCollectionByName(
 					String.valueOf(baselineIdSupplier.get()));
 
-		if (baselineCollectionOptional.isPresent()) {
-			_changesetBaselineEntryLocalService.getChangesetBaselineEntries(
-				baselineCollectionOptional.get().
-					getChangesetBaselineCollectionId());
+		if (!baselineCollectionOptional.isPresent()) {
+			return Collections.emptyList();
 		}
 
-		return Collections.emptyList();
+		long collectionId = baselineCollectionOptional.map(
+			ChangesetBaselineCollection::getChangesetBaselineCollectionId)
+			.orElse(0L);
+
+		return _changesetBaselineEntryLocalService.getChangesetBaselineEntries(
+			collectionId);
 	}
 
 	public double getBaselineVersion(
@@ -168,21 +171,7 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 				getChangesetBaselineCollections(
 					QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
-		for (ChangesetBaselineCollection changesetBaselineCollection :
-				changesetBaselineCollections) {
-
-			List<ChangesetBaselineEntry> changesetBaselineEntries =
-				_changesetBaselineEntryLocalService.getChangesetBaselineEntries(
-					changesetBaselineCollection.
-						getChangesetBaselineCollectionId());
-
-			changesetBaselineEntries.forEach(
-				_changesetBaselineEntryLocalService::
-					deleteChangesetBaselineEntry);
-
-			_changesetBaselineCollectionLocalService.
-				deleteChangesetBaselineCollection(changesetBaselineCollection);
-		}
+		changesetBaselineCollections.forEach(this::_removeBaselineCollection);
 	}
 
 	@Override
@@ -194,22 +183,7 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 				getChangesetBaselineCollectionByName(
 					String.valueOf(baselineIdSupplier.get()));
 
-		baselineCollectionOptional.ifPresent(
-			baselineCollection -> {
-				_changesetBaselineEntryLocalService.
-					deleteChangesetBaselineEntries(
-						baselineCollection.getChangesetBaselineCollectionId());
-
-				try {
-					_changesetBaselineCollectionLocalService.
-						deleteChangesetBaselineCollection(
-							baselineCollection.
-								getChangesetBaselineCollectionId());
-				}
-				catch (PortalException pe) {
-					_log.error("Unable to remove baseline collection", pe);
-				}
-			});
+		baselineCollectionOptional.ifPresent(this::_removeBaselineCollection);
 	}
 
 	@Reference(cardinality = ReferenceCardinality.MULTIPLE, unbind = "-")
@@ -246,6 +220,22 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 					(long)classedModel.getPrimaryKeyObj(),
 					BeanPropertiesUtil.getDoubleSilent(classedModel, "version"))
 		);
+	}
+
+	private void _removeBaselineCollection(
+		ChangesetBaselineCollection baselineCollection) {
+
+		_changesetBaselineEntryLocalService.deleteChangesetBaselineEntries(
+			baselineCollection.getChangesetBaselineCollectionId());
+
+		try {
+			_changesetBaselineCollectionLocalService.
+				deleteChangesetBaselineCollection(
+					baselineCollection.getChangesetBaselineCollectionId());
+		}
+		catch (PortalException pe) {
+			_log.error("Unable to remove baseline collection", pe);
+		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

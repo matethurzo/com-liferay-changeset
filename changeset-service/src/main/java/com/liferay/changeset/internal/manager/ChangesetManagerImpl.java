@@ -240,6 +240,8 @@ public class ChangesetManagerImpl implements ChangesetManager {
 			changesetEntry.setChangesetCollectionId(
 				ChangesetConstants.PRODUCTION_CHANGESET_COLLECTION_ID);
 
+			_changesetEntryLocalService.updateChangesetEntry(changesetEntry);
+
 			String className = _portal.getClassName(
 				changesetEntry.getClassNameId());
 

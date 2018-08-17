@@ -254,6 +254,14 @@ public class ChangesetBaselineEntryLocalServiceWrapper
 	}
 
 	@Override
+	public com.liferay.changeset.model.ChangesetBaselineEntry getChangesetBaselineEntry(
+		long changesetBaselineCollectionId, long classNameId, long classPK)
+		throws com.liferay.changeset.exception.NoSuchBaselineEntryException {
+		return _changesetBaselineEntryLocalService.getChangesetBaselineEntry(changesetBaselineCollectionId,
+			classNameId, classPK);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		return _changesetBaselineEntryLocalService.getIndexableActionableDynamicQuery();
 	}

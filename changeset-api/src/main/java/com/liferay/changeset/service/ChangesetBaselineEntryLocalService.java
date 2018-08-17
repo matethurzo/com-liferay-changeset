@@ -16,6 +16,7 @@ package com.liferay.changeset.service;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.changeset.exception.NoSuchBaselineEntryException;
 import com.liferay.changeset.model.ChangesetBaselineEntry;
 
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
@@ -219,6 +220,11 @@ public interface ChangesetBaselineEntryLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ChangesetBaselineEntry getChangesetBaselineEntry(
 		long changesetBaselineEntryId) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ChangesetBaselineEntry getChangesetBaselineEntry(
+		long changesetBaselineCollectionId, long classNameId, long classPK)
+		throws NoSuchBaselineEntryException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();

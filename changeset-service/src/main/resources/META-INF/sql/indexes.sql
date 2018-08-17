@@ -1,6 +1,6 @@
 create index IX_D48426FA on ChangesetBaselineCollection (name[$COLUMN_LENGTH:75$]);
 
-create index IX_9006FCDF on ChangesetBaselineEntry (changesetBaselineCollectionId);
+create unique index IX_179EEDF4 on ChangesetBaselineEntry (changesetBaselineCollectionId, classNameId, classPK);
 
 create index IX_9AC55E11 on ChangesetCollection (companyId, name[$COLUMN_LENGTH:75$]);
 create unique index IX_ABEEE793 on ChangesetCollection (groupId, name[$COLUMN_LENGTH:75$]);

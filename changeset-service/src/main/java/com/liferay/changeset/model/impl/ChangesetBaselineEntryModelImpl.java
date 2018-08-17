@@ -110,7 +110,9 @@ public class ChangesetBaselineEntryModelImpl extends BaseModelImpl<ChangesetBase
 				"value.object.column.bitmask.enabled.com.liferay.changeset.model.ChangesetBaselineEntry"),
 			true);
 	public static final long CHANGESETBASELINECOLLECTIONID_COLUMN_BITMASK = 1L;
-	public static final long CHANGESETBASELINEENTRYID_COLUMN_BITMASK = 2L;
+	public static final long CLASSNAMEID_COLUMN_BITMASK = 2L;
+	public static final long CLASSPK_COLUMN_BITMASK = 4L;
+	public static final long CHANGESETBASELINEENTRYID_COLUMN_BITMASK = 8L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.changeset.service.util.ServiceProps.get(
 				"lock.expiration.time.com.liferay.changeset.model.ChangesetBaselineEntry"));
 
@@ -371,7 +373,19 @@ public class ChangesetBaselineEntryModelImpl extends BaseModelImpl<ChangesetBase
 
 	@Override
 	public void setClassNameId(long classNameId) {
+		_columnBitmask |= CLASSNAMEID_COLUMN_BITMASK;
+
+		if (!_setOriginalClassNameId) {
+			_setOriginalClassNameId = true;
+
+			_originalClassNameId = _classNameId;
+		}
+
 		_classNameId = classNameId;
+	}
+
+	public long getOriginalClassNameId() {
+		return _originalClassNameId;
 	}
 
 	@Override
@@ -381,7 +395,19 @@ public class ChangesetBaselineEntryModelImpl extends BaseModelImpl<ChangesetBase
 
 	@Override
 	public void setClassPK(long classPK) {
+		_columnBitmask |= CLASSPK_COLUMN_BITMASK;
+
+		if (!_setOriginalClassPK) {
+			_setOriginalClassPK = true;
+
+			_originalClassPK = _classPK;
+		}
+
 		_classPK = classPK;
+	}
+
+	public long getOriginalClassPK() {
+		return _originalClassPK;
 	}
 
 	@Override
@@ -502,6 +528,14 @@ public class ChangesetBaselineEntryModelImpl extends BaseModelImpl<ChangesetBase
 		changesetBaselineEntryModelImpl._originalChangesetBaselineCollectionId = changesetBaselineEntryModelImpl._changesetBaselineCollectionId;
 
 		changesetBaselineEntryModelImpl._setOriginalChangesetBaselineCollectionId = false;
+
+		changesetBaselineEntryModelImpl._originalClassNameId = changesetBaselineEntryModelImpl._classNameId;
+
+		changesetBaselineEntryModelImpl._setOriginalClassNameId = false;
+
+		changesetBaselineEntryModelImpl._originalClassPK = changesetBaselineEntryModelImpl._classPK;
+
+		changesetBaselineEntryModelImpl._setOriginalClassPK = false;
 
 		changesetBaselineEntryModelImpl._columnBitmask = 0;
 	}
@@ -651,7 +685,11 @@ public class ChangesetBaselineEntryModelImpl extends BaseModelImpl<ChangesetBase
 	private long _originalChangesetBaselineCollectionId;
 	private boolean _setOriginalChangesetBaselineCollectionId;
 	private long _classNameId;
+	private long _originalClassNameId;
+	private boolean _setOriginalClassNameId;
 	private long _classPK;
+	private long _originalClassPK;
+	private boolean _setOriginalClassPK;
 	private double _version;
 	private long _columnBitmask;
 	private ChangesetBaselineEntry _escapedModel;

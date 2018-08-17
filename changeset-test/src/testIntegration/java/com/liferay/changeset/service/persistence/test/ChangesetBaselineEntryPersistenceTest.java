@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.test.AssertUtils;
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.transaction.Propagation;
@@ -176,6 +177,14 @@ public class ChangesetBaselineEntryPersistenceTest {
 		_persistence.countByChangesetBaselineCollectionId(RandomTestUtil.nextLong());
 
 		_persistence.countByChangesetBaselineCollectionId(0L);
+	}
+
+	@Test
+	public void testCountByC_C_C() throws Exception {
+		_persistence.countByC_C_C(RandomTestUtil.nextLong(),
+			RandomTestUtil.nextLong(), RandomTestUtil.nextLong());
+
+		_persistence.countByC_C_C(0L, 0L, 0L);
 	}
 
 	@Test
@@ -412,6 +421,28 @@ public class ChangesetBaselineEntryPersistenceTest {
 		List<Object> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
 		Assert.assertEquals(0, result.size());
+	}
+
+	@Test
+	public void testResetOriginalValues() throws Exception {
+		ChangesetBaselineEntry newChangesetBaselineEntry = addChangesetBaselineEntry();
+
+		_persistence.clearCache();
+
+		ChangesetBaselineEntry existingChangesetBaselineEntry = _persistence.findByPrimaryKey(newChangesetBaselineEntry.getPrimaryKey());
+
+		Assert.assertEquals(Long.valueOf(
+				existingChangesetBaselineEntry.getChangesetBaselineCollectionId()),
+			ReflectionTestUtil.<Long>invoke(existingChangesetBaselineEntry,
+				"getOriginalChangesetBaselineCollectionId", new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(
+				existingChangesetBaselineEntry.getClassNameId()),
+			ReflectionTestUtil.<Long>invoke(existingChangesetBaselineEntry,
+				"getOriginalClassNameId", new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(
+				existingChangesetBaselineEntry.getClassPK()),
+			ReflectionTestUtil.<Long>invoke(existingChangesetBaselineEntry,
+				"getOriginalClassPK", new Class<?>[0]));
 	}
 
 	protected ChangesetBaselineEntry addChangesetBaselineEntry()

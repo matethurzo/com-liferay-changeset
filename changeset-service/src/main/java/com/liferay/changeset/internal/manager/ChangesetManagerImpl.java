@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
@@ -248,25 +247,19 @@ public class ChangesetManagerImpl implements ChangesetManager {
 				changesetConfigurationOptional =
 					getChangesetConfigurationByVersionClassName(className);
 
-			Optional<Indexer> indexerOptional =
-				changesetConfigurationOptional.map(
-					ChangesetConfiguration::getIndexer);
-
-			if (indexerOptional.isPresent()) {
-				Indexer indexer = indexerOptional.get();
-
-				try {
-					indexer.reindex(className, changesetEntry.getClassPK());
-				}
-				catch (SearchException se) {
-					_log.error(
-						"Unable to reindex ChangesetEntry: " +
-							changesetEntry.toString());
-				}
-			}
-			else {
-				_log.error("No indexer registered for " + className);
-			}
+			changesetConfigurationOptional.map(
+				ChangesetConfiguration::getIndexer
+			).ifPresent(
+				indexer -> {
+					try {
+						indexer.reindex(className, changesetEntry.getClassPK());
+					}
+					catch (SearchException se) {
+						_log.error(
+							"Unable to reindex ChangesetEntry: " +
+								changesetEntry.toString());
+					}
+				});
 		}
 	}
 

@@ -49,6 +49,7 @@
 		<column name="changesetBaselineCollectionId" type="long" />
 		<column name="classNameId" type="long" />
 		<column name="classPK" type="long" />
+		<column name="resourcePrimKey" type="long" />
 		<column name="version" type="double" />
 
 		<!-- Finder methods -->
@@ -60,6 +61,10 @@
 			<finder-column name="changesetBaselineCollectionId" />
 			<finder-column name="classNameId" />
 			<finder-column name="classPK" />
+		</finder>
+		<finder name="C_R" return-type="Collection">
+			<finder-column name="changesetBaselineCollectionId" />
+			<finder-column name="resourcePrimKey" />
 		</finder>
 	</entity>
 	<entity local-service="true" name="ChangesetCollection" remote-service="false" trash-enabled="false" uuid="false">
@@ -133,6 +138,7 @@
 		<column name="changesetCollectionId" type="long" />
 		<column name="classNameId" type="long" />
 		<column name="classPK" type="long" />
+		<column name="resourcePrimKey" type="long" />
 
 		<!-- Finder methods -->
 
@@ -157,6 +163,10 @@
 			<finder-column name="changesetCollectionId" />
 			<finder-column name="classNameId" />
 			<finder-column name="classPK" />
+		</finder>
+		<finder name="C_R" return-type="Collection">
+			<finder-column name="changesetCollectionId" />
+			<finder-column name="resourcePrimKey" />
 		</finder>
 	</entity>
 </service-builder>

@@ -36,8 +36,8 @@ public class ChangesetEntryLocalServiceImpl
 
 	@Override
 	public ChangesetEntry addChangesetEntry(
-			long userId, long changesetCollectionId, long classNameId,
-			long classPK)
+			long userId, long changesetCollectionId, long resourcePrimKey,
+			long classNameId, long classPK)
 		throws PortalException {
 
 		User user = userLocalService.getUser(userId);
@@ -55,6 +55,7 @@ public class ChangesetEntryLocalServiceImpl
 		changesetEntry.setUserId(user.getUserId());
 		changesetEntry.setUserName(user.getFullName());
 		changesetEntry.setChangesetCollectionId(changesetCollectionId);
+		changesetEntry.setResourcePrimKey(resourcePrimKey);
 		changesetEntry.setClassNameId(classNameId);
 		changesetEntry.setClassPK(classPK);
 
@@ -75,9 +76,7 @@ public class ChangesetEntryLocalServiceImpl
 
 		actionableDynamicQuery.setPerformActionMethod(
 			(ActionableDynamicQuery.PerformActionMethod<ChangesetEntry>)
-				changesetEntry ->
-					changesetEntryLocalService.deleteChangesetEntry(
-						changesetEntry));
+				changesetEntryLocalService::deleteChangesetEntry);
 
 		actionableDynamicQuery.performActions();
 	}
@@ -100,9 +99,7 @@ public class ChangesetEntryLocalServiceImpl
 
 		actionableDynamicQuery.setPerformActionMethod(
 			(ActionableDynamicQuery.PerformActionMethod<ChangesetEntry>)
-				changesetEntry ->
-					changesetEntryLocalService.deleteChangesetEntry(
-						changesetEntry));
+				changesetEntryLocalService::deleteChangesetEntry);
 
 		actionableDynamicQuery.performActions();
 	}
@@ -128,7 +125,8 @@ public class ChangesetEntryLocalServiceImpl
 
 	@Override
 	public ChangesetEntry fetchOrAddChangesetEntry(
-			long changesetCollectionId, long classNameId, long classPK)
+			long changesetCollectionId, long resourcePrimKey, long classNameId,
+			long classPK)
 		throws PortalException {
 
 		ChangesetEntry changesetEntry =
@@ -147,7 +145,8 @@ public class ChangesetEntryLocalServiceImpl
 			changesetCollection.getCompanyId());
 
 		return changesetEntryLocalService.addChangesetEntry(
-			user.getUserId(), changesetCollectionId, classNameId, classPK);
+			user.getUserId(), changesetCollectionId, resourcePrimKey,
+			classNameId, classPK);
 	}
 
 	@Override

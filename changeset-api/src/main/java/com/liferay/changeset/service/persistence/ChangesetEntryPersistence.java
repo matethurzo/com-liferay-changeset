@@ -868,63 +868,6 @@ public interface ChangesetEntryPersistence extends BasePersistence<ChangesetEntr
 	public int countByC_C(long changesetCollectionId, long classNameId);
 
 	/**
-	* Returns the changeset entry where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63; or throws a {@link NoSuchEntryException} if it could not be found.
-	*
-	* @param changesetCollectionId the changeset collection ID
-	* @param classNameId the class name ID
-	* @param classPK the class pk
-	* @return the matching changeset entry
-	* @throws NoSuchEntryException if a matching changeset entry could not be found
-	*/
-	public ChangesetEntry findByC_C_C(long changesetCollectionId,
-		long classNameId, long classPK) throws NoSuchEntryException;
-
-	/**
-	* Returns the changeset entry where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	*
-	* @param changesetCollectionId the changeset collection ID
-	* @param classNameId the class name ID
-	* @param classPK the class pk
-	* @return the matching changeset entry, or <code>null</code> if a matching changeset entry could not be found
-	*/
-	public ChangesetEntry fetchByC_C_C(long changesetCollectionId,
-		long classNameId, long classPK);
-
-	/**
-	* Returns the changeset entry where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
-	*
-	* @param changesetCollectionId the changeset collection ID
-	* @param classNameId the class name ID
-	* @param classPK the class pk
-	* @param retrieveFromCache whether to retrieve from the finder cache
-	* @return the matching changeset entry, or <code>null</code> if a matching changeset entry could not be found
-	*/
-	public ChangesetEntry fetchByC_C_C(long changesetCollectionId,
-		long classNameId, long classPK, boolean retrieveFromCache);
-
-	/**
-	* Removes the changeset entry where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63; from the database.
-	*
-	* @param changesetCollectionId the changeset collection ID
-	* @param classNameId the class name ID
-	* @param classPK the class pk
-	* @return the changeset entry that was removed
-	*/
-	public ChangesetEntry removeByC_C_C(long changesetCollectionId,
-		long classNameId, long classPK) throws NoSuchEntryException;
-
-	/**
-	* Returns the number of changeset entries where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63;.
-	*
-	* @param changesetCollectionId the changeset collection ID
-	* @param classNameId the class name ID
-	* @param classPK the class pk
-	* @return the number of matching changeset entries
-	*/
-	public int countByC_C_C(long changesetCollectionId, long classNameId,
-		long classPK);
-
-	/**
 	* Returns all the changeset entries where changesetCollectionId = &#63; and resourcePrimKey = &#63;.
 	*
 	* @param changesetCollectionId the changeset collection ID
@@ -1071,6 +1014,63 @@ public interface ChangesetEntryPersistence extends BasePersistence<ChangesetEntr
 	* @return the number of matching changeset entries
 	*/
 	public int countByC_R(long changesetCollectionId, long resourcePrimKey);
+
+	/**
+	* Returns the changeset entry where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63; or throws a {@link NoSuchEntryException} if it could not be found.
+	*
+	* @param changesetCollectionId the changeset collection ID
+	* @param classNameId the class name ID
+	* @param classPK the class pk
+	* @return the matching changeset entry
+	* @throws NoSuchEntryException if a matching changeset entry could not be found
+	*/
+	public ChangesetEntry findByC_C_C(long changesetCollectionId,
+		long classNameId, long classPK) throws NoSuchEntryException;
+
+	/**
+	* Returns the changeset entry where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param changesetCollectionId the changeset collection ID
+	* @param classNameId the class name ID
+	* @param classPK the class pk
+	* @return the matching changeset entry, or <code>null</code> if a matching changeset entry could not be found
+	*/
+	public ChangesetEntry fetchByC_C_C(long changesetCollectionId,
+		long classNameId, long classPK);
+
+	/**
+	* Returns the changeset entry where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param changesetCollectionId the changeset collection ID
+	* @param classNameId the class name ID
+	* @param classPK the class pk
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the matching changeset entry, or <code>null</code> if a matching changeset entry could not be found
+	*/
+	public ChangesetEntry fetchByC_C_C(long changesetCollectionId,
+		long classNameId, long classPK, boolean retrieveFromCache);
+
+	/**
+	* Removes the changeset entry where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63; from the database.
+	*
+	* @param changesetCollectionId the changeset collection ID
+	* @param classNameId the class name ID
+	* @param classPK the class pk
+	* @return the changeset entry that was removed
+	*/
+	public ChangesetEntry removeByC_C_C(long changesetCollectionId,
+		long classNameId, long classPK) throws NoSuchEntryException;
+
+	/**
+	* Returns the number of changeset entries where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63;.
+	*
+	* @param changesetCollectionId the changeset collection ID
+	* @param classNameId the class name ID
+	* @param classPK the class pk
+	* @return the number of matching changeset entries
+	*/
+	public int countByC_C_C(long changesetCollectionId, long classNameId,
+		long classPK);
 
 	/**
 	* Caches the changeset entry in the entity cache if it is enabled.

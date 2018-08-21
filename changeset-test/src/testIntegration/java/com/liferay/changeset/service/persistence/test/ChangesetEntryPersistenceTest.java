@@ -218,19 +218,19 @@ public class ChangesetEntryPersistenceTest {
 	}
 
 	@Test
-	public void testCountByC_C_C() throws Exception {
-		_persistence.countByC_C_C(RandomTestUtil.nextLong(),
-			RandomTestUtil.nextLong(), RandomTestUtil.nextLong());
-
-		_persistence.countByC_C_C(0L, 0L, 0L);
-	}
-
-	@Test
 	public void testCountByC_R() throws Exception {
 		_persistence.countByC_R(RandomTestUtil.nextLong(),
 			RandomTestUtil.nextLong());
 
 		_persistence.countByC_R(0L, 0L);
+	}
+
+	@Test
+	public void testCountByC_C_C() throws Exception {
+		_persistence.countByC_C_C(RandomTestUtil.nextLong(),
+			RandomTestUtil.nextLong(), RandomTestUtil.nextLong());
+
+		_persistence.countByC_C_C(0L, 0L, 0L);
 	}
 
 	@Test

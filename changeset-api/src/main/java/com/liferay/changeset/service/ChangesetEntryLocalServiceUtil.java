@@ -55,11 +55,12 @@ public class ChangesetEntryLocalServiceUtil {
 	}
 
 	public static com.liferay.changeset.model.ChangesetEntry addChangesetEntry(
-		long userId, long changesetCollectionId, long classNameId, long classPK)
+		long userId, long changesetCollectionId, long resourcePrimKey,
+		long classNameId, long classPK)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .addChangesetEntry(userId, changesetCollectionId,
-			classNameId, classPK);
+			resourcePrimKey, classNameId, classPK);
 	}
 
 	/**
@@ -213,11 +214,12 @@ public class ChangesetEntryLocalServiceUtil {
 	}
 
 	public static com.liferay.changeset.model.ChangesetEntry fetchOrAddChangesetEntry(
-		long changesetCollectionId, long classNameId, long classPK)
+		long changesetCollectionId, long resourcePrimKey, long classNameId,
+		long classPK)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .fetchOrAddChangesetEntry(changesetCollectionId,
-			classNameId, classPK);
+			resourcePrimKey, classNameId, classPK);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {

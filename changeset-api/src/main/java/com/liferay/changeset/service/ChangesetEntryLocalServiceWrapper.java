@@ -48,10 +48,11 @@ public class ChangesetEntryLocalServiceWrapper
 
 	@Override
 	public com.liferay.changeset.model.ChangesetEntry addChangesetEntry(
-		long userId, long changesetCollectionId, long classNameId, long classPK)
+		long userId, long changesetCollectionId, long resourcePrimKey,
+		long classNameId, long classPK)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _changesetEntryLocalService.addChangesetEntry(userId,
-			changesetCollectionId, classNameId, classPK);
+			changesetCollectionId, resourcePrimKey, classNameId, classPK);
 	}
 
 	/**
@@ -220,10 +221,11 @@ public class ChangesetEntryLocalServiceWrapper
 
 	@Override
 	public com.liferay.changeset.model.ChangesetEntry fetchOrAddChangesetEntry(
-		long changesetCollectionId, long classNameId, long classPK)
+		long changesetCollectionId, long resourcePrimKey, long classNameId,
+		long classPK)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _changesetEntryLocalService.fetchOrAddChangesetEntry(changesetCollectionId,
-			classNameId, classPK);
+			resourcePrimKey, classNameId, classPK);
 	}
 
 	@Override

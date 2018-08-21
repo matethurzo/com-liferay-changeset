@@ -74,8 +74,8 @@ public interface ChangesetEntryLocalService extends BaseLocalService,
 	public ChangesetEntry addChangesetEntry(ChangesetEntry changesetEntry);
 
 	public ChangesetEntry addChangesetEntry(long userId,
-		long changesetCollectionId, long classNameId, long classPK)
-		throws PortalException;
+		long changesetCollectionId, long resourcePrimKey, long classNameId,
+		long classPK) throws PortalException;
 
 	/**
 	* Creates a new changeset entry with the primary key. Does not add the changeset entry to the database.
@@ -189,7 +189,8 @@ public interface ChangesetEntryLocalService extends BaseLocalService,
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ChangesetEntry fetchOrAddChangesetEntry(long changesetCollectionId,
-		long classNameId, long classPK) throws PortalException;
+		long resourcePrimKey, long classNameId, long classPK)
+		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();

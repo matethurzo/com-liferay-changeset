@@ -17,6 +17,7 @@ package com.liferay.changeset.manager;
 import com.liferay.changeset.configuration.ChangesetConfiguration;
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.model.ChangesetEntry;
+import com.liferay.portal.kernel.exception.PortalException;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,15 @@ import java.util.Optional;
  * @author Daniel Kocsis
  */
 public interface ChangesetManager {
+
+	public Optional<ChangesetEntry> addChangesetEntry(
+			long changesetCollectionId, long resourcePrimKey, long classNameId,
+			long classPK)
+		throws PortalException;
+
+	public Optional<ChangesetEntry> addChangesetEntry(
+		long changesetCollectionId, long resourcePrimKey, String className,
+		long classPK);
 
 	public Optional<ChangesetCollection> create(
 		String name, String description);
@@ -59,6 +69,8 @@ public interface ChangesetManager {
 
 	public Optional<ChangesetEntry> getChangesetEntry(
 		String className, long classPK);
+
+	public boolean isChangesetEnabled();
 
 	public boolean isChangesetSupported(Class<?> clazz);
 

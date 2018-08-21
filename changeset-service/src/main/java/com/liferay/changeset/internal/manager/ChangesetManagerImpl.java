@@ -60,6 +60,39 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class ChangesetManagerImpl implements ChangesetManager {
 
 	@Override
+	public Optional<ChangesetEntry> addChangesetEntry(
+		long changesetCollectionId, long resourcePrimKey, long classNameId,
+		long classPK) {
+
+		long userId = PrincipalThreadLocal.getUserId();
+
+		try {
+			ChangesetEntry changesetEntry =
+				_changesetEntryLocalService.addChangesetEntry(
+					userId, changesetCollectionId, resourcePrimKey, classNameId,
+					classPK);
+
+			return Optional.of(changesetEntry);
+		}
+		catch (PortalException pe) {
+			_log.error("Unable to create changeset entry", pe);
+		}
+
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<ChangesetEntry> addChangesetEntry(
+		long changesetCollectionId, long resourcePrimKey, String className,
+		long classPK) {
+
+		long classNameId = _portal.getClassNameId(className);
+
+		return addChangesetEntry(
+			changesetCollectionId, resourcePrimKey, classNameId, classPK);
+	}
+
+	@Override
 	public Optional<ChangesetCollection> create(
 		String name, String description) {
 
@@ -231,6 +264,14 @@ public class ChangesetManagerImpl implements ChangesetManager {
 		long classNameId = _portal.getClassNameId(className);
 
 		return getChangesetEntry(classNameId, classPK);
+	}
+
+	@Override
+	public boolean isChangesetEnabled() {
+		Optional<ChangesetBaselineCollection> productionBaselineOptional =
+			_changesetBaselineManager.getProductionBaseline();
+
+		return productionBaselineOptional.isPresent();
 	}
 
 	@Override

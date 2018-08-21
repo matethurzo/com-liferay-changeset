@@ -20,9 +20,10 @@ import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntry;
 import com.liferay.commerce.user.segment.service.CommerceUserSegmentEntryLocalService;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 
-import org.osgi.service.component.annotations.Reference;
-
 import java.util.Random;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Mate Thurzo
@@ -49,8 +50,10 @@ import java.util.Random;
 //			CommerceUserSegmentEntryVersion::getCommerceUserSegmentEntryId,
 //			CommerceUserSegmentEntryVersionModel::getVersion,
 //			_commerceUserSegmentEntryLocalService
-//		).baselining(
-//			() -> _commerceUserSegmentEntryVersionPersistence.findAll()
+//		).baselining( //			() ->
+
+// _commerceUserSegmentEntryVersionPersistence.findAll()
+
 //		).indexer(
 //			IndexerRegistryUtil::getIndexer
 //		).build();
@@ -65,7 +68,7 @@ import java.util.Random;
 //		_commerceUserSegmentEntryVersionPersistence;
 //
 //}
-
+@Component(immediate = true, service = ChangesetConfigurationRegistrar.class)
 public class CommerceUserSegmentConfigurationRegistrar
 	implements ChangesetConfigurationRegistrar
 	<CommerceUserSegmentEntry, CommerceUserSegmentEntry> {
@@ -74,7 +77,7 @@ public class CommerceUserSegmentConfigurationRegistrar
 	public ChangesetConfiguration changesetConfiguration(
 		ChangesetConfiguration.Builder
 			<CommerceUserSegmentEntry, CommerceUserSegmentEntry>
-			builder) {
+				builder) {
 
 		return builder.identifier(
 			"commerce-user-segment"
@@ -85,7 +88,7 @@ public class CommerceUserSegmentConfigurationRegistrar
 		).addVersionEntity(
 			CommerceUserSegmentEntry.class,
 			CommerceUserSegmentEntry::getCommerceUserSegmentEntryId,
-			(commerceUserSegmentEntry) -> {
+			commerceUserSegmentEntry -> {
 				Random random = new Random();
 
 				return random.nextDouble();

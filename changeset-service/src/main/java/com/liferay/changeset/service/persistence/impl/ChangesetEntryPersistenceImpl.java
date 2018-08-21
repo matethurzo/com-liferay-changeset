@@ -3241,254 +3241,6 @@ public class ChangesetEntryPersistenceImpl extends BasePersistenceImpl<Changeset
 
 	private static final String _FINDER_COLUMN_C_C_CHANGESETCOLLECTIONID_2 = "changesetEntry.changesetCollectionId = ? AND ";
 	private static final String _FINDER_COLUMN_C_C_CLASSNAMEID_2 = "changesetEntry.classNameId = ?";
-	public static final FinderPath FINDER_PATH_FETCH_BY_C_C_C = new FinderPath(ChangesetEntryModelImpl.ENTITY_CACHE_ENABLED,
-			ChangesetEntryModelImpl.FINDER_CACHE_ENABLED,
-			ChangesetEntryImpl.class, FINDER_CLASS_NAME_ENTITY, "fetchByC_C_C",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			},
-			ChangesetEntryModelImpl.CHANGESETCOLLECTIONID_COLUMN_BITMASK |
-			ChangesetEntryModelImpl.CLASSNAMEID_COLUMN_BITMASK |
-			ChangesetEntryModelImpl.CLASSPK_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_C_C_C = new FinderPath(ChangesetEntryModelImpl.ENTITY_CACHE_ENABLED,
-			ChangesetEntryModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByC_C_C",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			});
-
-	/**
-	 * Returns the changeset entry where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63; or throws a {@link NoSuchEntryException} if it could not be found.
-	 *
-	 * @param changesetCollectionId the changeset collection ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching changeset entry
-	 * @throws NoSuchEntryException if a matching changeset entry could not be found
-	 */
-	@Override
-	public ChangesetEntry findByC_C_C(long changesetCollectionId,
-		long classNameId, long classPK) throws NoSuchEntryException {
-		ChangesetEntry changesetEntry = fetchByC_C_C(changesetCollectionId,
-				classNameId, classPK);
-
-		if (changesetEntry == null) {
-			StringBundler msg = new StringBundler(8);
-
-			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			msg.append("changesetCollectionId=");
-			msg.append(changesetCollectionId);
-
-			msg.append(", classNameId=");
-			msg.append(classNameId);
-
-			msg.append(", classPK=");
-			msg.append(classPK);
-
-			msg.append("}");
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(msg.toString());
-			}
-
-			throw new NoSuchEntryException(msg.toString());
-		}
-
-		return changesetEntry;
-	}
-
-	/**
-	 * Returns the changeset entry where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param changesetCollectionId the changeset collection ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching changeset entry, or <code>null</code> if a matching changeset entry could not be found
-	 */
-	@Override
-	public ChangesetEntry fetchByC_C_C(long changesetCollectionId,
-		long classNameId, long classPK) {
-		return fetchByC_C_C(changesetCollectionId, classNameId, classPK, true);
-	}
-
-	/**
-	 * Returns the changeset entry where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
-	 *
-	 * @param changesetCollectionId the changeset collection ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the matching changeset entry, or <code>null</code> if a matching changeset entry could not be found
-	 */
-	@Override
-	public ChangesetEntry fetchByC_C_C(long changesetCollectionId,
-		long classNameId, long classPK, boolean retrieveFromCache) {
-		Object[] finderArgs = new Object[] {
-				changesetCollectionId, classNameId, classPK
-			};
-
-		Object result = null;
-
-		if (retrieveFromCache) {
-			result = finderCache.getResult(FINDER_PATH_FETCH_BY_C_C_C,
-					finderArgs, this);
-		}
-
-		if (result instanceof ChangesetEntry) {
-			ChangesetEntry changesetEntry = (ChangesetEntry)result;
-
-			if ((changesetCollectionId != changesetEntry.getChangesetCollectionId()) ||
-					(classNameId != changesetEntry.getClassNameId()) ||
-					(classPK != changesetEntry.getClassPK())) {
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler query = new StringBundler(5);
-
-			query.append(_SQL_SELECT_CHANGESETENTRY_WHERE);
-
-			query.append(_FINDER_COLUMN_C_C_C_CHANGESETCOLLECTIONID_2);
-
-			query.append(_FINDER_COLUMN_C_C_C_CLASSNAMEID_2);
-
-			query.append(_FINDER_COLUMN_C_C_C_CLASSPK_2);
-
-			String sql = query.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query q = session.createQuery(sql);
-
-				QueryPos qPos = QueryPos.getInstance(q);
-
-				qPos.add(changesetCollectionId);
-
-				qPos.add(classNameId);
-
-				qPos.add(classPK);
-
-				List<ChangesetEntry> list = q.list();
-
-				if (list.isEmpty()) {
-					finderCache.putResult(FINDER_PATH_FETCH_BY_C_C_C,
-						finderArgs, list);
-				}
-				else {
-					ChangesetEntry changesetEntry = list.get(0);
-
-					result = changesetEntry;
-
-					cacheResult(changesetEntry);
-				}
-			}
-			catch (Exception e) {
-				finderCache.removeResult(FINDER_PATH_FETCH_BY_C_C_C, finderArgs);
-
-				throw processException(e);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (ChangesetEntry)result;
-		}
-	}
-
-	/**
-	 * Removes the changeset entry where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63; from the database.
-	 *
-	 * @param changesetCollectionId the changeset collection ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the changeset entry that was removed
-	 */
-	@Override
-	public ChangesetEntry removeByC_C_C(long changesetCollectionId,
-		long classNameId, long classPK) throws NoSuchEntryException {
-		ChangesetEntry changesetEntry = findByC_C_C(changesetCollectionId,
-				classNameId, classPK);
-
-		return remove(changesetEntry);
-	}
-
-	/**
-	 * Returns the number of changeset entries where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63;.
-	 *
-	 * @param changesetCollectionId the changeset collection ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the number of matching changeset entries
-	 */
-	@Override
-	public int countByC_C_C(long changesetCollectionId, long classNameId,
-		long classPK) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_C_C_C;
-
-		Object[] finderArgs = new Object[] {
-				changesetCollectionId, classNameId, classPK
-			};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler query = new StringBundler(4);
-
-			query.append(_SQL_COUNT_CHANGESETENTRY_WHERE);
-
-			query.append(_FINDER_COLUMN_C_C_C_CHANGESETCOLLECTIONID_2);
-
-			query.append(_FINDER_COLUMN_C_C_C_CLASSNAMEID_2);
-
-			query.append(_FINDER_COLUMN_C_C_C_CLASSPK_2);
-
-			String sql = query.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query q = session.createQuery(sql);
-
-				QueryPos qPos = QueryPos.getInstance(q);
-
-				qPos.add(changesetCollectionId);
-
-				qPos.add(classNameId);
-
-				qPos.add(classPK);
-
-				count = (Long)q.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
-	}
-
-	private static final String _FINDER_COLUMN_C_C_C_CHANGESETCOLLECTIONID_2 = "changesetEntry.changesetCollectionId = ? AND ";
-	private static final String _FINDER_COLUMN_C_C_C_CLASSNAMEID_2 = "changesetEntry.classNameId = ? AND ";
-	private static final String _FINDER_COLUMN_C_C_C_CLASSPK_2 = "changesetEntry.classPK = ?";
 	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_C_R = new FinderPath(ChangesetEntryModelImpl.ENTITY_CACHE_ENABLED,
 			ChangesetEntryModelImpl.FINDER_CACHE_ENABLED,
 			ChangesetEntryImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
@@ -4046,6 +3798,254 @@ public class ChangesetEntryPersistenceImpl extends BasePersistenceImpl<Changeset
 
 	private static final String _FINDER_COLUMN_C_R_CHANGESETCOLLECTIONID_2 = "changesetEntry.changesetCollectionId = ? AND ";
 	private static final String _FINDER_COLUMN_C_R_RESOURCEPRIMKEY_2 = "changesetEntry.resourcePrimKey = ?";
+	public static final FinderPath FINDER_PATH_FETCH_BY_C_C_C = new FinderPath(ChangesetEntryModelImpl.ENTITY_CACHE_ENABLED,
+			ChangesetEntryModelImpl.FINDER_CACHE_ENABLED,
+			ChangesetEntryImpl.class, FINDER_CLASS_NAME_ENTITY, "fetchByC_C_C",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Long.class.getName()
+			},
+			ChangesetEntryModelImpl.CHANGESETCOLLECTIONID_COLUMN_BITMASK |
+			ChangesetEntryModelImpl.CLASSNAMEID_COLUMN_BITMASK |
+			ChangesetEntryModelImpl.CLASSPK_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_C_C_C = new FinderPath(ChangesetEntryModelImpl.ENTITY_CACHE_ENABLED,
+			ChangesetEntryModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByC_C_C",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Long.class.getName()
+			});
+
+	/**
+	 * Returns the changeset entry where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63; or throws a {@link NoSuchEntryException} if it could not be found.
+	 *
+	 * @param changesetCollectionId the changeset collection ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching changeset entry
+	 * @throws NoSuchEntryException if a matching changeset entry could not be found
+	 */
+	@Override
+	public ChangesetEntry findByC_C_C(long changesetCollectionId,
+		long classNameId, long classPK) throws NoSuchEntryException {
+		ChangesetEntry changesetEntry = fetchByC_C_C(changesetCollectionId,
+				classNameId, classPK);
+
+		if (changesetEntry == null) {
+			StringBundler msg = new StringBundler(8);
+
+			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+			msg.append("changesetCollectionId=");
+			msg.append(changesetCollectionId);
+
+			msg.append(", classNameId=");
+			msg.append(classNameId);
+
+			msg.append(", classPK=");
+			msg.append(classPK);
+
+			msg.append("}");
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
+			}
+
+			throw new NoSuchEntryException(msg.toString());
+		}
+
+		return changesetEntry;
+	}
+
+	/**
+	 * Returns the changeset entry where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param changesetCollectionId the changeset collection ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching changeset entry, or <code>null</code> if a matching changeset entry could not be found
+	 */
+	@Override
+	public ChangesetEntry fetchByC_C_C(long changesetCollectionId,
+		long classNameId, long classPK) {
+		return fetchByC_C_C(changesetCollectionId, classNameId, classPK, true);
+	}
+
+	/**
+	 * Returns the changeset entry where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param changesetCollectionId the changeset collection ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the matching changeset entry, or <code>null</code> if a matching changeset entry could not be found
+	 */
+	@Override
+	public ChangesetEntry fetchByC_C_C(long changesetCollectionId,
+		long classNameId, long classPK, boolean retrieveFromCache) {
+		Object[] finderArgs = new Object[] {
+				changesetCollectionId, classNameId, classPK
+			};
+
+		Object result = null;
+
+		if (retrieveFromCache) {
+			result = finderCache.getResult(FINDER_PATH_FETCH_BY_C_C_C,
+					finderArgs, this);
+		}
+
+		if (result instanceof ChangesetEntry) {
+			ChangesetEntry changesetEntry = (ChangesetEntry)result;
+
+			if ((changesetCollectionId != changesetEntry.getChangesetCollectionId()) ||
+					(classNameId != changesetEntry.getClassNameId()) ||
+					(classPK != changesetEntry.getClassPK())) {
+				result = null;
+			}
+		}
+
+		if (result == null) {
+			StringBundler query = new StringBundler(5);
+
+			query.append(_SQL_SELECT_CHANGESETENTRY_WHERE);
+
+			query.append(_FINDER_COLUMN_C_C_C_CHANGESETCOLLECTIONID_2);
+
+			query.append(_FINDER_COLUMN_C_C_C_CLASSNAMEID_2);
+
+			query.append(_FINDER_COLUMN_C_C_C_CLASSPK_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(changesetCollectionId);
+
+				qPos.add(classNameId);
+
+				qPos.add(classPK);
+
+				List<ChangesetEntry> list = q.list();
+
+				if (list.isEmpty()) {
+					finderCache.putResult(FINDER_PATH_FETCH_BY_C_C_C,
+						finderArgs, list);
+				}
+				else {
+					ChangesetEntry changesetEntry = list.get(0);
+
+					result = changesetEntry;
+
+					cacheResult(changesetEntry);
+				}
+			}
+			catch (Exception e) {
+				finderCache.removeResult(FINDER_PATH_FETCH_BY_C_C_C, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		if (result instanceof List<?>) {
+			return null;
+		}
+		else {
+			return (ChangesetEntry)result;
+		}
+	}
+
+	/**
+	 * Removes the changeset entry where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63; from the database.
+	 *
+	 * @param changesetCollectionId the changeset collection ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the changeset entry that was removed
+	 */
+	@Override
+	public ChangesetEntry removeByC_C_C(long changesetCollectionId,
+		long classNameId, long classPK) throws NoSuchEntryException {
+		ChangesetEntry changesetEntry = findByC_C_C(changesetCollectionId,
+				classNameId, classPK);
+
+		return remove(changesetEntry);
+	}
+
+	/**
+	 * Returns the number of changeset entries where changesetCollectionId = &#63; and classNameId = &#63; and classPK = &#63;.
+	 *
+	 * @param changesetCollectionId the changeset collection ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the number of matching changeset entries
+	 */
+	@Override
+	public int countByC_C_C(long changesetCollectionId, long classNameId,
+		long classPK) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_C_C_C;
+
+		Object[] finderArgs = new Object[] {
+				changesetCollectionId, classNameId, classPK
+			};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(4);
+
+			query.append(_SQL_COUNT_CHANGESETENTRY_WHERE);
+
+			query.append(_FINDER_COLUMN_C_C_C_CHANGESETCOLLECTIONID_2);
+
+			query.append(_FINDER_COLUMN_C_C_C_CLASSNAMEID_2);
+
+			query.append(_FINDER_COLUMN_C_C_C_CLASSPK_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(changesetCollectionId);
+
+				qPos.add(classNameId);
+
+				qPos.add(classPK);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_C_C_C_CHANGESETCOLLECTIONID_2 = "changesetEntry.changesetCollectionId = ? AND ";
+	private static final String _FINDER_COLUMN_C_C_C_CLASSNAMEID_2 = "changesetEntry.classNameId = ? AND ";
+	private static final String _FINDER_COLUMN_C_C_C_CLASSPK_2 = "changesetEntry.classPK = ?";
 
 	public ChangesetEntryPersistenceImpl() {
 		setModelClass(ChangesetEntry.class);

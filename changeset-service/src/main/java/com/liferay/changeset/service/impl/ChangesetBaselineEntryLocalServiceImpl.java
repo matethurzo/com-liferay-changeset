@@ -43,7 +43,7 @@ public class ChangesetBaselineEntryLocalServiceImpl
 	@Override
 	public ChangesetBaselineEntry addChangesetBaselineEntry(
 		long changesetBaselineCollectionId, long classNameId, long classPK,
-		double version) {
+		long resourcePrimKey, double version) {
 
 		ChangesetBaselineCollection changesetBaselineCollection =
 			changesetBaselineCollectionLocalService.
@@ -69,6 +69,7 @@ public class ChangesetBaselineEntryLocalServiceImpl
 
 		changesetBaselineEntry.setClassNameId(classNameId);
 		changesetBaselineEntry.setClassPK(classPK);
+		changesetBaselineEntry.setResourcePrimKey(resourcePrimKey);
 		changesetBaselineEntry.setVersion(version);
 
 		changesetBaselineEntryPersistence.update(changesetBaselineEntry);

@@ -49,9 +49,9 @@ public class ChangesetBaselineEntryLocalServiceWrapper
 	@Override
 	public com.liferay.changeset.model.ChangesetBaselineEntry addChangesetBaselineEntry(
 		long changesetBaselineCollectionId, long classNameId, long classPK,
-		double version) {
+		long resourcePrimKey, double version) {
 		return _changesetBaselineEntryLocalService.addChangesetBaselineEntry(changesetBaselineCollectionId,
-			classNameId, classPK, version);
+			classNameId, classPK, resourcePrimKey, version);
 	}
 
 	/**

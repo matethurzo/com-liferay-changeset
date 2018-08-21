@@ -75,7 +75,7 @@ public interface ChangesetBaselineEntryLocalService extends BaseLocalService,
 
 	public ChangesetBaselineEntry addChangesetBaselineEntry(
 		long changesetBaselineCollectionId, long classNameId, long classPK,
-		double version);
+		long resourcePrimKey, double version);
 
 	/**
 	* Creates a new changeset baseline entry with the primary key. Does not add the changeset baseline entry to the database.

@@ -56,10 +56,10 @@ public class ChangesetBaselineEntryLocalServiceUtil {
 
 	public static com.liferay.changeset.model.ChangesetBaselineEntry addChangesetBaselineEntry(
 		long changesetBaselineCollectionId, long classNameId, long classPK,
-		double version) {
+		long resourcePrimKey, double version) {
 		return getService()
 				   .addChangesetBaselineEntry(changesetBaselineCollectionId,
-			classNameId, classPK, version);
+			classNameId, classPK, resourcePrimKey, version);
 	}
 
 	/**

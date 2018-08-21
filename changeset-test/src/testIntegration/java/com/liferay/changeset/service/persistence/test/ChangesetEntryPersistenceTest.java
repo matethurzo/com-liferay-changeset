@@ -141,6 +141,8 @@ public class ChangesetEntryPersistenceTest {
 
 		newChangesetEntry.setClassPK(RandomTestUtil.nextLong());
 
+		newChangesetEntry.setResourcePrimKey(RandomTestUtil.nextLong());
+
 		_changesetEntries.add(_persistence.update(newChangesetEntry));
 
 		ChangesetEntry existingChangesetEntry = _persistence.findByPrimaryKey(newChangesetEntry.getPrimaryKey());
@@ -167,6 +169,15 @@ public class ChangesetEntryPersistenceTest {
 			newChangesetEntry.getClassNameId());
 		Assert.assertEquals(existingChangesetEntry.getClassPK(),
 			newChangesetEntry.getClassPK());
+		Assert.assertEquals(existingChangesetEntry.getResourcePrimKey(),
+			newChangesetEntry.getResourcePrimKey());
+	}
+
+	@Test
+	public void testCountByResourcePrimKey() throws Exception {
+		_persistence.countByResourcePrimKey(RandomTestUtil.nextLong());
+
+		_persistence.countByResourcePrimKey(0L);
 	}
 
 	@Test
@@ -215,6 +226,14 @@ public class ChangesetEntryPersistenceTest {
 	}
 
 	@Test
+	public void testCountByC_R() throws Exception {
+		_persistence.countByC_R(RandomTestUtil.nextLong(),
+			RandomTestUtil.nextLong());
+
+		_persistence.countByC_R(0L, 0L);
+	}
+
+	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		ChangesetEntry newChangesetEntry = addChangesetEntry();
 
@@ -241,7 +260,7 @@ public class ChangesetEntryPersistenceTest {
 			"changesetEntryId", true, "groupId", true, "companyId", true,
 			"userId", true, "userName", true, "createDate", true,
 			"modifiedDate", true, "changesetCollectionId", true, "classNameId",
-			true, "classPK", true);
+			true, "classPK", true, "resourcePrimKey", true);
 	}
 
 	@Test
@@ -481,6 +500,8 @@ public class ChangesetEntryPersistenceTest {
 		changesetEntry.setClassNameId(RandomTestUtil.nextLong());
 
 		changesetEntry.setClassPK(RandomTestUtil.nextLong());
+
+		changesetEntry.setResourcePrimKey(RandomTestUtil.nextLong());
 
 		_changesetEntries.add(_persistence.update(changesetEntry));
 

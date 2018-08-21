@@ -68,6 +68,7 @@ public class ChangesetEntryWrapper implements ChangesetEntry,
 		attributes.put("changesetCollectionId", getChangesetCollectionId());
 		attributes.put("classNameId", getClassNameId());
 		attributes.put("classPK", getClassPK());
+		attributes.put("resourcePrimKey", getResourcePrimKey());
 
 		return attributes;
 	}
@@ -133,6 +134,12 @@ public class ChangesetEntryWrapper implements ChangesetEntry,
 
 		if (classPK != null) {
 			setClassPK(classPK);
+		}
+
+		Long resourcePrimKey = (Long)attributes.get("resourcePrimKey");
+
+		if (resourcePrimKey != null) {
+			setResourcePrimKey(resourcePrimKey);
 		}
 	}
 
@@ -257,6 +264,16 @@ public class ChangesetEntryWrapper implements ChangesetEntry,
 	}
 
 	/**
+	* Returns the resource prim key of this changeset entry.
+	*
+	* @return the resource prim key of this changeset entry
+	*/
+	@Override
+	public long getResourcePrimKey() {
+		return _changesetEntry.getResourcePrimKey();
+	}
+
+	/**
 	* Returns the user ID of this changeset entry.
 	*
 	* @return the user ID of this changeset entry
@@ -304,6 +321,11 @@ public class ChangesetEntryWrapper implements ChangesetEntry,
 	@Override
 	public boolean isNew() {
 		return _changesetEntry.isNew();
+	}
+
+	@Override
+	public boolean isResourceMain() {
+		return _changesetEntry.isResourceMain();
 	}
 
 	@Override
@@ -435,6 +457,16 @@ public class ChangesetEntryWrapper implements ChangesetEntry,
 	@Override
 	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_changesetEntry.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	/**
+	* Sets the resource prim key of this changeset entry.
+	*
+	* @param resourcePrimKey the resource prim key of this changeset entry
+	*/
+	@Override
+	public void setResourcePrimKey(long resourcePrimKey) {
+		_changesetEntry.setResourcePrimKey(resourcePrimKey);
 	}
 
 	/**

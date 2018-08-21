@@ -277,6 +277,13 @@ public class ChangesetBaselineEntryLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List<?extends com.liferay.portal.kernel.model.PersistedModel> getPersistedModel(
+		long resourcePrimKey)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _changesetBaselineEntryLocalService.getPersistedModel(resourcePrimKey);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
 		java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {

@@ -18,6 +18,7 @@ create table ChangesetBaselineEntry (
 	changesetBaselineCollectionId LONG,
 	classNameId LONG,
 	classPK LONG,
+	resourcePrimKey LONG,
 	version DOUBLE
 );
 
@@ -43,5 +44,6 @@ create table ChangesetEntry (
 	modifiedDate DATE null,
 	changesetCollectionId LONG,
 	classNameId LONG,
-	classPK LONG
+	classPK LONG,
+	resourcePrimKey LONG
 );

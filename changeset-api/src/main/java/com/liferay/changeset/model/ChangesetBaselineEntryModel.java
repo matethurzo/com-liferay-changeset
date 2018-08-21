@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.model.AttachedModel;
 import com.liferay.portal.kernel.model.AuditedModel;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ResourcedModel;
 import com.liferay.portal.kernel.model.ShardedModel;
 import com.liferay.portal.kernel.service.ServiceContext;
 
@@ -45,7 +46,7 @@ import java.util.Date;
  */
 @ProviderType
 public interface ChangesetBaselineEntryModel extends AttachedModel, AuditedModel,
-	BaseModel<ChangesetBaselineEntry>, ShardedModel {
+	BaseModel<ChangesetBaselineEntry>, ResourcedModel, ShardedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -233,6 +234,25 @@ public interface ChangesetBaselineEntryModel extends AttachedModel, AuditedModel
 	 */
 	@Override
 	public void setClassPK(long classPK);
+
+	/**
+	 * Returns the resource prim key of this changeset baseline entry.
+	 *
+	 * @return the resource prim key of this changeset baseline entry
+	 */
+	@Override
+	public long getResourcePrimKey();
+
+	/**
+	 * Sets the resource prim key of this changeset baseline entry.
+	 *
+	 * @param resourcePrimKey the resource prim key of this changeset baseline entry
+	 */
+	@Override
+	public void setResourcePrimKey(long resourcePrimKey);
+
+	@Override
+	public boolean isResourceMain();
 
 	/**
 	 * Returns the version of this changeset baseline entry.

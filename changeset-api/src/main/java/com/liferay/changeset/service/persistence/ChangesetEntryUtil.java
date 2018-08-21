@@ -113,6 +113,180 @@ public class ChangesetEntryUtil {
 	}
 
 	/**
+	* Returns all the changeset entries where resourcePrimKey = &#63;.
+	*
+	* @param resourcePrimKey the resource prim key
+	* @return the matching changeset entries
+	*/
+	public static List<ChangesetEntry> findByResourcePrimKey(
+		long resourcePrimKey) {
+		return getPersistence().findByResourcePrimKey(resourcePrimKey);
+	}
+
+	/**
+	* Returns a range of all the changeset entries where resourcePrimKey = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ChangesetEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param resourcePrimKey the resource prim key
+	* @param start the lower bound of the range of changeset entries
+	* @param end the upper bound of the range of changeset entries (not inclusive)
+	* @return the range of matching changeset entries
+	*/
+	public static List<ChangesetEntry> findByResourcePrimKey(
+		long resourcePrimKey, int start, int end) {
+		return getPersistence()
+				   .findByResourcePrimKey(resourcePrimKey, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the changeset entries where resourcePrimKey = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ChangesetEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param resourcePrimKey the resource prim key
+	* @param start the lower bound of the range of changeset entries
+	* @param end the upper bound of the range of changeset entries (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching changeset entries
+	*/
+	public static List<ChangesetEntry> findByResourcePrimKey(
+		long resourcePrimKey, int start, int end,
+		OrderByComparator<ChangesetEntry> orderByComparator) {
+		return getPersistence()
+				   .findByResourcePrimKey(resourcePrimKey, start, end,
+			orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the changeset entries where resourcePrimKey = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ChangesetEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param resourcePrimKey the resource prim key
+	* @param start the lower bound of the range of changeset entries
+	* @param end the upper bound of the range of changeset entries (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching changeset entries
+	*/
+	public static List<ChangesetEntry> findByResourcePrimKey(
+		long resourcePrimKey, int start, int end,
+		OrderByComparator<ChangesetEntry> orderByComparator,
+		boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByResourcePrimKey(resourcePrimKey, start, end,
+			orderByComparator, retrieveFromCache);
+	}
+
+	/**
+	* Returns the first changeset entry in the ordered set where resourcePrimKey = &#63;.
+	*
+	* @param resourcePrimKey the resource prim key
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching changeset entry
+	* @throws NoSuchEntryException if a matching changeset entry could not be found
+	*/
+	public static ChangesetEntry findByResourcePrimKey_First(
+		long resourcePrimKey,
+		OrderByComparator<ChangesetEntry> orderByComparator)
+		throws com.liferay.changeset.exception.NoSuchEntryException {
+		return getPersistence()
+				   .findByResourcePrimKey_First(resourcePrimKey,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the first changeset entry in the ordered set where resourcePrimKey = &#63;.
+	*
+	* @param resourcePrimKey the resource prim key
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching changeset entry, or <code>null</code> if a matching changeset entry could not be found
+	*/
+	public static ChangesetEntry fetchByResourcePrimKey_First(
+		long resourcePrimKey,
+		OrderByComparator<ChangesetEntry> orderByComparator) {
+		return getPersistence()
+				   .fetchByResourcePrimKey_First(resourcePrimKey,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last changeset entry in the ordered set where resourcePrimKey = &#63;.
+	*
+	* @param resourcePrimKey the resource prim key
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching changeset entry
+	* @throws NoSuchEntryException if a matching changeset entry could not be found
+	*/
+	public static ChangesetEntry findByResourcePrimKey_Last(
+		long resourcePrimKey,
+		OrderByComparator<ChangesetEntry> orderByComparator)
+		throws com.liferay.changeset.exception.NoSuchEntryException {
+		return getPersistence()
+				   .findByResourcePrimKey_Last(resourcePrimKey,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last changeset entry in the ordered set where resourcePrimKey = &#63;.
+	*
+	* @param resourcePrimKey the resource prim key
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching changeset entry, or <code>null</code> if a matching changeset entry could not be found
+	*/
+	public static ChangesetEntry fetchByResourcePrimKey_Last(
+		long resourcePrimKey,
+		OrderByComparator<ChangesetEntry> orderByComparator) {
+		return getPersistence()
+				   .fetchByResourcePrimKey_Last(resourcePrimKey,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the changeset entries before and after the current changeset entry in the ordered set where resourcePrimKey = &#63;.
+	*
+	* @param changesetEntryId the primary key of the current changeset entry
+	* @param resourcePrimKey the resource prim key
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next changeset entry
+	* @throws NoSuchEntryException if a changeset entry with the primary key could not be found
+	*/
+	public static ChangesetEntry[] findByResourcePrimKey_PrevAndNext(
+		long changesetEntryId, long resourcePrimKey,
+		OrderByComparator<ChangesetEntry> orderByComparator)
+		throws com.liferay.changeset.exception.NoSuchEntryException {
+		return getPersistence()
+				   .findByResourcePrimKey_PrevAndNext(changesetEntryId,
+			resourcePrimKey, orderByComparator);
+	}
+
+	/**
+	* Removes all the changeset entries where resourcePrimKey = &#63; from the database.
+	*
+	* @param resourcePrimKey the resource prim key
+	*/
+	public static void removeByResourcePrimKey(long resourcePrimKey) {
+		getPersistence().removeByResourcePrimKey(resourcePrimKey);
+	}
+
+	/**
+	* Returns the number of changeset entries where resourcePrimKey = &#63;.
+	*
+	* @param resourcePrimKey the resource prim key
+	* @return the number of matching changeset entries
+	*/
+	public static int countByResourcePrimKey(long resourcePrimKey) {
+		return getPersistence().countByResourcePrimKey(resourcePrimKey);
+	}
+
+	/**
 	* Returns all the changeset entries where groupId = &#63;.
 	*
 	* @param groupId the group ID
@@ -1037,6 +1211,195 @@ public class ChangesetEntryUtil {
 		long classNameId, long classPK) {
 		return getPersistence()
 				   .countByC_C_C(changesetCollectionId, classNameId, classPK);
+	}
+
+	/**
+	* Returns all the changeset entries where changesetCollectionId = &#63; and resourcePrimKey = &#63;.
+	*
+	* @param changesetCollectionId the changeset collection ID
+	* @param resourcePrimKey the resource prim key
+	* @return the matching changeset entries
+	*/
+	public static List<ChangesetEntry> findByC_R(long changesetCollectionId,
+		long resourcePrimKey) {
+		return getPersistence().findByC_R(changesetCollectionId, resourcePrimKey);
+	}
+
+	/**
+	* Returns a range of all the changeset entries where changesetCollectionId = &#63; and resourcePrimKey = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ChangesetEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param changesetCollectionId the changeset collection ID
+	* @param resourcePrimKey the resource prim key
+	* @param start the lower bound of the range of changeset entries
+	* @param end the upper bound of the range of changeset entries (not inclusive)
+	* @return the range of matching changeset entries
+	*/
+	public static List<ChangesetEntry> findByC_R(long changesetCollectionId,
+		long resourcePrimKey, int start, int end) {
+		return getPersistence()
+				   .findByC_R(changesetCollectionId, resourcePrimKey, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the changeset entries where changesetCollectionId = &#63; and resourcePrimKey = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ChangesetEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param changesetCollectionId the changeset collection ID
+	* @param resourcePrimKey the resource prim key
+	* @param start the lower bound of the range of changeset entries
+	* @param end the upper bound of the range of changeset entries (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching changeset entries
+	*/
+	public static List<ChangesetEntry> findByC_R(long changesetCollectionId,
+		long resourcePrimKey, int start, int end,
+		OrderByComparator<ChangesetEntry> orderByComparator) {
+		return getPersistence()
+				   .findByC_R(changesetCollectionId, resourcePrimKey, start,
+			end, orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the changeset entries where changesetCollectionId = &#63; and resourcePrimKey = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ChangesetEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param changesetCollectionId the changeset collection ID
+	* @param resourcePrimKey the resource prim key
+	* @param start the lower bound of the range of changeset entries
+	* @param end the upper bound of the range of changeset entries (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching changeset entries
+	*/
+	public static List<ChangesetEntry> findByC_R(long changesetCollectionId,
+		long resourcePrimKey, int start, int end,
+		OrderByComparator<ChangesetEntry> orderByComparator,
+		boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByC_R(changesetCollectionId, resourcePrimKey, start,
+			end, orderByComparator, retrieveFromCache);
+	}
+
+	/**
+	* Returns the first changeset entry in the ordered set where changesetCollectionId = &#63; and resourcePrimKey = &#63;.
+	*
+	* @param changesetCollectionId the changeset collection ID
+	* @param resourcePrimKey the resource prim key
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching changeset entry
+	* @throws NoSuchEntryException if a matching changeset entry could not be found
+	*/
+	public static ChangesetEntry findByC_R_First(long changesetCollectionId,
+		long resourcePrimKey,
+		OrderByComparator<ChangesetEntry> orderByComparator)
+		throws com.liferay.changeset.exception.NoSuchEntryException {
+		return getPersistence()
+				   .findByC_R_First(changesetCollectionId, resourcePrimKey,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the first changeset entry in the ordered set where changesetCollectionId = &#63; and resourcePrimKey = &#63;.
+	*
+	* @param changesetCollectionId the changeset collection ID
+	* @param resourcePrimKey the resource prim key
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching changeset entry, or <code>null</code> if a matching changeset entry could not be found
+	*/
+	public static ChangesetEntry fetchByC_R_First(long changesetCollectionId,
+		long resourcePrimKey,
+		OrderByComparator<ChangesetEntry> orderByComparator) {
+		return getPersistence()
+				   .fetchByC_R_First(changesetCollectionId, resourcePrimKey,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last changeset entry in the ordered set where changesetCollectionId = &#63; and resourcePrimKey = &#63;.
+	*
+	* @param changesetCollectionId the changeset collection ID
+	* @param resourcePrimKey the resource prim key
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching changeset entry
+	* @throws NoSuchEntryException if a matching changeset entry could not be found
+	*/
+	public static ChangesetEntry findByC_R_Last(long changesetCollectionId,
+		long resourcePrimKey,
+		OrderByComparator<ChangesetEntry> orderByComparator)
+		throws com.liferay.changeset.exception.NoSuchEntryException {
+		return getPersistence()
+				   .findByC_R_Last(changesetCollectionId, resourcePrimKey,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last changeset entry in the ordered set where changesetCollectionId = &#63; and resourcePrimKey = &#63;.
+	*
+	* @param changesetCollectionId the changeset collection ID
+	* @param resourcePrimKey the resource prim key
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching changeset entry, or <code>null</code> if a matching changeset entry could not be found
+	*/
+	public static ChangesetEntry fetchByC_R_Last(long changesetCollectionId,
+		long resourcePrimKey,
+		OrderByComparator<ChangesetEntry> orderByComparator) {
+		return getPersistence()
+				   .fetchByC_R_Last(changesetCollectionId, resourcePrimKey,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the changeset entries before and after the current changeset entry in the ordered set where changesetCollectionId = &#63; and resourcePrimKey = &#63;.
+	*
+	* @param changesetEntryId the primary key of the current changeset entry
+	* @param changesetCollectionId the changeset collection ID
+	* @param resourcePrimKey the resource prim key
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next changeset entry
+	* @throws NoSuchEntryException if a changeset entry with the primary key could not be found
+	*/
+	public static ChangesetEntry[] findByC_R_PrevAndNext(
+		long changesetEntryId, long changesetCollectionId,
+		long resourcePrimKey,
+		OrderByComparator<ChangesetEntry> orderByComparator)
+		throws com.liferay.changeset.exception.NoSuchEntryException {
+		return getPersistence()
+				   .findByC_R_PrevAndNext(changesetEntryId,
+			changesetCollectionId, resourcePrimKey, orderByComparator);
+	}
+
+	/**
+	* Removes all the changeset entries where changesetCollectionId = &#63; and resourcePrimKey = &#63; from the database.
+	*
+	* @param changesetCollectionId the changeset collection ID
+	* @param resourcePrimKey the resource prim key
+	*/
+	public static void removeByC_R(long changesetCollectionId,
+		long resourcePrimKey) {
+		getPersistence().removeByC_R(changesetCollectionId, resourcePrimKey);
+	}
+
+	/**
+	* Returns the number of changeset entries where changesetCollectionId = &#63; and resourcePrimKey = &#63;.
+	*
+	* @param changesetCollectionId the changeset collection ID
+	* @param resourcePrimKey the resource prim key
+	* @return the number of matching changeset entries
+	*/
+	public static int countByC_R(long changesetCollectionId,
+		long resourcePrimKey) {
+		return getPersistence()
+				   .countByC_R(changesetCollectionId, resourcePrimKey);
 	}
 
 	/**

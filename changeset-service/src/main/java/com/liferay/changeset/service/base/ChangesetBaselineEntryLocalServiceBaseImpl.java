@@ -287,6 +287,12 @@ public abstract class ChangesetBaselineEntryLocalServiceBaseImpl
 		return changesetBaselineEntryPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
+	@Override
+	public List<?extends PersistedModel> getPersistedModel(long resourcePrimKey)
+		throws PortalException {
+		return changesetBaselineEntryPersistence.findByResourcePrimKey(resourcePrimKey);
+	}
+
 	/**
 	 * Returns a range of all the changeset baseline entries.
 	 *

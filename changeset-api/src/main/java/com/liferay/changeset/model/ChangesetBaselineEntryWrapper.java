@@ -69,6 +69,7 @@ public class ChangesetBaselineEntryWrapper implements ChangesetBaselineEntry,
 			getChangesetBaselineCollectionId());
 		attributes.put("classNameId", getClassNameId());
 		attributes.put("classPK", getClassPK());
+		attributes.put("resourcePrimKey", getResourcePrimKey());
 		attributes.put("version", getVersion());
 
 		return attributes;
@@ -130,6 +131,12 @@ public class ChangesetBaselineEntryWrapper implements ChangesetBaselineEntry,
 
 		if (classPK != null) {
 			setClassPK(classPK);
+		}
+
+		Long resourcePrimKey = (Long)attributes.get("resourcePrimKey");
+
+		if (resourcePrimKey != null) {
+			setResourcePrimKey(resourcePrimKey);
 		}
 
 		Double version = (Double)attributes.get("version");
@@ -250,6 +257,16 @@ public class ChangesetBaselineEntryWrapper implements ChangesetBaselineEntry,
 	}
 
 	/**
+	* Returns the resource prim key of this changeset baseline entry.
+	*
+	* @return the resource prim key of this changeset baseline entry
+	*/
+	@Override
+	public long getResourcePrimKey() {
+		return _changesetBaselineEntry.getResourcePrimKey();
+	}
+
+	/**
 	* Returns the user ID of this changeset baseline entry.
 	*
 	* @return the user ID of this changeset baseline entry
@@ -307,6 +324,11 @@ public class ChangesetBaselineEntryWrapper implements ChangesetBaselineEntry,
 	@Override
 	public boolean isNew() {
 		return _changesetBaselineEntry.isNew();
+	}
+
+	@Override
+	public boolean isResourceMain() {
+		return _changesetBaselineEntry.isResourceMain();
 	}
 
 	@Override
@@ -429,6 +451,16 @@ public class ChangesetBaselineEntryWrapper implements ChangesetBaselineEntry,
 	@Override
 	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_changesetBaselineEntry.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	/**
+	* Sets the resource prim key of this changeset baseline entry.
+	*
+	* @param resourcePrimKey the resource prim key of this changeset baseline entry
+	*/
+	@Override
+	public void setResourcePrimKey(long resourcePrimKey) {
+		_changesetBaselineEntry.setResourcePrimKey(resourcePrimKey);
 	}
 
 	/**

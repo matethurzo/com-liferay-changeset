@@ -65,7 +65,7 @@ public class ChangesetEntryCacheModel implements CacheModel<ChangesetEntry>,
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(23);
 
 		sb.append("{changesetEntryId=");
 		sb.append(changesetEntryId);
@@ -87,6 +87,8 @@ public class ChangesetEntryCacheModel implements CacheModel<ChangesetEntry>,
 		sb.append(classNameId);
 		sb.append(", classPK=");
 		sb.append(classPK);
+		sb.append(", resourcePrimKey=");
+		sb.append(resourcePrimKey);
 		sb.append("}");
 
 		return sb.toString();
@@ -125,6 +127,7 @@ public class ChangesetEntryCacheModel implements CacheModel<ChangesetEntry>,
 		changesetEntryImpl.setChangesetCollectionId(changesetCollectionId);
 		changesetEntryImpl.setClassNameId(classNameId);
 		changesetEntryImpl.setClassPK(classPK);
+		changesetEntryImpl.setResourcePrimKey(resourcePrimKey);
 
 		changesetEntryImpl.resetOriginalValues();
 
@@ -149,6 +152,8 @@ public class ChangesetEntryCacheModel implements CacheModel<ChangesetEntry>,
 		classNameId = objectInput.readLong();
 
 		classPK = objectInput.readLong();
+
+		resourcePrimKey = objectInput.readLong();
 	}
 
 	@Override
@@ -177,6 +182,8 @@ public class ChangesetEntryCacheModel implements CacheModel<ChangesetEntry>,
 		objectOutput.writeLong(classNameId);
 
 		objectOutput.writeLong(classPK);
+
+		objectOutput.writeLong(resourcePrimKey);
 	}
 
 	public long changesetEntryId;
@@ -189,4 +196,5 @@ public class ChangesetEntryCacheModel implements CacheModel<ChangesetEntry>,
 	public long changesetCollectionId;
 	public long classNameId;
 	public long classPK;
+	public long resourcePrimKey;
 }

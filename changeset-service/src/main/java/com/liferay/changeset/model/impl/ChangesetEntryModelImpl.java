@@ -76,7 +76,8 @@ public class ChangesetEntryModelImpl extends BaseModelImpl<ChangesetEntry>
 			{ "modifiedDate", Types.TIMESTAMP },
 			{ "changesetCollectionId", Types.BIGINT },
 			{ "classNameId", Types.BIGINT },
-			{ "classPK", Types.BIGINT }
+			{ "classPK", Types.BIGINT },
+			{ "resourcePrimKey", Types.BIGINT }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -91,9 +92,10 @@ public class ChangesetEntryModelImpl extends BaseModelImpl<ChangesetEntry>
 		TABLE_COLUMNS_MAP.put("changesetCollectionId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("classNameId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("classPK", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("resourcePrimKey", Types.BIGINT);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ChangesetEntry (changesetEntryId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,changesetCollectionId LONG,classNameId LONG,classPK LONG)";
+	public static final String TABLE_SQL_CREATE = "create table ChangesetEntry (changesetEntryId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,changesetCollectionId LONG,classNameId LONG,classPK LONG,resourcePrimKey LONG)";
 	public static final String TABLE_SQL_DROP = "drop table ChangesetEntry";
 	public static final String ORDER_BY_JPQL = " ORDER BY changesetEntry.changesetEntryId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ChangesetEntry.changesetEntryId ASC";
@@ -114,7 +116,8 @@ public class ChangesetEntryModelImpl extends BaseModelImpl<ChangesetEntry>
 	public static final long CLASSPK_COLUMN_BITMASK = 4L;
 	public static final long COMPANYID_COLUMN_BITMASK = 8L;
 	public static final long GROUPID_COLUMN_BITMASK = 16L;
-	public static final long CHANGESETENTRYID_COLUMN_BITMASK = 32L;
+	public static final long RESOURCEPRIMKEY_COLUMN_BITMASK = 32L;
+	public static final long CHANGESETENTRYID_COLUMN_BITMASK = 64L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.changeset.service.util.ServiceProps.get(
 				"lock.expiration.time.com.liferay.changeset.model.ChangesetEntry"));
 
@@ -165,6 +168,7 @@ public class ChangesetEntryModelImpl extends BaseModelImpl<ChangesetEntry>
 		attributes.put("changesetCollectionId", getChangesetCollectionId());
 		attributes.put("classNameId", getClassNameId());
 		attributes.put("classPK", getClassPK());
+		attributes.put("resourcePrimKey", getResourcePrimKey());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -233,6 +237,12 @@ public class ChangesetEntryModelImpl extends BaseModelImpl<ChangesetEntry>
 
 		if (classPK != null) {
 			setClassPK(classPK);
+		}
+
+		Long resourcePrimKey = (Long)attributes.get("resourcePrimKey");
+
+		if (resourcePrimKey != null) {
+			setResourcePrimKey(resourcePrimKey);
 		}
 	}
 
@@ -443,6 +453,33 @@ public class ChangesetEntryModelImpl extends BaseModelImpl<ChangesetEntry>
 		return _originalClassPK;
 	}
 
+	@Override
+	public long getResourcePrimKey() {
+		return _resourcePrimKey;
+	}
+
+	@Override
+	public void setResourcePrimKey(long resourcePrimKey) {
+		_columnBitmask |= RESOURCEPRIMKEY_COLUMN_BITMASK;
+
+		if (!_setOriginalResourcePrimKey) {
+			_setOriginalResourcePrimKey = true;
+
+			_originalResourcePrimKey = _resourcePrimKey;
+		}
+
+		_resourcePrimKey = resourcePrimKey;
+	}
+
+	@Override
+	public boolean isResourceMain() {
+		return true;
+	}
+
+	public long getOriginalResourcePrimKey() {
+		return _originalResourcePrimKey;
+	}
+
 	public long getColumnBitmask() {
 		return _columnBitmask;
 	}
@@ -484,6 +521,7 @@ public class ChangesetEntryModelImpl extends BaseModelImpl<ChangesetEntry>
 		changesetEntryImpl.setChangesetCollectionId(getChangesetCollectionId());
 		changesetEntryImpl.setClassNameId(getClassNameId());
 		changesetEntryImpl.setClassPK(getClassPK());
+		changesetEntryImpl.setResourcePrimKey(getResourcePrimKey());
 
 		changesetEntryImpl.resetOriginalValues();
 
@@ -568,6 +606,10 @@ public class ChangesetEntryModelImpl extends BaseModelImpl<ChangesetEntry>
 
 		changesetEntryModelImpl._setOriginalClassPK = false;
 
+		changesetEntryModelImpl._originalResourcePrimKey = changesetEntryModelImpl._resourcePrimKey;
+
+		changesetEntryModelImpl._setOriginalResourcePrimKey = false;
+
 		changesetEntryModelImpl._columnBitmask = 0;
 	}
 
@@ -615,12 +657,14 @@ public class ChangesetEntryModelImpl extends BaseModelImpl<ChangesetEntry>
 
 		changesetEntryCacheModel.classPK = getClassPK();
 
+		changesetEntryCacheModel.resourcePrimKey = getResourcePrimKey();
+
 		return changesetEntryCacheModel;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(23);
 
 		sb.append("{changesetEntryId=");
 		sb.append(getChangesetEntryId());
@@ -642,6 +686,8 @@ public class ChangesetEntryModelImpl extends BaseModelImpl<ChangesetEntry>
 		sb.append(getClassNameId());
 		sb.append(", classPK=");
 		sb.append(getClassPK());
+		sb.append(", resourcePrimKey=");
+		sb.append(getResourcePrimKey());
 		sb.append("}");
 
 		return sb.toString();
@@ -649,7 +695,7 @@ public class ChangesetEntryModelImpl extends BaseModelImpl<ChangesetEntry>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(34);
+		StringBundler sb = new StringBundler(37);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.changeset.model.ChangesetEntry");
@@ -695,6 +741,10 @@ public class ChangesetEntryModelImpl extends BaseModelImpl<ChangesetEntry>
 			"<column><column-name>classPK</column-name><column-value><![CDATA[");
 		sb.append(getClassPK());
 		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>resourcePrimKey</column-name><column-value><![CDATA[");
+		sb.append(getResourcePrimKey());
+		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
 
@@ -726,6 +776,9 @@ public class ChangesetEntryModelImpl extends BaseModelImpl<ChangesetEntry>
 	private long _classPK;
 	private long _originalClassPK;
 	private boolean _setOriginalClassPK;
+	private long _resourcePrimKey;
+	private long _originalResourcePrimKey;
+	private boolean _setOriginalResourcePrimKey;
 	private long _columnBitmask;
 	private ChangesetEntry _escapedModel;
 }

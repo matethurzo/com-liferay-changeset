@@ -20,6 +20,7 @@
 		<field name="changesetBaselineCollectionId" type="long" />
 		<field name="classNameId" type="long" />
 		<field name="classPK" type="long" />
+		<field name="resourcePrimKey" type="long" />
 		<field name="version" type="double" />
 	</model>
 	<model name="com.liferay.changeset.model.ChangesetCollection">
@@ -44,5 +45,6 @@
 		<field name="changesetCollectionId" type="long" />
 		<field name="classNameId" type="long" />
 		<field name="classPK" type="long" />
+		<field name="resourcePrimKey" type="long" />
 	</model>
 </model-hints>

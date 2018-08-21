@@ -65,7 +65,7 @@ public class ChangesetBaselineEntryCacheModel implements CacheModel<ChangesetBas
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(23);
 
 		sb.append("{changesetBaselineEntryId=");
 		sb.append(changesetBaselineEntryId);
@@ -85,6 +85,8 @@ public class ChangesetBaselineEntryCacheModel implements CacheModel<ChangesetBas
 		sb.append(classNameId);
 		sb.append(", classPK=");
 		sb.append(classPK);
+		sb.append(", resourcePrimKey=");
+		sb.append(resourcePrimKey);
 		sb.append(", version=");
 		sb.append(version);
 		sb.append("}");
@@ -124,6 +126,7 @@ public class ChangesetBaselineEntryCacheModel implements CacheModel<ChangesetBas
 		changesetBaselineEntryImpl.setChangesetBaselineCollectionId(changesetBaselineCollectionId);
 		changesetBaselineEntryImpl.setClassNameId(classNameId);
 		changesetBaselineEntryImpl.setClassPK(classPK);
+		changesetBaselineEntryImpl.setResourcePrimKey(resourcePrimKey);
 		changesetBaselineEntryImpl.setVersion(version);
 
 		changesetBaselineEntryImpl.resetOriginalValues();
@@ -147,6 +150,8 @@ public class ChangesetBaselineEntryCacheModel implements CacheModel<ChangesetBas
 		classNameId = objectInput.readLong();
 
 		classPK = objectInput.readLong();
+
+		resourcePrimKey = objectInput.readLong();
 
 		version = objectInput.readDouble();
 	}
@@ -176,6 +181,8 @@ public class ChangesetBaselineEntryCacheModel implements CacheModel<ChangesetBas
 
 		objectOutput.writeLong(classPK);
 
+		objectOutput.writeLong(resourcePrimKey);
+
 		objectOutput.writeDouble(version);
 	}
 
@@ -188,5 +195,6 @@ public class ChangesetBaselineEntryCacheModel implements CacheModel<ChangesetBas
 	public long changesetBaselineCollectionId;
 	public long classNameId;
 	public long classPK;
+	public long resourcePrimKey;
 	public double version;
 }

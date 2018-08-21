@@ -140,6 +140,8 @@ public class ChangesetBaselineEntryPersistenceTest {
 
 		newChangesetBaselineEntry.setClassPK(RandomTestUtil.nextLong());
 
+		newChangesetBaselineEntry.setResourcePrimKey(RandomTestUtil.nextLong());
+
 		newChangesetBaselineEntry.setVersion(RandomTestUtil.nextDouble());
 
 		_changesetBaselineEntries.add(_persistence.update(
@@ -167,8 +169,17 @@ public class ChangesetBaselineEntryPersistenceTest {
 			newChangesetBaselineEntry.getClassNameId());
 		Assert.assertEquals(existingChangesetBaselineEntry.getClassPK(),
 			newChangesetBaselineEntry.getClassPK());
+		Assert.assertEquals(existingChangesetBaselineEntry.getResourcePrimKey(),
+			newChangesetBaselineEntry.getResourcePrimKey());
 		AssertUtils.assertEquals(existingChangesetBaselineEntry.getVersion(),
 			newChangesetBaselineEntry.getVersion());
+	}
+
+	@Test
+	public void testCountByResourcePrimKey() throws Exception {
+		_persistence.countByResourcePrimKey(RandomTestUtil.nextLong());
+
+		_persistence.countByResourcePrimKey(0L);
 	}
 
 	@Test
@@ -185,6 +196,14 @@ public class ChangesetBaselineEntryPersistenceTest {
 			RandomTestUtil.nextLong(), RandomTestUtil.nextLong());
 
 		_persistence.countByC_C_C(0L, 0L, 0L);
+	}
+
+	@Test
+	public void testCountByC_R() throws Exception {
+		_persistence.countByC_R(RandomTestUtil.nextLong(),
+			RandomTestUtil.nextLong());
+
+		_persistence.countByC_R(0L, 0L);
 	}
 
 	@Test
@@ -215,7 +234,7 @@ public class ChangesetBaselineEntryPersistenceTest {
 			"changesetBaselineEntryId", true, "companyId", true, "userId",
 			true, "userName", true, "createDate", true, "modifiedDate", true,
 			"changesetBaselineCollectionId", true, "classNameId", true,
-			"classPK", true, "version", true);
+			"classPK", true, "resourcePrimKey", true, "version", true);
 	}
 
 	@Test
@@ -466,6 +485,8 @@ public class ChangesetBaselineEntryPersistenceTest {
 		changesetBaselineEntry.setClassNameId(RandomTestUtil.nextLong());
 
 		changesetBaselineEntry.setClassPK(RandomTestUtil.nextLong());
+
+		changesetBaselineEntry.setResourcePrimKey(RandomTestUtil.nextLong());
 
 		changesetBaselineEntry.setVersion(RandomTestUtil.nextDouble());
 

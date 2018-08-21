@@ -43,6 +43,7 @@ public class ChangesetEntrySoap implements Serializable {
 		soapModel.setChangesetCollectionId(model.getChangesetCollectionId());
 		soapModel.setClassNameId(model.getClassNameId());
 		soapModel.setClassPK(model.getClassPK());
+		soapModel.setResourcePrimKey(model.getResourcePrimKey());
 
 		return soapModel;
 	}
@@ -175,6 +176,14 @@ public class ChangesetEntrySoap implements Serializable {
 		_classPK = classPK;
 	}
 
+	public long getResourcePrimKey() {
+		return _resourcePrimKey;
+	}
+
+	public void setResourcePrimKey(long resourcePrimKey) {
+		_resourcePrimKey = resourcePrimKey;
+	}
+
 	private long _changesetEntryId;
 	private long _groupId;
 	private long _companyId;
@@ -185,4 +194,5 @@ public class ChangesetEntrySoap implements Serializable {
 	private long _changesetCollectionId;
 	private long _classNameId;
 	private long _classPK;
+	private long _resourcePrimKey;
 }

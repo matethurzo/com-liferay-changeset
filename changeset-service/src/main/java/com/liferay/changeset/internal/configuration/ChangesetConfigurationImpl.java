@@ -57,8 +57,28 @@ public class ChangesetConfigurationImpl<T, U>
 	}
 
 	@Override
+	public Function<T, Long> getResourceEntityIdFunction() {
+		return _resouceEntityInformation.getResourceIdFunction();
+	}
+
+	@Override
+	public Function<U, Long> getResourceEntityIdFromVersionEntityFunction() {
+		return _versionEntityInformation.getResourceIdFunction();
+	}
+
+	@Override
 	public Class<U> getVersionEntityClass() {
 		return _versionEntityInformation.getEntityClass();
+	}
+
+	@Override
+	public Function<U, Long> getVersionEntityIdFunction() {
+		return _versionEntityInformation.getVersionIdFunction();
+	}
+
+	@Override
+	public Function<U, ? extends Serializable> getVersionFunction() {
+		return _versionEntityInformation.getVersionFunction();
 	}
 
 	public static class BuilderImpl<T, U> implements Builder<T, U> {
@@ -118,7 +138,7 @@ public class ChangesetConfigurationImpl<T, U>
 
 				_changesetConfiguration._resouceEntityInformation =
 					new EntityInformation<>(
-						resourceEntityClass, resourceEntityIdFunction,
+						resourceEntityClass, resourceEntityIdFunction, null,
 						resourceEntityLocalService);
 
 				return new VersionEntityStepImpl<>();
@@ -131,15 +151,16 @@ public class ChangesetConfigurationImpl<T, U>
 
 			public BaseliningStep<T, U> addVersionEntity(
 				Class<U> versionEntityClass,
-				Function<U, Long> versionEntityIdSupplier,
+				Function<U, Long> resourceEntityIdFunction,
+				Function<U, Long> versionEntityIdFunction,
 				Function<U, ? extends Serializable>
 					versionEntityVersionFunction,
 				BaseLocalService versionEntityLocalService) {
 
 				_changesetConfiguration._versionEntityInformation =
 					new EntityInformation<>(
-						versionEntityClass, versionEntityIdSupplier,
-						versionEntityLocalService);
+						versionEntityClass, resourceEntityIdFunction,
+						versionEntityIdFunction, versionEntityLocalService);
 
 				_changesetConfiguration._versionEntityInformation.
 					setVersionFunction(versionEntityVersionFunction);
@@ -165,11 +186,13 @@ public class ChangesetConfigurationImpl<T, U>
 	private static class EntityInformation<T> {
 
 		public EntityInformation(
-			Class<T> entityClass, Function<T, Long> entityIdSupplier,
+			Class<T> entityClass, Function<T, Long> resourceEntityIdFunction,
+			Function<T, Long> versionEntityIdFunction,
 			BaseLocalService entityLocalService) {
 
 			_class = entityClass;
-			_idSupplier = entityIdSupplier;
+			_resourceIdFunction = resourceEntityIdFunction;
+			_versionIdFunction = versionEntityIdFunction;
 			_baseLocalService = entityLocalService;
 		}
 
@@ -181,8 +204,12 @@ public class ChangesetConfigurationImpl<T, U>
 			return _class;
 		}
 
-		public Function<T, Long> getIdSupplier() {
-			return _idSupplier;
+		public Function<T, Long> getResourceIdFunction() {
+			return _resourceIdFunction;
+		}
+
+		public Function<T, Long> getVersionIdFunction() {
+			return _versionIdFunction;
 		}
 
 		public Function<Class<T>, Indexer<T>> getIndexerFunction() {
@@ -207,7 +234,8 @@ public class ChangesetConfigurationImpl<T, U>
 
 		private final BaseLocalService _baseLocalService;
 		private final Class<T> _class;
-		private final Function<T, Long> _idSupplier;
+		private final Function<T, Long> _resourceIdFunction;
+		private final Function<T, Long> _versionIdFunction;
 		private Function<Class<T>, Indexer<T>> _indexerFunction;
 		private Function<T, ? extends Serializable> _versionFunction;
 

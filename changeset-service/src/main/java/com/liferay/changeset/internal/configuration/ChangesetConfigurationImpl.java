@@ -57,13 +57,13 @@ public class ChangesetConfigurationImpl<T, U>
 	}
 
 	@Override
-	public Function<T, Long> getResourceEntityIdFunction() {
-		return _resouceEntityInformation.getResourceIdFunction();
+	public Function<U, Long> getResourceEntityIdFromVersionEntityFunction() {
+		return _versionEntityInformation.getResourceIdFunction();
 	}
 
 	@Override
-	public Function<U, Long> getResourceEntityIdFromVersionEntityFunction() {
-		return _versionEntityInformation.getResourceIdFunction();
+	public Function<T, Long> getResourceEntityIdFunction() {
+		return _resouceEntityInformation.getResourceIdFunction();
 	}
 
 	@Override
@@ -204,20 +204,20 @@ public class ChangesetConfigurationImpl<T, U>
 			return _class;
 		}
 
-		public Function<T, Long> getResourceIdFunction() {
-			return _resourceIdFunction;
-		}
-
-		public Function<T, Long> getVersionIdFunction() {
-			return _versionIdFunction;
-		}
-
 		public Function<Class<T>, Indexer<T>> getIndexerFunction() {
 			return _indexerFunction;
 		}
 
+		public Function<T, Long> getResourceIdFunction() {
+			return _resourceIdFunction;
+		}
+
 		public Function<T, ? extends Serializable> getVersionFunction() {
 			return _versionFunction;
+		}
+
+		public Function<T, Long> getVersionIdFunction() {
+			return _versionIdFunction;
 		}
 
 		public void setIndexerFunction(
@@ -234,10 +234,10 @@ public class ChangesetConfigurationImpl<T, U>
 
 		private final BaseLocalService _baseLocalService;
 		private final Class<T> _class;
-		private final Function<T, Long> _resourceIdFunction;
-		private final Function<T, Long> _versionIdFunction;
 		private Function<Class<T>, Indexer<T>> _indexerFunction;
+		private final Function<T, Long> _resourceIdFunction;
 		private Function<T, ? extends Serializable> _versionFunction;
+		private final Function<T, Long> _versionIdFunction;
 
 	}
 

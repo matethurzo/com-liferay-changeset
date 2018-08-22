@@ -40,9 +40,9 @@ public interface ChangesetConfiguration<T, U> {
 
 	public Class<T> getResourceEntityClass();
 
-	public Function<T, Long> getResourceEntityIdFunction();
-
 	public Function<U, Long> getResourceEntityIdFromVersionEntityFunction();
+
+	public Function<T, Long> getResourceEntityIdFunction();
 
 	public Class<U> getVersionEntityClass();
 

@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -245,21 +246,22 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 
 		ClassedModel versionEntity = (ClassedModel)object;
 
-		long classPK = changesetConfiguration.getVersionEntityIdFunction(
-			).apply(
-				versionEntity
-			);
+		Function<ClassedModel, Long> versionEntityIdFunction =
+			changesetConfiguration.getVersionEntityIdFunction();
 
-		long resourcePrimKey =
-			changesetConfiguration.getResourceEntityIdFromVersionEntityFunction(
-				).apply(
-					versionEntity
-				);
+		long classPK = versionEntityIdFunction.apply(versionEntity);
 
-		double version = (Double)changesetConfiguration.getVersionFunction(
-			).apply(
-				versionEntity
-			);
+		Function<ClassedModel, Long> resourceEntityIdFromVersionEntityFunction =
+			changesetConfiguration.
+				getResourceEntityIdFromVersionEntityFunction();
+
+		long resourcePrimKey = resourceEntityIdFromVersionEntityFunction.apply(
+			versionEntity);
+
+		Function<ClassedModel, ? extends Serializable> versionFunction =
+			changesetConfiguration.getVersionFunction();
+
+		double version = (Double)versionFunction.apply(versionEntity);
 
 		_changesetBaselineEntryLocalService.addChangesetBaselineEntry(
 			changesetBaselineCollectionId, classNameId, classPK,
@@ -289,8 +291,10 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 			}
 		);
 
-		Stream<ChangesetConfiguration<?, ?>> stream =
-			changesetConfigurations.values().parallelStream();
+		Collection<ChangesetConfiguration<?, ?>> values =
+			changesetConfigurations.values();
+
+		Stream<ChangesetConfiguration<?, ?>> stream = values.parallelStream();
 
 		stream.filter(
 			Objects::nonNull

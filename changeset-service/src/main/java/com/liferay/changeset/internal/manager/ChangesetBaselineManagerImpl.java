@@ -24,7 +24,6 @@ import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.changeset.model.ChangesetBaselineEntry;
 import com.liferay.changeset.service.ChangesetBaselineCollectionLocalService;
 import com.liferay.changeset.service.ChangesetBaselineEntryLocalService;
-import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -40,7 +39,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -105,6 +106,7 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 								getChangesetBaselineCollectionId(),
 							changesetBaselineEntry.getClassNameId(),
 							changesetBaselineEntry.getClassPK(),
+							changesetBaselineEntry.getResourcePrimKey(),
 							changesetBaselineEntry.getVersion()));
 		}
 
@@ -232,11 +234,43 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 			changesetConfigurationRegistrar);
 	}
 
+	private void _addChangesetBaselineEntry(
+		long changesetBaselineCollectionId, Object object,
+		ChangesetConfiguration<?, ClassedModel> changesetConfiguration) {
+
+		Class<?> versionEntityClass =
+			changesetConfiguration.getVersionEntityClass();
+
+		long classNameId = _portal.getClassNameId(versionEntityClass.getName());
+
+		ClassedModel versionEntity = (ClassedModel)object;
+
+		long classPK = changesetConfiguration.getVersionEntityIdFunction(
+			).apply(
+				versionEntity
+			);
+
+		long resourcePrimKey =
+			changesetConfiguration.getResourceEntityIdFromVersionEntityFunction(
+				).apply(
+					versionEntity
+				);
+
+		double version = (Double)changesetConfiguration.getVersionFunction(
+			).apply(
+				versionEntity
+			);
+
+		_changesetBaselineEntryLocalService.addChangesetBaselineEntry(
+			changesetBaselineCollectionId, classNameId, classPK,
+			resourcePrimKey, version);
+	}
+
 	private void _addDefaultBaselineVersions(
 		ChangesetBaselineCollection changesetBaselineCollection) {
 
-		List<ChangesetConfiguration<?, ?>> changesetConfigurations =
-			new ArrayList<>();
+		Map<Class<?>, ChangesetConfiguration<?, ?>> changesetConfigurations =
+			new HashMap<>();
 
 		Stream<ChangesetConfigurationRegistrar<?, ?>> registrarStream =
 			_changesetConfigurationRegistrars.stream();
@@ -249,12 +283,14 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 					registrar.changesetConfiguration(
 						new ChangesetConfigurationImpl.BuilderImpl<>());
 
-				changesetConfigurations.add(changesetConfiguration);
+				changesetConfigurations.put(
+					changesetConfiguration.getVersionEntityClass(),
+					changesetConfiguration);
 			}
 		);
 
 		Stream<ChangesetConfiguration<?, ?>> stream =
-			changesetConfigurations.parallelStream();
+			changesetConfigurations.values().parallelStream();
 
 		stream.filter(
 			Objects::nonNull
@@ -266,16 +302,12 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 			Supplier::get
 		).flatMap(
 			Collection::stream
-		).map(
-			object -> (ClassedModel)object
 		).forEach(
-			classedModel -> _changesetBaselineEntryLocalService.
-				addChangesetBaselineEntry(
-					changesetBaselineCollection.
-						getChangesetBaselineCollectionId(),
-					_portal.getClassNameId(classedModel.getModelClassName()),
-					(long)classedModel.getPrimaryKeyObj(),
-					BeanPropertiesUtil.getDoubleSilent(classedModel, "version"))
+			object -> _addChangesetBaselineEntry(
+				changesetBaselineCollection.getChangesetBaselineCollectionId(),
+				object,
+				(ChangesetConfiguration<?, ClassedModel>)
+					changesetConfigurations.get(object.getClass()))
 		);
 	}
 

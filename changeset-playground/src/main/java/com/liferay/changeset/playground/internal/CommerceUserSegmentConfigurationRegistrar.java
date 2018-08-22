@@ -73,6 +73,8 @@ public class CommerceUserSegmentConfigurationRegistrar
 	implements ChangesetConfigurationRegistrar
 	<CommerceUserSegmentEntry, CommerceUserSegmentEntry> {
 
+	// TODO Modify this to use CommerceUserSegmentEntryVersion, it fails for some reason right now
+
 	@Override
 	public ChangesetConfiguration changesetConfiguration(
 		ChangesetConfiguration.Builder
@@ -87,6 +89,7 @@ public class CommerceUserSegmentConfigurationRegistrar
 			_commerceUserSegmentEntryLocalService
 		).addVersionEntity(
 			CommerceUserSegmentEntry.class,
+			CommerceUserSegmentEntry::getCommerceUserSegmentEntryId,
 			CommerceUserSegmentEntry::getCommerceUserSegmentEntryId,
 			commerceUserSegmentEntry -> {
 				Random random = new Random();

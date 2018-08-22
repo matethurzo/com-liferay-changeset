@@ -45,8 +45,9 @@ public class JournalChangesetConfigurationRegistrar
 			JournalArticleResource::getResourcePrimKey,
 			_journalArticleResourceLocalService
 		).addVersionEntity(
-			JournalArticle.class, JournalArticle::getId,
-			JournalArticle::getVersion, _journalArticleLocalService
+			JournalArticle.class, JournalArticle::getResourcePrimKey,
+			JournalArticle::getId, JournalArticle::getVersion,
+			_journalArticleLocalService
 		).baselining(
 			_journalArticleLocalService::getArticles
 		).indexer(

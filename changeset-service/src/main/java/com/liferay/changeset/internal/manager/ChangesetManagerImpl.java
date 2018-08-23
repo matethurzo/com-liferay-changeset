@@ -21,8 +21,10 @@ import com.liferay.changeset.internal.configuration.ChangesetConfigurationImpl;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
+import com.liferay.changeset.model.ChangesetBaselineEntry;
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.model.ChangesetEntry;
+import com.liferay.changeset.service.ChangesetBaselineEntryLocalService;
 import com.liferay.changeset.service.ChangesetCollectionLocalService;
 import com.liferay.changeset.service.ChangesetEntryLocalService;
 import com.liferay.portal.kernel.dao.orm.Conjunction;
@@ -47,6 +49,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import com.liferay.portal.kernel.util.StreamUtil;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -291,35 +294,28 @@ public class ChangesetManagerImpl implements ChangesetManager {
 
 	@Override
 	public void publish(long changesetCollectionId) {
-		for (ChangesetEntry changesetEntry :
-				getChangesetEntries(changesetCollectionId)) {
+		long productionChangesetBaselineCollectionId =
+			_changesetBaselineManager.getProductionBaseline(
+			).map(
+				ChangesetBaselineCollection::getChangesetBaselineCollectionId
+			).orElseThrow(
+				() -> new IllegalStateException(
+					"Unable to determine production baseline")
+			);
 
-			changesetEntry.setChangesetCollectionId(
-				ChangesetConstants.PRODUCTION_CHANGESET_COLLECTION_ID);
+		List<ChangesetEntry> changesetEntries =
+			getChangesetEntries(changesetCollectionId);
 
-			_changesetEntryLocalService.updateChangesetEntry(changesetEntry);
+		changesetEntries.forEach(
+			changesetEntry ->
+				_changesetBaselineEntryLocalService.addChangesetBaselineEntry(
+					productionChangesetBaselineCollectionId,
+					changesetEntry.getClassNameId(),
+					changesetEntry.getClassPK(),
+					changesetEntry.getResourcePrimKey(), 1.0));
 
-			String className = _portal.getClassName(
-				changesetEntry.getClassNameId());
-
-			Optional<ChangesetConfiguration<?, ?>>
-				changesetConfigurationOptional =
-					getChangesetConfigurationByVersionClassName(className);
-
-			changesetConfigurationOptional.map(
-				ChangesetConfiguration::getIndexer
-			).ifPresent(
-				indexer -> {
-					try {
-						indexer.reindex(className, changesetEntry.getClassPK());
-					}
-					catch (SearchException se) {
-						_log.error(
-							"Unable to reindex ChangesetEntry: " +
-								changesetEntry.toString());
-					}
-				});
-		}
+		// TODO What version should we set here?
+		// TODO What else needs to be done during publish?
 	}
 
 	@Override
@@ -381,6 +377,10 @@ public class ChangesetManagerImpl implements ChangesetManager {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ChangesetManagerImpl.class);
+
+	@Reference
+	private ChangesetBaselineEntryLocalService
+		_changesetBaselineEntryLocalService;
 
 	@Reference
 	private ChangesetBaselineManager _changesetBaselineManager;

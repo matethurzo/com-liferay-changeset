@@ -26,7 +26,6 @@ import com.liferay.changeset.service.ChangesetAwareServiceContext;
 import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntry;
 import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntryVersion;
 import com.liferay.commerce.user.segment.service.CommerceUserSegmentEntryLocalService;
-import com.liferay.commerce.user.segment.service.persistence.CommerceUserSegmentEntryVersionUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -42,7 +41,6 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -101,15 +99,9 @@ public class ChangesetPublishTest {
 			_addSupportedEntity(
 				_changesetCollection.getChangesetCollectionId());
 
-		List<CommerceUserSegmentEntryVersion> commerceUserSegmentEntryVersions =
-			CommerceUserSegmentEntryVersionUtil.
-				findByCommerceUserSegmentEntryId(
-					commerceUserSegmentEntry.getCommerceUserSegmentEntryId());
-
-		// TODO The above non-transactional call fails as it has no session, will need to update it once we have the API for it
-
 		CommerceUserSegmentEntryVersion commerceUserSegmentEntryVersion =
-			commerceUserSegmentEntryVersions.get(0);
+			_commerceUserSegmentEntryLocalService.fetchLatestVersion(
+				commerceUserSegmentEntry);
 
 		long productionBaseLineCollectionId =
 			_changesetBaselineManager.getProductionBaseline(

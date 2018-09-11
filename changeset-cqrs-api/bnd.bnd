@@ -5,4 +5,5 @@ Export-Package:\
 	com.liferay.changeset.cqrs,\
 	com.liferay.changeset.cqrs.event,\
 	com.liferay.changeset.cqrs.event.store,\
-	com.liferay.changeset.cqrs.repository
+	com.liferay.changeset.cqrs.repository,\
+	com.liferay.changeset.cqrs.search

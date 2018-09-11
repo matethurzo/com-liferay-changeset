@@ -3,6 +3,7 @@ Bundle-SymbolicName: com.liferay.changeset.api
 Bundle-Version: 2.0.0
 Export-Package:\
 	com.liferay.changeset.configuration,\
+	com.liferay.changeset.constants,\
 	com.liferay.changeset.exception,\
 	com.liferay.changeset.manager,\
 	com.liferay.changeset.model,\

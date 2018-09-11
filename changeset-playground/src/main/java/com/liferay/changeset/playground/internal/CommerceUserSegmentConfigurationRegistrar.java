@@ -71,7 +71,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(immediate = true, service = ChangesetConfigurationRegistrar.class)
 public class CommerceUserSegmentConfigurationRegistrar
 	implements ChangesetConfigurationRegistrar
-	<CommerceUserSegmentEntry, CommerceUserSegmentEntry> {
+		<CommerceUserSegmentEntry, CommerceUserSegmentEntry> {
 
 	// TODO Modify this to use CommerceUserSegmentEntryVersion, it fails for some reason right now
 

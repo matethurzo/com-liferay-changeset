@@ -21,7 +21,6 @@ import com.liferay.changeset.internal.configuration.ChangesetConfigurationImpl;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
-import com.liferay.changeset.model.ChangesetBaselineEntry;
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.model.ChangesetEntry;
 import com.liferay.changeset.service.ChangesetBaselineEntryLocalService;
@@ -36,8 +35,6 @@ import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.search.IndexerPostProcessor;
-import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.util.Portal;
@@ -51,7 +48,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import com.liferay.portal.kernel.util.StreamUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -308,8 +304,8 @@ public class ChangesetManagerImpl implements ChangesetManager {
 					"Unable to determine production baseline")
 			);
 
-		List<ChangesetEntry> changesetEntries =
-			getChangesetEntries(changesetCollectionId);
+		List<ChangesetEntry> changesetEntries = getChangesetEntries(
+			changesetCollectionId);
 
 		changesetEntries.forEach(
 			changesetEntry ->
@@ -321,6 +317,7 @@ public class ChangesetManagerImpl implements ChangesetManager {
 
 		// TODO What version should we set here?
 		// TODO What else needs to be done during publish?
+
 	}
 
 	@Override
@@ -373,8 +370,8 @@ public class ChangesetManagerImpl implements ChangesetManager {
 		BundleContext bundleContext = bundle.getBundleContext();
 
 		bundleContext.registerService(
-			ChangesetConfiguration.class,
-			changesetConfiguration, new Hashtable<>());
+			ChangesetConfiguration.class, changesetConfiguration,
+			new Hashtable<>());
 	}
 
 	private void _removeChangesetConfiguration(

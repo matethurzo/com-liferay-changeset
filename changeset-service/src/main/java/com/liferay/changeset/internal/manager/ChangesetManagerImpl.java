@@ -36,12 +36,14 @@ import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.search.IndexerPostProcessor;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.util.Portal;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -50,6 +52,9 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import com.liferay.portal.kernel.util.StreamUtil;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -362,6 +367,14 @@ public class ChangesetManagerImpl implements ChangesetManager {
 		_configurationsByVersionClass.put(
 			changesetConfiguration.getVersionEntityClass(),
 			changesetConfiguration);
+
+		Bundle bundle = FrameworkUtil.getBundle(ChangesetManagerImpl.class);
+
+		BundleContext bundleContext = bundle.getBundleContext();
+
+		bundleContext.registerService(
+			ChangesetConfiguration.class,
+			changesetConfiguration, new Hashtable<>());
 	}
 
 	private void _removeChangesetConfiguration(

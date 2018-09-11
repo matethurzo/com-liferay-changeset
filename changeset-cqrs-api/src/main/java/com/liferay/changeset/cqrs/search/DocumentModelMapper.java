@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.changeset.cqrs.repository;
+package com.liferay.changeset.cqrs.search;
 
 import com.liferay.portal.kernel.search.Document;
 
@@ -22,5 +22,7 @@ import com.liferay.portal.kernel.search.Document;
 public interface DocumentModelMapper<T> {
 
 	public T map(Document document);
+
+	public Document map(T model);
 
 }

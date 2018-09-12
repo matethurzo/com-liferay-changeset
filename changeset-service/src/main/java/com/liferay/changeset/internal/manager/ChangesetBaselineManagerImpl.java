@@ -306,12 +306,14 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 			Supplier::get
 		).flatMap(
 			Collection::stream
+		).map(
+			object -> (ClassedModel)object
 		).forEach(
 			object -> _addChangesetBaselineEntry(
 				changesetBaselineCollection.getChangesetBaselineCollectionId(),
 				object,
 				(ChangesetConfiguration<?, ClassedModel>)
-					changesetConfigurations.get(object.getClass()))
+					changesetConfigurations.get(object.getModelClass()))
 		);
 	}
 

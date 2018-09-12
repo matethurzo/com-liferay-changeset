@@ -99,10 +99,6 @@ public class ChangesetPublishTest {
 			_addSupportedEntity(
 				_changesetCollection.getChangesetCollectionId());
 
-		CommerceUserSegmentEntryVersion commerceUserSegmentEntryVersion =
-			_commerceUserSegmentEntryLocalService.fetchLatestVersion(
-				commerceUserSegmentEntry);
-
 		long productionBaseLineCollectionId =
 			_changesetBaselineManager.getProductionBaseline(
 			).map(
@@ -114,9 +110,8 @@ public class ChangesetPublishTest {
 		ChangesetBaselineEntry productionChangesetBaselineEntry =
 			_changesetBaselineManager.getBaselineEntry(
 				productionBaseLineCollectionId,
-				commerceUserSegmentEntryVersion.getModelClassName(),
-				commerceUserSegmentEntryVersion.
-					getCommerceUserSegmentEntryVersionId()
+				commerceUserSegmentEntry.getModelClassName(),
+				commerceUserSegmentEntry.getVersionId()
 			).orElse(
 				null
 			);
@@ -131,9 +126,8 @@ public class ChangesetPublishTest {
 		productionChangesetBaselineEntry =
 			_changesetBaselineManager.getBaselineEntry(
 				productionBaseLineCollectionId,
-				commerceUserSegmentEntryVersion.getModelClassName(),
-				commerceUserSegmentEntryVersion.
-						getCommerceUserSegmentEntryVersionId()
+				commerceUserSegmentEntry.getModelClassName(),
+				commerceUserSegmentEntry.getVersionId()
 			).orElse(
 				null
 			);

@@ -40,6 +40,7 @@ import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -186,9 +187,21 @@ public class ChangesetCreationTest {
 					ChangesetBaselineCollection::
 						getChangesetBaselineCollectionId).get());
 
-		Assert.assertEquals(
-			"Baselines must be equal", productionChangesetBaselineEntries,
-			changesetBaselineEntries);
+		final List<ChangesetBaselineEntry> modifiableChangesetBaselineEntries =
+			new ArrayList<>(changesetBaselineEntries);
+
+		productionChangesetBaselineEntries.forEach(
+			productionBaselineEntry ->
+				modifiableChangesetBaselineEntries.removeIf(
+					changesetBaselineEntry ->
+						changesetBaselineEntry.getClassNameId() ==
+							productionBaselineEntry.getClassNameId() &&
+						changesetBaselineEntry.getClassPK() ==
+							productionBaselineEntry.getClassPK()));
+
+		Assert.assertTrue(
+			"Baselines must be equal",
+			modifiableChangesetBaselineEntries.isEmpty());
 	}
 
 	@Test

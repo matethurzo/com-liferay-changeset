@@ -36,7 +36,8 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
  * @author Daniel Kocsis
  */
 @Component(immediate = true, service = DocumentModelMapperRegistry.class)
-public class DucumentModelRegistryImpl implements DocumentModelMapperRegistry {
+public class DocumentModelMapperRegistryImpl
+	implements DocumentModelMapperRegistry {
 
 	@Deactivate
 	public void deactivate() {

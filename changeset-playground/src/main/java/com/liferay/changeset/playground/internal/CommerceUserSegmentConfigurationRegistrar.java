@@ -17,10 +17,15 @@ package com.liferay.changeset.playground.internal;
 import com.liferay.changeset.configuration.ChangesetConfiguration;
 import com.liferay.changeset.configuration.ChangesetConfigurationRegistrar;
 import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntry;
+import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntryVersion;
+import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntryVersionModel;
 import com.liferay.commerce.user.segment.service.CommerceUserSegmentEntryLocalService;
+import com.liferay.commerce.user.segment.service.persistence.CommerceUserSegmentEntryVersionUtil;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -28,57 +33,15 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Mate Thurzo
  */
-//@Component(immediate = true, service = ChangesetConfigurationRegistrar.class)
-//public class CommerceUserSegmentConfigurationRegistrar
-//	implements ChangesetConfigurationRegistrar
-//		<CommerceUserSegmentEntry, CommerceUserSegmentEntryVersion> {
-//
-//	@Override
-//	public ChangesetConfiguration changesetConfiguration(
-//		ChangesetConfiguration.Builder
-//			<CommerceUserSegmentEntry, CommerceUserSegmentEntryVersion>
-//				 builder) {
-//
-//		return builder.identifier(
-//			"commerce-user-segment"
-//		).addResourceEntity(
-//			CommerceUserSegmentEntry.class,
-//			CommerceUserSegmentEntry::getCommerceUserSegmentEntryId,
-//			_commerceUserSegmentEntryLocalService
-//		).addVersionEntity(
-//			CommerceUserSegmentEntryVersion.class,
-//			CommerceUserSegmentEntryVersion::getCommerceUserSegmentEntryId,
-//			CommerceUserSegmentEntryVersionModel::getVersion,
-//			_commerceUserSegmentEntryLocalService
-//		).baselining( //			() ->
-
-// _commerceUserSegmentEntryVersionPersistence.findAll()
-
-//		).indexer(
-//			IndexerRegistryUtil::getIndexer
-//		).build();
-//	}
-//
-//	@Reference
-//	private CommerceUserSegmentEntryLocalService
-//		_commerceUserSegmentEntryLocalService;
-//
-//	@Reference
-//	private CommerceUserSegmentEntryVersionPersistence
-//		_commerceUserSegmentEntryVersionPersistence;
-//
-//}
 @Component(immediate = true, service = ChangesetConfigurationRegistrar.class)
 public class CommerceUserSegmentConfigurationRegistrar
 	implements ChangesetConfigurationRegistrar
-		<CommerceUserSegmentEntry, CommerceUserSegmentEntry> {
-
-	// TODO Modify this to use CommerceUserSegmentEntryVersion, it fails for some reason right now
+		<CommerceUserSegmentEntry, CommerceUserSegmentEntryVersion> {
 
 	@Override
 	public ChangesetConfiguration changesetConfiguration(
 		ChangesetConfiguration.Builder
-			<CommerceUserSegmentEntry, CommerceUserSegmentEntry>
+			<CommerceUserSegmentEntry, CommerceUserSegmentEntryVersion>
 				builder) {
 
 		return builder.identifier(
@@ -88,19 +51,34 @@ public class CommerceUserSegmentConfigurationRegistrar
 			CommerceUserSegmentEntry::getCommerceUserSegmentEntryId,
 			_commerceUserSegmentEntryLocalService
 		).addVersionEntity(
-			CommerceUserSegmentEntry.class,
-			CommerceUserSegmentEntry::getCommerceUserSegmentEntryId,
-			CommerceUserSegmentEntry::getCommerceUserSegmentEntryId,
-			commerceUserSegmentEntry -> {
-				Random random = new Random();
-
-				return random.nextDouble();
-			},
-			_commerceUserSegmentEntryLocalService
+			CommerceUserSegmentEntryVersion.class,
+			CommerceUserSegmentEntryVersion::getCommerceUserSegmentEntryId,
+			CommerceUserSegmentEntryVersion::
+				getCommerceUserSegmentEntryVersionId,
+			CommerceUserSegmentEntryVersionModel::getVersion,
+			null
 		).baselining(
-			() ->
-				_commerceUserSegmentEntryLocalService.
-					getCommerceUserSegmentEntries(-1, -1)
+
+			// TODO extract this to some helper
+
+			() -> {
+				List<CommerceUserSegmentEntryVersion>
+					commerceUserSegmentEntryVersions = new ArrayList<>();
+
+				List<CommerceUserSegmentEntry> commerceUserSegmentEntries =
+					_commerceUserSegmentEntryLocalService.
+						getCommerceUserSegmentEntries(
+							QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+				commerceUserSegmentEntries.forEach(
+					commerceUserSegmentEntry ->
+						commerceUserSegmentEntryVersions.add(
+							CommerceUserSegmentEntryVersionUtil.
+								fetchByPrimaryKey(
+									commerceUserSegmentEntry.getVersionId())));
+
+				return commerceUserSegmentEntryVersions;
+			}
 		).indexer(
 			IndexerRegistryUtil::getIndexer
 		).build();

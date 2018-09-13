@@ -16,23 +16,33 @@ package com.liferay.changeset.internal.baseline.manager.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
-import com.liferay.changeset.manager.ChangesetBaselineManagerUtil;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.changeset.model.ChangesetBaselineEntry;
-import com.liferay.changeset.service.ChangesetBaselineCollectionLocalServiceUtil;
-import com.liferay.changeset.service.ChangesetBaselineEntryLocalServiceUtil;
-import com.liferay.journal.model.JournalArticle;
-import com.liferay.journal.service.JournalArticleLocalServiceUtil;
+import com.liferay.changeset.service.ChangesetAwareServiceContext;
+import com.liferay.changeset.service.ChangesetBaselineCollectionLocalService;
+import com.liferay.changeset.service.ChangesetBaselineEntryLocalService;
+import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntry;
+import com.liferay.commerce.user.segment.service.CommerceUserSegmentEntryLocalService;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.model.GroupConstants;
-import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
-import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
+import com.liferay.portal.kernel.test.util.GroupTestUtil;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.service.test.ServiceTestUtil;
+import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.io.Serializable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -56,47 +66,60 @@ public class ChangesetBaselineManagerTest {
 
 	@Before
 	public void setUp() throws Exception {
+		ServiceTestUtil.setUser(TestPropsValues.getUser());
+
+		_group = GroupTestUtil.addGroup();
+
+		_serviceContext = new ChangesetAwareServiceContext(
+			new ServiceContext());
+
+		_serviceContext.setScopeGroupId(_group.getGroupId());
+		_serviceContext.setUserId(TestPropsValues.getUserId());
+
+		ServiceContextThreadLocal.pushServiceContext(_serviceContext);
+
 		List<ChangesetBaselineCollection> changesetBaselineCollections =
-			ChangesetBaselineCollectionLocalServiceUtil.
-				getChangesetBaselineCollections(-1, -1);
+			_changesetBaselineCollectionLocalService.
+				getChangesetBaselineCollections(
+					QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 		for (ChangesetBaselineCollection changesetBaselineCollection :
 				changesetBaselineCollections) {
 
-			ChangesetBaselineCollectionLocalServiceUtil.
+			_changesetBaselineCollectionLocalService.
 				deleteChangesetBaselineCollection(
 					changesetBaselineCollection.
 						getChangesetBaselineCollectionId());
 		}
 
 		List<ChangesetBaselineEntry> baselineEntries =
-			ChangesetBaselineEntryLocalServiceUtil.getChangesetBaselineEntries(
-				-1, -1);
+			_changesetBaselineEntryLocalService.getChangesetBaselineEntries(
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 		for (ChangesetBaselineEntry baselineEntry : baselineEntries) {
-			ChangesetBaselineEntryLocalServiceUtil.deleteChangesetBaselineEntry(
+			_changesetBaselineEntryLocalService.deleteChangesetBaselineEntry(
 				baselineEntry.getChangesetBaselineEntryId());
 		}
 	}
 
 	@Test
 	public void testCreateBaseline() throws Exception {
-		Group group = GroupLocalServiceUtil.getGroup(
-			CompanyThreadLocal.getCompanyId(), GroupConstants.GUEST);
+		Map<Locale, String> nameMap = new HashMap<>();
 
-		JournalArticle journalArticle = JournalTestUtil.addArticle(
-			group.getGroupId(), 0);
+		nameMap.put(LocaleUtil.HUNGARY, RandomTestUtil.randomString());
+
+		CommerceUserSegmentEntry commerceUserSegmentEntry =
+			_commerceUserSegmentEntryLocalService.addCommerceUserSegmentEntry(
+				nameMap, RandomTestUtil.randomString(), true, false, 1.0D,
+				_serviceContext);
 
 		Supplier<? extends Serializable> baselineIdSupplier =
 			() -> "Test baseline";
 
-		ChangesetBaselineManager changesetBaselineManager =
-			ChangesetBaselineManagerUtil.getChangesetManager();
-
-		changesetBaselineManager.createBaseline(baselineIdSupplier);
+		_changesetBaselineManager.createBaseline(baselineIdSupplier);
 
 		Optional<ChangesetBaselineCollection> baselineInformation =
-			changesetBaselineManager.getChangesetBaselineCollection(
+			_changesetBaselineManager.getChangesetBaselineCollection(
 				baselineIdSupplier);
 
 		Assert.assertTrue(
@@ -108,14 +131,34 @@ public class ChangesetBaselineManagerTest {
 			baselineInformation.get().getName());
 
 		int count =
-			ChangesetBaselineEntryLocalServiceUtil.
+			_changesetBaselineEntryLocalService.
 				getChangesetBaselineEntriesCount();
 
 		Assert.assertEquals(
 			"Baseline contains different than 1 entry", 1, count);
 
-		JournalArticleLocalServiceUtil.deleteJournalArticle(
-			journalArticle.getId());
+		_commerceUserSegmentEntryLocalService.deleteCommerceUserSegmentEntry(
+			commerceUserSegmentEntry.getCommerceUserSegmentEntryId());
 	}
+
+	@Inject
+	private ChangesetBaselineCollectionLocalService
+		_changesetBaselineCollectionLocalService;
+
+	@Inject
+	private ChangesetBaselineEntryLocalService
+		_changesetBaselineEntryLocalService;
+
+	@Inject
+	private ChangesetBaselineManager _changesetBaselineManager;
+
+	@Inject
+	private CommerceUserSegmentEntryLocalService
+		_commerceUserSegmentEntryLocalService;
+
+	@DeleteAfterTestRun
+	private Group _group;
+
+	private ChangesetAwareServiceContext _serviceContext;
 
 }

@@ -20,7 +20,6 @@ import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntry;
 import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntryVersion;
 import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntryVersionModel;
 import com.liferay.commerce.user.segment.service.CommerceUserSegmentEntryLocalService;
-import com.liferay.commerce.user.segment.service.persistence.CommerceUserSegmentEntryVersionUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 
@@ -73,9 +72,8 @@ public class CommerceUserSegmentConfigurationRegistrar
 				commerceUserSegmentEntries.forEach(
 					commerceUserSegmentEntry ->
 						commerceUserSegmentEntryVersions.add(
-							CommerceUserSegmentEntryVersionUtil.
-								fetchByPrimaryKey(
-									commerceUserSegmentEntry.getVersionId())));
+							_commerceUserSegmentEntryLocalService.
+								getLatestVersion(commerceUserSegmentEntry)));
 
 				return commerceUserSegmentEntryVersions;
 			}

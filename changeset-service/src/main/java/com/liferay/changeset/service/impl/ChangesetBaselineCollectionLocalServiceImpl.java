@@ -67,15 +67,8 @@ public class ChangesetBaselineCollectionLocalServiceImpl
 	public Optional<ChangesetBaselineCollection>
 		getChangesetBaselineCollectionByName(String name) {
 
-		try {
-			return Optional.ofNullable(
-				changesetBaselineCollectionPersistence.findByName(name));
-		}
-		catch (PortalException pe) {
-			pe.printStackTrace();
-
-			return Optional.empty();
-		}
+		return Optional.ofNullable(
+			changesetBaselineCollectionPersistence.fetchByName(name));
 	}
 
 }

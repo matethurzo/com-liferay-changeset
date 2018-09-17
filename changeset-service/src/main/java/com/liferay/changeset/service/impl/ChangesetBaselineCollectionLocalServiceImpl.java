@@ -16,7 +16,6 @@ package com.liferay.changeset.service.impl;
 
 import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.changeset.service.base.ChangesetBaselineCollectionLocalServiceBaseImpl;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 
 import java.util.Date;

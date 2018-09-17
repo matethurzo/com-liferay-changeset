@@ -18,6 +18,8 @@ import com.liferay.changeset.configuration.ChangesetConfiguration;
 import com.liferay.changeset.configuration.ChangesetConfigurationRegistrar;
 import com.liferay.changeset.constants.ChangesetConstants;
 import com.liferay.changeset.internal.configuration.ChangesetConfigurationImpl;
+import com.liferay.changeset.internal.search.ChangesetAwareIndexer;
+import com.liferay.changeset.internal.search.ChangesetIndexerPostProcessor;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
@@ -35,10 +37,13 @@ import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerPostProcessor;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.util.Portal;
 
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -341,6 +346,8 @@ public class ChangesetManagerImpl implements ChangesetManager {
 				new ChangesetConfigurationImpl.BuilderImpl<>());
 
 		_addChangesetConfiguration(changesetConfiguration);
+
+		_wrapIndexer(changesetConfiguration);
 	}
 
 	protected void removeChangesetConfigurationRegistrar(
@@ -364,14 +371,6 @@ public class ChangesetManagerImpl implements ChangesetManager {
 		_configurationsByVersionClass.put(
 			changesetConfiguration.getVersionEntityClass(),
 			changesetConfiguration);
-
-		Bundle bundle = FrameworkUtil.getBundle(ChangesetManagerImpl.class);
-
-		BundleContext bundleContext = bundle.getBundleContext();
-
-		bundleContext.registerService(
-			ChangesetConfiguration.class, changesetConfiguration,
-			new Hashtable<>());
 	}
 
 	private void _removeChangesetConfiguration(
@@ -384,6 +383,38 @@ public class ChangesetManagerImpl implements ChangesetManager {
 		_configurationsByVersionClass.remove(
 			changesetConfiguration.getVersionEntityClass());
 	}
+
+	private void _wrapIndexer(
+		ChangesetConfiguration<?, ?> changesetConfiguration) {
+
+		Indexer indexer = changesetConfiguration.getIndexer();
+
+		// todo: occasionally null because indexer registration is wrong
+
+		if (indexer == null) {
+			return;
+		}
+
+		final Bundle bundle = FrameworkUtil.getBundle(
+			ChangesetManagerImpl.class);
+
+		final BundleContext bundleContext = bundle.getBundleContext();
+
+		String indexerClassName = indexer.getClassName();
+
+		Dictionary<String, Object> properties = new Hashtable<>();
+
+		// todo: it won't work this way, indexer class name will be the same if we move forward with wrapping
+
+		properties.put("indexer.class.name", indexerClassName);
+
+		bundleContext.registerService(
+			IndexerPostProcessor.class, _CHANGESET_INDEXER_POST_PROCESSOR,
+			properties);
+	}
+
+	private static final ChangesetIndexerPostProcessor
+		_CHANGESET_INDEXER_POST_PROCESSOR = new ChangesetIndexerPostProcessor();
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ChangesetManagerImpl.class);

@@ -18,6 +18,13 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
+import com.liferay.changeset.model.ChangesetCollection;
+import com.liferay.changeset.model.ChangesetEntry;
+import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntry;
+import com.liferay.commerce.user.segment.service.CommerceUserSegmentCriterionLocalService;
+import com.liferay.commerce.user.segment.service.CommerceUserSegmentEntryLocalService;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.test.rule.Inject;
 
 import java.util.Optional;
@@ -25,6 +32,12 @@ import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Mate Thurzo
@@ -50,7 +63,12 @@ public class ChangesetTest {
 
 		// Add a new changeset
 
-		_changesetManager.create("CHANGESET-1", "Changeset 1 description");
+		Optional<ChangesetCollection> changesetCollectionOptional =
+			_changesetManager.create("CHANGESET-1", "Changeset 1 description");
+
+		Assert.assertTrue(
+			"Changeset collection optional should not be empty",
+			changesetCollectionOptional.isPresent());
 
 		// Check changeset baseline
 
@@ -58,7 +76,36 @@ public class ChangesetTest {
 			_changesetBaselineManager.getChangesetBaselineCollection(
 				() -> "CHANGESET-1");
 
-		// Check
+		Assert.assertTrue(
+			"Created baseline is not present",
+			changesetBaselineOptional.isPresent());
+
+		// Create user segment entry
+
+		Map<Locale, String> nameMap = new HashMap<>();
+
+		nameMap.put(Locale.US, "User Segment");
+
+		CommerceUserSegmentEntry segmentEntry =
+			_commerceUserSegmentEntryLocalService.addCommerceUserSegmentEntry(
+				nameMap, "USERSEGMENT", true, false, 1.0d,
+				new ServiceContext());
+
+		_commerceUserSegmentCriterionLocalService.
+			addCommerceUserSegmentCriterion(
+				segmentEntry.getCommerceUserSegmentEntryId(), "user",
+				StringPool.BLANK, 1.0, new ServiceContext());
+
+		// Check changeset content
+
+		List<ChangesetEntry> changesetEntries =
+			_changesetManager.getChangesetEntries(
+				changesetCollectionOptional.get().getChangesetCollectionId());
+
+		Assert.assertFalse(
+			"Changeset entries should not be empty",
+			changesetEntries.isEmpty());
+	}
 
 	}
 
@@ -66,6 +113,11 @@ public class ChangesetTest {
 	private ChangesetBaselineManager _changesetBaselineManager;
 
 	@Inject
-	private ChangesetManager _changesetManager;
+	private CommerceUserSegmentEntryLocalService
+		_commerceUserSegmentEntryLocalService;
+
+	@Inject
+	private CommerceUserSegmentCriterionLocalService
+		_commerceUserSegmentCriterionLocalService;
 
 }

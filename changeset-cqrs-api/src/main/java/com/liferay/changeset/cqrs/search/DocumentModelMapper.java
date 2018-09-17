@@ -23,6 +23,6 @@ public interface DocumentModelMapper<T> {
 
 	public T map(Document document);
 
-	public Document map(T model);
+	public Document map(T baseModel);
 
 }

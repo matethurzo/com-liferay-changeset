@@ -25,7 +25,7 @@ public interface DocumentModelMapperRegistry {
 
 	public <T> DocumentModelMapper<T> getDocumentModelMapper(String className);
 
-	public Set<DocumentModelMapper<?>> getDocumentModelMappers();
+	public Set<DocumentModelMapper> getDocumentModelMappers();
 
 	public void register(
 		String className, DocumentModelMapper<?> documentModelMapper);

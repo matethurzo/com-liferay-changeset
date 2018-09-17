@@ -35,7 +35,7 @@ public class DocumentModelMapperRegistryUtil {
 		return _documentModelMapperRegistry.getDocumentModelMapper(className);
 	}
 
-	public static Set<DocumentModelMapper<?>> getDocumentModelMappers() {
+	public static Set<DocumentModelMapper> getDocumentModelMappers() {
 		return _documentModelMapperRegistry.getDocumentModelMappers();
 	}
 

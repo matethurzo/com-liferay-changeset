@@ -55,7 +55,7 @@ public class DocumentModelMapperRegistryImpl
 	}
 
 	@Override
-	public Set<DocumentModelMapper<?>> getDocumentModelMappers() {
+	public Set<DocumentModelMapper> getDocumentModelMappers() {
 		return new HashSet<>(_documentModelMappers.values());
 	}
 

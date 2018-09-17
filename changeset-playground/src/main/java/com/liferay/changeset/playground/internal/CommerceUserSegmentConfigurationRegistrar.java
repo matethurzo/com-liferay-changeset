@@ -78,6 +78,9 @@ public class CommerceUserSegmentConfigurationRegistrar
 				return commerceUserSegmentEntryVersions;
 			}
 		).indexer(
+
+			// todo: this won't work
+
 			IndexerRegistryUtil::getIndexer
 		).build();
 	}

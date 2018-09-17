@@ -41,6 +41,7 @@ public class ChangesetEntryLocalServiceImpl
 		throws PortalException {
 
 		User user = userLocalService.getUser(userId);
+
 		ChangesetCollection changesetCollection =
 			changesetCollectionPersistence.fetchByPrimaryKey(
 				changesetCollectionId);

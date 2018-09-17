@@ -18,7 +18,6 @@ import com.liferay.changeset.configuration.ChangesetConfiguration;
 import com.liferay.changeset.configuration.ChangesetConfigurationRegistrar;
 import com.liferay.changeset.constants.ChangesetConstants;
 import com.liferay.changeset.internal.configuration.ChangesetConfigurationImpl;
-import com.liferay.changeset.internal.search.ChangesetAwareIndexer;
 import com.liferay.changeset.internal.search.ChangesetIndexerPostProcessor;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.manager.ChangesetManager;

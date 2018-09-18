@@ -17,8 +17,8 @@ package com.liferay.changeset.internal.baseline.manager.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.changeset.manager.ChangesetManager;
-import com.liferay.journal.model.JournalArticle;
-import com.liferay.journal.model.JournalArticleResource;
+import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntry;
+import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntryVersion;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -43,17 +43,18 @@ public class ChangesetSupportTest {
 	@Test
 	public void testChangesetSupportDisabled() throws Exception {
 		Assert.assertTrue(
-			"'journal' should be supported in changeset",
-			_changesetManager.isChangesetSupported("journal"));
+			"'commerce-user-segment' should be supported in changeset",
+			_changesetManager.isChangesetSupported("commerce-user-segment"));
 
 		Assert.assertTrue(
-			"Journal Article should be supported in changeset",
-			_changesetManager.isChangesetSupported(JournalArticle.class));
-
-		Assert.assertTrue(
-			"Journal Article Resource should be supported in changeset",
+			"Commerce User Segment Version should be supported in changeset",
 			_changesetManager.isChangesetSupported(
-				JournalArticleResource.class));
+				CommerceUserSegmentEntryVersion.class));
+
+		Assert.assertTrue(
+			"Commerce User Segment should be supported in changeset",
+			_changesetManager.isChangesetSupported(
+				CommerceUserSegmentEntry.class));
 	}
 
 	@Test
@@ -61,17 +62,18 @@ public class ChangesetSupportTest {
 		_changesetManager.enableChangesets();
 
 		Assert.assertTrue(
-			"'journal' should be supported in changeset",
-			_changesetManager.isChangesetSupported("journal"));
+			"'commerce-user-segment' should be supported in changeset",
+			_changesetManager.isChangesetSupported("commerce-user-segment"));
 
 		Assert.assertTrue(
-			"Journal Article should be supported in changeset",
-			_changesetManager.isChangesetSupported(JournalArticle.class));
-
-		Assert.assertTrue(
-			"Journal Article Resource should be supported in changeset",
+			"Commerce User Segment Version should be supported in changeset",
 			_changesetManager.isChangesetSupported(
-				JournalArticleResource.class));
+				CommerceUserSegmentEntryVersion.class));
+
+		Assert.assertTrue(
+			"Commerce User Segment should be supported in changeset",
+			_changesetManager.isChangesetSupported(
+				CommerceUserSegmentEntry.class));
 
 		_changesetManager.disableChangesets();
 	}

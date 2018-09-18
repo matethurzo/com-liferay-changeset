@@ -23,23 +23,37 @@ import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.changeset.model.ChangesetBaselineEntry;
-import com.liferay.changeset.service.ChangesetBaselineEntryLocalService;
-import com.liferay.journal.model.JournalArticle;
-import com.liferay.journal.service.JournalArticleLocalService;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.changeset.service.ChangesetAwareServiceContext;
+import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntry;
+import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntryVersion;
+import com.liferay.commerce.user.segment.service.CommerceUserSegmentEntryLocalService;
+import com.liferay.commerce.user.segment.service.persistence.CommerceUserSegmentEntryPersistence;
+import com.liferay.commerce.user.segment.service.persistence.CommerceUserSegmentEntryVersionPersistence;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
+import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.TransactionalTestRule;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -54,10 +68,27 @@ public class ChangesetEnableTest {
 	@ClassRule
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
-		new LiferayIntegrationTestRule();
+		new AggregateTestRule(
+			new LiferayIntegrationTestRule(),
+			new TransactionalTestRule(Propagation.REQUIRED));
+
+	@Before
+	public void setUp() throws Exception {
+		ServiceTestUtil.setUser(TestPropsValues.getUser());
+
+		_group = GroupTestUtil.addGroup();
+
+		_serviceContext = new ChangesetAwareServiceContext(
+			new ServiceContext());
+
+		_serviceContext.setScopeGroupId(_group.getGroupId());
+		_serviceContext.setUserId(TestPropsValues.getUserId());
+
+		ServiceContextThreadLocal.pushServiceContext(_serviceContext);
+	}
 
 	@After
-	public void tearDown() throws Exception {
+	public void tearDown() {
 		_changesetManager.disableChangesets();
 
 		try {
@@ -65,33 +96,15 @@ public class ChangesetEnableTest {
 		}
 		catch (Exception e) {
 		}
-
-		try {
-			_journalArticleLocalService.deleteJournalArticle(
-				_journalArticle.getId());
-		}
-		catch (Exception e) {
-		}
 	}
 
 	@Test
-	public void testEnableChangeset() throws Exception {
+	public void testEnableChangeset() {
 
-		// Clean up articles for changeset enabling
+		// Clean up entries for changeset enabling
 
-		// TODO rewrite to use CommerceUserSegmentEntry instead of JournalArticle
-
-		List<JournalArticle> journalArticles =
-			_journalArticleLocalService.getArticles();
-
-		journalArticles.forEach(journalArticle -> {
-			try {
-				_journalArticleLocalService.deleteJournalArticle(
-					journalArticle.getId());
-			}
-			catch (PortalException pe) {
-			}
-		});
+		_commerceUserSegmentEntryPersistence.removeAll();
+		_commerceUserSegmentEntryVersionPersistence.removeAll();
 
 		_changesetManager.enableChangesets();
 
@@ -115,8 +128,14 @@ public class ChangesetEnableTest {
 
 		// Create data first for baseline
 
-		_journalArticle = JournalTestUtil.addArticle(
-			TestPropsValues.getGroupId(), 0);
+		Map<Locale, String> nameMap = new HashMap<>();
+
+		nameMap.put(LocaleUtil.HUNGARY, RandomTestUtil.randomString());
+
+		CommerceUserSegmentEntry commerceUserSegmentEntry =
+			_commerceUserSegmentEntryLocalService.addCommerceUserSegmentEntry(
+				nameMap, RandomTestUtil.randomString(), true, false, 1.0D,
+				_serviceContext);
 
 		_changesetManager.enableChangesets();
 
@@ -131,14 +150,20 @@ public class ChangesetEnableTest {
 			_changesetBaselineManager.getBaselineEntries(
 				() -> ChangesetConstants.PRODUCTION_BASELINE_NAME);
 
-		long journalArticleClassNameId = _portal.getClassNameId(
-			JournalArticle.class.getName());
+		long classNameId = _portal.getClassNameId(
+			CommerceUserSegmentEntryVersion.class.getName());
+
+		CommerceUserSegmentEntryVersion commerceUserSegmentEntryVersion =
+			_commerceUserSegmentEntryLocalService.getLatestVersion(
+				commerceUserSegmentEntry);
 
 		boolean found = false;
 
 		for (ChangesetBaselineEntry baselineEntry : baselineEntries) {
-			if ((baselineEntry.getClassNameId() == journalArticleClassNameId) &&
-				(baselineEntry.getClassPK() == _journalArticle.getId())) {
+			if ((baselineEntry.getClassNameId() == classNameId) &&
+				(baselineEntry.getClassPK() ==
+					commerceUserSegmentEntryVersion.
+						getCommerceUserSegmentEntryVersionId())) {
 
 				found = true;
 
@@ -147,7 +172,7 @@ public class ChangesetEnableTest {
 		}
 
 		if (!found) {
-			Assert.fail("Journal article cannot be found in the baseline");
+			Assert.fail("Entry version cannot be found in the baseline");
 		}
 	}
 
@@ -191,21 +216,29 @@ public class ChangesetEnableTest {
 	private BlogsEntryLocalService _blogsEntryLocalService;
 
 	@Inject
-	private ChangesetBaselineEntryLocalService
-		_changesetBaselineEntryLocalService;
-
-	@Inject
 	private ChangesetBaselineManager _changesetBaselineManager;
 
 	@Inject
 	private ChangesetManager _changesetManager;
 
-	private JournalArticle _journalArticle;
+	@Inject
+	private CommerceUserSegmentEntryLocalService
+		_commerceUserSegmentEntryLocalService;
 
 	@Inject
-	private JournalArticleLocalService _journalArticleLocalService;
+	private CommerceUserSegmentEntryPersistence
+		_commerceUserSegmentEntryPersistence;
+
+	@Inject
+	private CommerceUserSegmentEntryVersionPersistence
+		_commerceUserSegmentEntryVersionPersistence;
+
+	@DeleteAfterTestRun
+	private Group _group;
 
 	@Inject
 	private Portal _portal;
+
+	private ChangesetAwareServiceContext _serviceContext;
 
 }

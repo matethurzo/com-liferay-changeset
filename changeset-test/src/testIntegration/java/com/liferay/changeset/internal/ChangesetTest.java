@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.changeset;
+package com.liferay.changeset.internal;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
@@ -27,17 +27,15 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.test.rule.Inject;
 
-import java.util.Optional;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * @author Mate Thurzo
@@ -107,17 +105,18 @@ public class ChangesetTest {
 			changesetEntries.isEmpty());
 	}
 
-	}
-
 	@Inject
 	private ChangesetBaselineManager _changesetBaselineManager;
 
 	@Inject
-	private CommerceUserSegmentEntryLocalService
-		_commerceUserSegmentEntryLocalService;
+	private ChangesetManager _changesetManager;
 
 	@Inject
 	private CommerceUserSegmentCriterionLocalService
 		_commerceUserSegmentCriterionLocalService;
+
+	@Inject
+	private CommerceUserSegmentEntryLocalService
+		_commerceUserSegmentEntryLocalService;
 
 }

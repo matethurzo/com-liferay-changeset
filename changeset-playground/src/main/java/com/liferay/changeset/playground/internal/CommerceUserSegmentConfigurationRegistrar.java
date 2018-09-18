@@ -54,8 +54,7 @@ public class CommerceUserSegmentConfigurationRegistrar
 			CommerceUserSegmentEntryVersion::getCommerceUserSegmentEntryId,
 			CommerceUserSegmentEntryVersion::
 				getCommerceUserSegmentEntryVersionId,
-			CommerceUserSegmentEntryVersionModel::getVersion,
-			null
+			CommerceUserSegmentEntryVersionModel::getVersion, null
 		).baselining(
 
 			// TODO extract this to some helper

@@ -24,6 +24,7 @@ import com.liferay.changeset.model.ChangesetBaselineEntry;
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.service.ChangesetAwareServiceContext;
 import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntry;
+import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntryVersion;
 import com.liferay.commerce.user.segment.service.CommerceUserSegmentEntryLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
@@ -90,12 +91,19 @@ public class ChangesetPublishTest {
 		_changesetManager.disableChangesets();
 
 		ServiceContextThreadLocal.popServiceContext();
+
+		// TODO Clean up all entities that this test created
+
 	}
 
 	@Test
 	public void testPublishChangesetWithSupportedEntity() throws Exception {
 		CommerceUserSegmentEntry commerceUserSegmentEntry = _addSupportedEntity(
 			_changesetCollection.getChangesetCollectionId());
+
+		CommerceUserSegmentEntryVersion commerceUserSegmentEntryVersion =
+			_commerceUserSegmentEntryLocalService.getLatestVersion(
+				commerceUserSegmentEntry);
 
 		long productionBaseLineCollectionId =
 			_changesetBaselineManager.getProductionBaseline(
@@ -108,8 +116,9 @@ public class ChangesetPublishTest {
 		ChangesetBaselineEntry productionChangesetBaselineEntry =
 			_changesetBaselineManager.getBaselineEntry(
 				productionBaseLineCollectionId,
-				commerceUserSegmentEntry.getModelClassName(),
-				commerceUserSegmentEntry.getVersionId()
+				commerceUserSegmentEntryVersion.getModelClassName(),
+				commerceUserSegmentEntryVersion.
+					getCommerceUserSegmentEntryVersionId()
 			).orElse(
 				null
 			);
@@ -124,8 +133,9 @@ public class ChangesetPublishTest {
 		productionChangesetBaselineEntry =
 			_changesetBaselineManager.getBaselineEntry(
 				productionBaseLineCollectionId,
-				commerceUserSegmentEntry.getModelClassName(),
-				commerceUserSegmentEntry.getVersionId()
+				commerceUserSegmentEntryVersion.getModelClassName(),
+				commerceUserSegmentEntryVersion.
+					getCommerceUserSegmentEntryVersionId()
 			).orElse(
 				null
 			);

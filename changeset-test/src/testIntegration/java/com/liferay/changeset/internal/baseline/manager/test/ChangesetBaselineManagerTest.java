@@ -21,8 +21,8 @@ import com.liferay.changeset.model.ChangesetBaselineEntry;
 import com.liferay.changeset.service.ChangesetAwareServiceContext;
 import com.liferay.changeset.service.ChangesetBaselineCollectionLocalService;
 import com.liferay.changeset.service.ChangesetBaselineEntryLocalService;
-import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntry;
 import com.liferay.commerce.user.segment.service.CommerceUserSegmentEntryLocalService;
+import com.liferay.commerce.user.segment.service.persistence.CommerceUserSegmentEntryPersistence;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -32,10 +32,12 @@ import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.TransactionalTestRule;
 
 import java.io.Serializable;
 
@@ -46,6 +48,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -62,7 +65,9 @@ public class ChangesetBaselineManagerTest {
 	@ClassRule
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
-		new LiferayIntegrationTestRule();
+		new AggregateTestRule(
+			new LiferayIntegrationTestRule(),
+			new TransactionalTestRule(Propagation.REQUIRED));
 
 	@Before
 	public void setUp() throws Exception {
@@ -77,7 +82,10 @@ public class ChangesetBaselineManagerTest {
 		_serviceContext.setUserId(TestPropsValues.getUserId());
 
 		ServiceContextThreadLocal.pushServiceContext(_serviceContext);
+	}
 
+	@After
+	public void tearDown() throws Exception {
 		List<ChangesetBaselineCollection> changesetBaselineCollections =
 			_changesetBaselineCollectionLocalService.
 				getChangesetBaselineCollections(
@@ -100,6 +108,9 @@ public class ChangesetBaselineManagerTest {
 			_changesetBaselineEntryLocalService.deleteChangesetBaselineEntry(
 				baselineEntry.getChangesetBaselineEntryId());
 		}
+
+		// TODO Clean up all entities that this test created
+
 	}
 
 	@Test
@@ -108,10 +119,9 @@ public class ChangesetBaselineManagerTest {
 
 		nameMap.put(LocaleUtil.HUNGARY, RandomTestUtil.randomString());
 
-		CommerceUserSegmentEntry commerceUserSegmentEntry =
-			_commerceUserSegmentEntryLocalService.addCommerceUserSegmentEntry(
-				nameMap, RandomTestUtil.randomString(), true, false, 1.0D,
-				_serviceContext);
+		_commerceUserSegmentEntryLocalService.addCommerceUserSegmentEntry(
+			nameMap, RandomTestUtil.randomString(), true, false, 1.0D,
+			_serviceContext);
 
 		Supplier<? extends Serializable> baselineIdSupplier =
 			() -> "Test baseline";
@@ -136,9 +146,6 @@ public class ChangesetBaselineManagerTest {
 
 		Assert.assertEquals(
 			"Baseline contains different than 1 entry", 1, count);
-
-		_commerceUserSegmentEntryLocalService.deleteCommerceUserSegmentEntry(
-			commerceUserSegmentEntry.getCommerceUserSegmentEntryId());
 	}
 
 	@Inject
@@ -155,6 +162,10 @@ public class ChangesetBaselineManagerTest {
 	@Inject
 	private CommerceUserSegmentEntryLocalService
 		_commerceUserSegmentEntryLocalService;
+
+	@Inject
+	private CommerceUserSegmentEntryPersistence
+		_commerceUserSegmentEntryPersistence;
 
 	@DeleteAfterTestRun
 	private Group _group;

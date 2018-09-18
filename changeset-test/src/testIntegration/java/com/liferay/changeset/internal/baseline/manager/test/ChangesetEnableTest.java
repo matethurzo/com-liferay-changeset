@@ -79,6 +79,8 @@ public class ChangesetEnableTest {
 
 		// Clean up articles for changeset enabling
 
+		// TODO rewrite to use CommerceUserSegmentEntry instead of JournalArticle
+
 		List<JournalArticle> journalArticles =
 			_journalArticleLocalService.getArticles();
 

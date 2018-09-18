@@ -19,11 +19,12 @@ import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.portal.test.rule.Inject;
+
+import java.util.Optional;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.Optional;
 
 /**
  * @author Mate Thurzo
@@ -58,14 +59,13 @@ public class ChangesetTest {
 				() -> "CHANGESET-1");
 
 		// Check
-	}
 
-	@Inject
-	private ChangesetManager _changesetManager;
+	}
 
 	@Inject
 	private ChangesetBaselineManager _changesetBaselineManager;
 
-
+	@Inject
+	private ChangesetManager _changesetManager;
 
 }

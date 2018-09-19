@@ -20,11 +20,15 @@ import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.model.ChangesetEntry;
+import com.liferay.changeset.service.ChangesetAwareServiceContext;
 import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntry;
 import com.liferay.commerce.user.segment.service.CommerceUserSegmentCriterionLocalService;
 import com.liferay.commerce.user.segment.service.CommerceUserSegmentEntryLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.test.rule.Inject;
 
 import java.util.HashMap;
@@ -33,7 +37,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.TransactionalTestRule;
 import org.junit.Assert;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -42,6 +50,13 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 public class ChangesetTest {
+
+	@ClassRule
+	@Rule
+	public static final AggregateTestRule aggregateTestRule =
+		new AggregateTestRule(
+			new LiferayIntegrationTestRule(),
+			new TransactionalTestRule(Propagation.REQUIRED));
 
 	@Test
 	public void criticalPath() throws Exception {
@@ -103,6 +118,34 @@ public class ChangesetTest {
 		Assert.assertFalse(
 			"Changeset entries should not be empty",
 			changesetEntries.isEmpty());
+
+		ChangesetAwareServiceContext changesetAwareServiceContext =
+			new ChangesetAwareServiceContext(new ServiceContext());
+
+		changesetAwareServiceContext.setChangesetCollectionId(
+			changesetCollectionOptional.get().getChangesetCollectionId());
+
+		ServiceContextThreadLocal.pushServiceContext(
+			changesetAwareServiceContext);
+
+		// Read segment entry from local service - should return changeset one
+
+		CommerceUserSegmentEntry commerceUserSegmentEntry =
+			_commerceUserSegmentEntryLocalService.fetchCommerceUserSegmentEntry(
+				segmentEntry.getGroupId(), segmentEntry.getKey());
+
+		ServiceContextThreadLocal.popServiceContext();
+
+		changesetAwareServiceContext.setChangesetCollectionId(0);
+
+		ServiceContextThreadLocal.pushServiceContext(
+			changesetAwareServiceContext);
+
+		// Read segment entry from local service - should return production one
+
+		commerceUserSegmentEntry =
+			_commerceUserSegmentEntryLocalService.fetchCommerceUserSegmentEntry(
+				segmentEntry.getGroupId(), segmentEntry.getKey());
 	}
 
 	@Inject

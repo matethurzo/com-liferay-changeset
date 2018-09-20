@@ -80,8 +80,9 @@ public class CommerceUserSegmentConfigurationRegistrar
 
 			// todo: this won't work
 
-			IndexerRegistryUtil::getIndexer
-		).build();
+			clazz -> IndexerRegistryUtil.getIndexer(
+				CommerceUserSegmentEntry.class)
+	).build();
 	}
 
 	@Reference

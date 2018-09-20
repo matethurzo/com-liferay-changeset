@@ -95,13 +95,13 @@ public class ChangesetConfigurationImpl<T, U>
 
 		public class BaseliningStepImpl<T, U> implements BaseliningStep<T, U> {
 
-			public IndexerStep<T, U> baselining(
+			public IndexerStep baselining(
 				Supplier<? extends Collection<U>> baseliningSupplier) {
 
 				_changesetConfiguration._baseliningSuppliers.add(
 					baseliningSupplier);
 
-				return new IndexerStepImpl<>();
+				return new IndexerStepImpl();
 			}
 
 		}
@@ -115,11 +115,9 @@ public class ChangesetConfigurationImpl<T, U>
 
 		}
 
-		public class IndexerStepImpl<T, U> implements IndexerStep<T, U> {
+		public class IndexerStepImpl implements IndexerStep {
 
-			public BuildStep indexer(
-				Function<Class<U>, Indexer<U>> indexerFunction) {
-
+			public BuildStep indexer(Function<Class, Indexer> indexerFunction) {
 				_changesetConfiguration._versionEntityInformation.
 					setIndexerFunction(indexerFunction);
 

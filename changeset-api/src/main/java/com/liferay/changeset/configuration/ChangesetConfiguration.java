@@ -36,7 +36,7 @@ public interface ChangesetConfiguration<T, U> {
 
 	public String getIdentifier();
 
-	public Indexer<U> getIndexer();
+	public Indexer getIndexer();
 
 	public Class<T> getResourceEntityClass();
 
@@ -52,7 +52,7 @@ public interface ChangesetConfiguration<T, U> {
 
 	public interface BaseliningStep<T, U> {
 
-		public IndexerStep<T, U> baselining(
+		public IndexerStep baselining(
 			Supplier<? extends Collection<U>> baseliningSupplier);
 
 	}
@@ -69,10 +69,9 @@ public interface ChangesetConfiguration<T, U> {
 
 	}
 
-	public interface IndexerStep<T, U> {
+	public interface IndexerStep {
 
-		public BuildStep indexer(
-			Function<Class<U>, Indexer<U>> indexerFunction);
+		public BuildStep indexer(Function<Class, Indexer> indexerFunction);
 
 	}
 

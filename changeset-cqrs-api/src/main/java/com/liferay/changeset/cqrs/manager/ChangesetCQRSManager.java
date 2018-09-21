@@ -12,16 +12,17 @@
  * details.
  */
 
-package com.liferay.changeset.constants;
+package com.liferay.changeset.cqrs.manager;
 
 /**
- * @author Daniel Kocsis
+ * @author Gergely Mathe
  */
-public class ChangesetConstants {
+public interface ChangesetCQRSManager {
 
-	public static final String CQRS_REPOSITORY_ENABLED =
-		"cqrs-repository-enabled";
+	public void disableCQRSRepository();
 
-	public static final String PRODUCTION_BASELINE_NAME = "production-baseline";
+	public void enableCQRSRepository();
+
+	public boolean isCQRSRepositoryEnabled();
 
 }

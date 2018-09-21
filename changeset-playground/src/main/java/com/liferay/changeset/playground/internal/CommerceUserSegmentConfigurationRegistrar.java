@@ -16,6 +16,7 @@ package com.liferay.changeset.playground.internal;
 
 import com.liferay.changeset.configuration.ChangesetConfiguration;
 import com.liferay.changeset.configuration.ChangesetConfigurationRegistrar;
+import com.liferay.changeset.cqrs.manager.ChangesetCQRSManager;
 import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntry;
 import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntryVersion;
 import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntryVersionModel;
@@ -63,6 +64,8 @@ public class CommerceUserSegmentConfigurationRegistrar
 				List<CommerceUserSegmentEntryVersion>
 					commerceUserSegmentEntryVersions = new ArrayList<>();
 
+				_changesetCQRSManager.disableCQRSRepository();
+
 				List<CommerceUserSegmentEntry> commerceUserSegmentEntries =
 					_commerceUserSegmentEntryLocalService.
 						getCommerceUserSegmentEntries(
@@ -74,6 +77,8 @@ public class CommerceUserSegmentConfigurationRegistrar
 							_commerceUserSegmentEntryLocalService.
 								getLatestVersion(commerceUserSegmentEntry)));
 
+				_changesetCQRSManager.enableCQRSRepository();
+
 				return commerceUserSegmentEntryVersions;
 			}
 		).indexer(
@@ -84,6 +89,9 @@ public class CommerceUserSegmentConfigurationRegistrar
 				CommerceUserSegmentEntry.class)
 	).build();
 	}
+
+	@Reference
+	private ChangesetCQRSManager _changesetCQRSManager;
 
 	@Reference
 	private CommerceUserSegmentEntryLocalService

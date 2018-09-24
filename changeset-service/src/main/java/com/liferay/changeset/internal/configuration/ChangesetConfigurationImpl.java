@@ -72,7 +72,12 @@ public class ChangesetConfigurationImpl<T, U>
 	}
 
 	@Override
-	public Function<U, Long> getVersionEntityIdFunction() {
+	public Function<T, Long> getVersionEntityIdFromResourceEntityFunction() {
+		return _resouceEntityInformation.getVersionIdFunction();
+	}
+
+	@Override
+	public Function<U, Long> getVersionEntityIdFromVersionEntityFunction() {
 		return _versionEntityInformation.getVersionIdFunction();
 	}
 
@@ -132,12 +137,13 @@ public class ChangesetConfigurationImpl<T, U>
 			public VersionEntityStep<T, U> addResourceEntity(
 				Class<T> resourceEntityClass,
 				Function<T, Long> resourceEntityIdFunction,
+				Function<T, Long> versionEntityIdFunction,
 				BaseLocalService resourceEntityLocalService) {
 
 				_changesetConfiguration._resouceEntityInformation =
 					new EntityInformation<>(
-						resourceEntityClass, resourceEntityIdFunction, null,
-						resourceEntityLocalService);
+						resourceEntityClass, resourceEntityIdFunction,
+						versionEntityIdFunction, resourceEntityLocalService);
 
 				return new VersionEntityStepImpl<>();
 			}

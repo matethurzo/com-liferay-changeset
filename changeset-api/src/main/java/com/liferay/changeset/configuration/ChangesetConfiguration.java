@@ -46,7 +46,9 @@ public interface ChangesetConfiguration<T, U> {
 
 	public Class<U> getVersionEntityClass();
 
-	public Function<U, Long> getVersionEntityIdFunction();
+	public Function<T, Long> getVersionEntityIdFromResourceEntityFunction();
+
+	public Function<U, Long> getVersionEntityIdFromVersionEntityFunction();
 
 	public Function<U, ? extends Serializable> getVersionFunction();
 
@@ -80,6 +82,7 @@ public interface ChangesetConfiguration<T, U> {
 		public VersionEntityStep<T, U> addResourceEntity(
 			Class<T> resourceEntityClass,
 			Function<T, Long> resourceEntityIdFunction,
+			Function<T, Long> versionEntityIdFunction,
 			BaseLocalService resourceEntityLocalService);
 
 	}

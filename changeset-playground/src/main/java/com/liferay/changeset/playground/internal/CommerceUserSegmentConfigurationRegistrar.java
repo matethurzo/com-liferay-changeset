@@ -49,6 +49,7 @@ public class CommerceUserSegmentConfigurationRegistrar
 		).addResourceEntity(
 			CommerceUserSegmentEntry.class,
 			CommerceUserSegmentEntry::getCommerceUserSegmentEntryId,
+			CommerceUserSegmentEntry::getVersionId,
 			_commerceUserSegmentEntryLocalService
 		).addVersionEntity(
 			CommerceUserSegmentEntryVersion.class,

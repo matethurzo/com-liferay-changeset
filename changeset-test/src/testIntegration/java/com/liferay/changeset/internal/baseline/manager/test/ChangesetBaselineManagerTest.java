@@ -22,7 +22,6 @@ import com.liferay.changeset.service.ChangesetAwareServiceContext;
 import com.liferay.changeset.service.ChangesetBaselineCollectionLocalService;
 import com.liferay.changeset.service.ChangesetBaselineEntryLocalService;
 import com.liferay.commerce.user.segment.service.CommerceUserSegmentEntryLocalService;
-import com.liferay.commerce.user.segment.service.persistence.CommerceUserSegmentEntryPersistence;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -108,9 +107,6 @@ public class ChangesetBaselineManagerTest {
 			_changesetBaselineEntryLocalService.deleteChangesetBaselineEntry(
 				baselineEntry.getChangesetBaselineEntryId());
 		}
-
-		// TODO Clean up all entities that this test created
-
 	}
 
 	@Test
@@ -140,12 +136,17 @@ public class ChangesetBaselineManagerTest {
 			String.valueOf(baselineIdSupplier.get()),
 			baselineInformation.get().getName());
 
-		int count =
+		int entriesCount =
+			_commerceUserSegmentEntryLocalService.
+				getCommerceUserSegmentEntriesCount();
+
+		int baselineEntriesCount =
 			_changesetBaselineEntryLocalService.
 				getChangesetBaselineEntriesCount();
 
 		Assert.assertEquals(
-			"Baseline contains different than 1 entry", 1, count);
+			"Baseline contains different number of entries",
+			entriesCount, baselineEntriesCount);
 	}
 
 	@Inject
@@ -162,10 +163,6 @@ public class ChangesetBaselineManagerTest {
 	@Inject
 	private CommerceUserSegmentEntryLocalService
 		_commerceUserSegmentEntryLocalService;
-
-	@Inject
-	private CommerceUserSegmentEntryPersistence
-		_commerceUserSegmentEntryPersistence;
 
 	@DeleteAfterTestRun
 	private Group _group;

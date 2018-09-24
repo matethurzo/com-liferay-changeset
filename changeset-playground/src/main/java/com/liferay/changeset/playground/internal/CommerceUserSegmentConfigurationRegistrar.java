@@ -22,7 +22,7 @@ import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntryVersion;
 import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntryVersionModel;
 import com.liferay.commerce.user.segment.service.CommerceUserSegmentEntryLocalService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
-import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.search.Indexer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,11 +82,7 @@ public class CommerceUserSegmentConfigurationRegistrar
 				return commerceUserSegmentEntryVersions;
 			}
 		).indexer(
-
-			// todo: this won't work
-
-			clazz -> IndexerRegistryUtil.getIndexer(
-				CommerceUserSegmentEntry.class)
+			clazz -> _commerceUserSegmentEntryIndexer
 	).build();
 	}
 
@@ -96,5 +92,9 @@ public class CommerceUserSegmentConfigurationRegistrar
 	@Reference
 	private CommerceUserSegmentEntryLocalService
 		_commerceUserSegmentEntryLocalService;
+
+	@Reference(
+		target = "(model.class.name=com.liferay.commerce.user.segment.internal.search.CommerceUserSegmentEntryIndexer)")
+	private Indexer _commerceUserSegmentEntryIndexer;
 
 }

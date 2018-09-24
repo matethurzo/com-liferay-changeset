@@ -14,6 +14,10 @@
 
 package com.liferay.changeset.internal.search;
 
+import com.liferay.changeset.configuration.ChangesetConfiguration;
+import com.liferay.changeset.manager.ChangesetManager;
+import com.liferay.changeset.manager.ChangesetManagerUtil;
+import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
@@ -23,6 +27,8 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.GetterUtil;
 
 import java.util.Locale;
@@ -56,25 +62,44 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 		String entryClassName = baseModel.getModelClassName();
 		long entryClassPK = (long)baseModel.getPrimaryKeyObj();
 
+		ChangesetManager changesetManager =
+			ChangesetManagerUtil.getChangesetManager();
+
+		Optional<ChangesetConfiguration<?, ?>> changesetConfigurationOptional =
+			changesetManager.getChangesetConfigurationByResourceClassName(
+				entryClassName);
+
+		if (!changesetConfigurationOptional.isPresent()) {
+			return;
+		}
+
+		ChangesetConfiguration<?, ?> changesetConfiguration =
+			changesetConfigurationOptional.get();
+
+		String versionClassName =
+			changesetConfiguration.getVersionEntityClass().getName();
+
+		long versionId = BeanPropertiesUtil.getLongSilent(object, "versionId");
+
 		Optional<Long> changesetCollectionIdOptional =
 			ChangesetIndexingUtil.getChangesetCollectionId(
-				entryClassName, entryClassPK);
+				versionClassName, versionId);
 
 		if (!changesetCollectionIdOptional.isPresent()) {
 			return;
 		}
 
-		Optional<Long> changesetIdOptional =
+		Optional<Long> changesetEntryIdOptional =
 			ChangesetIndexingUtil.getChangesetEntryId(
-				entryClassName, entryClassPK);
+				versionClassName, versionId);
 
-		if (!changesetIdOptional.isPresent()) {
+		if (!changesetEntryIdOptional.isPresent()) {
 			return;
 		}
 
 		ChangesetIndexingUtil.index(
 			CompanyThreadLocal.getCompanyId(),
-			changesetCollectionIdOptional.get(), changesetIdOptional.get(),
+			changesetCollectionIdOptional.get(), changesetEntryIdOptional.get(),
 			baseModel);
 	}
 

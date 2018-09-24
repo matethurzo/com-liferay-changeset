@@ -73,10 +73,8 @@ public class ChangesetIndexingUtil {
 
 		Class<?> modelClass = baseModel.getModelClass();
 
-		DocumentModelMapperRegistryUtil.getDocumentModelMapper(modelClass);
-
 		if (!_changesetManager.isChangesetEnabled() ||
-			_changesetManager.isChangesetSupported(modelClass)) {
+			!_changesetManager.isChangesetSupported(modelClass)) {
 
 			return;
 		}

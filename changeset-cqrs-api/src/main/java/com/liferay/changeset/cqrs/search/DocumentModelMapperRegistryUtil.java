@@ -49,11 +49,12 @@ public class DocumentModelMapperRegistryUtil {
 		_documentModelMapperRegistry.unregister(className);
 	}
 
-	private static volatile DocumentModelMapperRegistry
-		_documentModelMapperRegistry =
-			ServiceProxyFactory.newServiceTrackedInstance(
-				DocumentModelMapperRegistry.class,
-				DocumentModelMapperRegistry.class,
-				"_documentModelMapperRegistry", false);
+	public static void setDocumentModelMapperRegistry(
+		DocumentModelMapperRegistry documentModelMapperRegistry) {
+
+		_documentModelMapperRegistry = documentModelMapperRegistry;
+	}
+
+	private static DocumentModelMapperRegistry _documentModelMapperRegistry;
 
 }

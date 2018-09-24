@@ -212,6 +212,24 @@ public class ChangesetManagerImpl implements ChangesetManager {
 		return Optional.ofNullable(_configurationsByResourceClass.get(clazz));
 	}
 
+	@Override
+	public Optional<ChangesetConfiguration<?, ?>>
+		getChangesetConfigurationByResourceClassName(String className) {
+
+		Set<Class<?>> keySet = _configurationsByResourceClass.keySet();
+
+		for (Class<?> key : keySet) {
+			String name = key.getName();
+
+			if (name.equals(className)) {
+				return Optional.ofNullable(
+					_configurationsByResourceClass.get(key));
+			}
+		}
+
+		return Optional.empty();
+	}
+
 	public Optional<ChangesetConfiguration<?, ?>>
 		getChangesetConfigurationByVersionClass(Class<?> clazz) {
 

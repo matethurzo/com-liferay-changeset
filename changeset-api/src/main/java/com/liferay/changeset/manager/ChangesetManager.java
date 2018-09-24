@@ -57,6 +57,9 @@ public interface ChangesetManager {
 		getChangesetConfigurationByResourceClass(Class<?> clazz);
 
 	public Optional<ChangesetConfiguration<?, ?>>
+	getChangesetConfigurationByResourceClassName(String className);
+
+	public Optional<ChangesetConfiguration<?, ?>>
 		getChangesetConfigurationByVersionClass(Class<?> clazz);
 
 	public Optional<ChangesetConfiguration<?, ?>>

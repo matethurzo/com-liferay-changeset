@@ -350,33 +350,6 @@ public class ChangesetManagerImpl implements ChangesetManager {
 	public void rollback(long changesetCollectionId) {
 	}
 
-	@Reference(
-		cardinality = ReferenceCardinality.MULTIPLE,
-		policy = ReferencePolicy.DYNAMIC,
-		unbind = "removeChangesetConfigurationRegistrar"
-	)
-	protected void addChangesetConfigurationRegistrar(
-		ChangesetConfigurationRegistrar<?, ?> changesetConfigurationRegistrar) {
-
-		ChangesetConfiguration<?, ?> changesetConfiguration =
-			changesetConfigurationRegistrar.changesetConfiguration(
-				new ChangesetConfigurationImpl.BuilderImpl<>());
-
-		_addChangesetConfiguration(changesetConfiguration);
-
-		_wrapIndexer(changesetConfiguration);
-	}
-
-	protected void removeChangesetConfigurationRegistrar(
-		ChangesetConfigurationRegistrar<?, ?> changesetConfigurationRegistrar) {
-
-		ChangesetConfiguration<?, ?> changesetConfiguration =
-			changesetConfigurationRegistrar.changesetConfiguration(
-				new ChangesetConfigurationImpl.BuilderImpl<>());
-
-		_removeChangesetConfiguration(changesetConfiguration);
-	}
-
 	private void _addChangesetConfiguration(
 		ChangesetConfiguration<?, ?> changesetConfiguration) {
 
@@ -390,6 +363,23 @@ public class ChangesetManagerImpl implements ChangesetManager {
 			changesetConfiguration);
 	}
 
+	@Reference(
+		cardinality = ReferenceCardinality.MULTIPLE,
+		policy = ReferencePolicy.DYNAMIC,
+		unbind = "_removeChangesetConfigurationRegistrar"
+	)
+	private void _addChangesetConfigurationRegistrar(
+		ChangesetConfigurationRegistrar<?, ?> changesetConfigurationRegistrar) {
+
+		ChangesetConfiguration<?, ?> changesetConfiguration =
+			changesetConfigurationRegistrar.changesetConfiguration(
+				new ChangesetConfigurationImpl.BuilderImpl<>());
+
+		_addChangesetConfiguration(changesetConfiguration);
+
+		_wrapIndexer(changesetConfiguration);
+	}
+
 	private void _removeChangesetConfiguration(
 		ChangesetConfiguration<?, ?> changesetConfiguration) {
 
@@ -399,6 +389,16 @@ public class ChangesetManagerImpl implements ChangesetManager {
 			changesetConfiguration.getResourceEntityClass());
 		_configurationsByVersionClass.remove(
 			changesetConfiguration.getVersionEntityClass());
+	}
+
+	private void _removeChangesetConfigurationRegistrar(
+		ChangesetConfigurationRegistrar<?, ?> changesetConfigurationRegistrar) {
+
+		ChangesetConfiguration<?, ?> changesetConfiguration =
+			changesetConfigurationRegistrar.changesetConfiguration(
+				new ChangesetConfigurationImpl.BuilderImpl<>());
+
+		_removeChangesetConfiguration(changesetConfiguration);
 	}
 
 	private void _wrapIndexer(

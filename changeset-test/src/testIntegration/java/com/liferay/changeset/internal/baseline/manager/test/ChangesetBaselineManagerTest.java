@@ -145,8 +145,8 @@ public class ChangesetBaselineManagerTest {
 				getChangesetBaselineEntriesCount();
 
 		Assert.assertEquals(
-			"Baseline contains different number of entries",
-			entriesCount, baselineEntriesCount);
+			"Baseline contains different number of entries", entriesCount,
+			baselineEntriesCount);
 	}
 
 	@Inject

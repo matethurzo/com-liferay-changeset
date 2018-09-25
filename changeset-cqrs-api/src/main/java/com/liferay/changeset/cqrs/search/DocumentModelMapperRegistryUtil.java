@@ -14,8 +14,6 @@
 
 package com.liferay.changeset.cqrs.search;
 
-import com.liferay.portal.kernel.util.ServiceProxyFactory;
-
 import java.util.Set;
 
 /**
@@ -45,14 +43,14 @@ public class DocumentModelMapperRegistryUtil {
 		_documentModelMapperRegistry.register(className, documentModelMapper);
 	}
 
-	public static void unregister(String className) {
-		_documentModelMapperRegistry.unregister(className);
-	}
-
 	public static void setDocumentModelMapperRegistry(
 		DocumentModelMapperRegistry documentModelMapperRegistry) {
 
 		_documentModelMapperRegistry = documentModelMapperRegistry;
+	}
+
+	public static void unregister(String className) {
+		_documentModelMapperRegistry.unregister(className);
 	}
 
 	private static DocumentModelMapperRegistry _documentModelMapperRegistry;

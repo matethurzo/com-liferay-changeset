@@ -102,8 +102,6 @@ public class ChangesetIndexingUtil {
 		final DocumentModelMapper documentModelMapper =
 			DocumentModelMapperRegistryUtil.getDocumentModelMapper(modelClass);
 
-		final Document mappedDocument = documentModelMapper.map(baseModel);
-
 		final Document baseDocument;
 
 		_runPostProcessor = false;
@@ -120,6 +118,8 @@ public class ChangesetIndexingUtil {
 		}
 
 		_runPostProcessor = true;
+
+		final Document mappedDocument = documentModelMapper.map(baseModel);
 
 		Document document = _mergeDocuments(baseDocument, mappedDocument);
 

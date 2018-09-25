@@ -29,12 +29,6 @@ public class ChangesetManagerUtil {
 	}
 
 	public static void setChangesetManager(ChangesetManager changesetManager) {
-		if (_changesetManager != null) {
-			changesetManager = _changesetManager;
-
-			return;
-		}
-
 		_changesetManager = changesetManager;
 	}
 

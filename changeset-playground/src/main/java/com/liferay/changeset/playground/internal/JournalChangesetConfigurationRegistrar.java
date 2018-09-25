@@ -43,10 +43,7 @@ public class JournalChangesetConfigurationRegistrar
 		).addResourceEntity(
 			JournalArticleResource.class,
 			JournalArticleResource::getResourcePrimKey,
-
-			// todo: PrimKey functions should handle Serializable
-
-			journalArticleResource -> 1L,
+			JournalArticleResource::getArticleId,
 			_journalArticleResourceLocalService
 		).addVersionEntity(
 			JournalArticle.class, JournalArticle::getResourcePrimKey,

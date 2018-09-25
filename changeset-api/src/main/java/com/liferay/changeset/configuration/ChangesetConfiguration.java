@@ -43,7 +43,8 @@ public interface ChangesetConfiguration<T, U> {
 	public Function<U, Serializable>
 		getResourceEntityIdFromVersionEntityFunction();
 
-	public Function<T, Serializable> getResourceEntityIdFunction();
+	public Function<T, Serializable>
+		getResourceEntityIdFromResourceEntityFunction();
 
 	public Class<U> getVersionEntityClass();
 

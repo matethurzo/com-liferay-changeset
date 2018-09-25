@@ -57,12 +57,14 @@ public class ChangesetConfigurationImpl<T, U>
 	}
 
 	@Override
-	public Function<U, Long> getResourceEntityIdFromVersionEntityFunction() {
+	public Function<U, Serializable>
+		getResourceEntityIdFromVersionEntityFunction() {
+
 		return _versionEntityInformation.getResourceIdFunction();
 	}
 
 	@Override
-	public Function<T, Long> getResourceEntityIdFunction() {
+	public Function<T, Serializable> getResourceEntityIdFunction() {
 		return _resouceEntityInformation.getResourceIdFunction();
 	}
 
@@ -72,12 +74,16 @@ public class ChangesetConfigurationImpl<T, U>
 	}
 
 	@Override
-	public Function<T, Long> getVersionEntityIdFromResourceEntityFunction() {
+	public Function<T, Serializable>
+		getVersionEntityIdFromResourceEntityFunction() {
+
 		return _resouceEntityInformation.getVersionIdFunction();
 	}
 
 	@Override
-	public Function<U, Long> getVersionEntityIdFromVersionEntityFunction() {
+	public Function<U, Serializable>
+		getVersionEntityIdFromVersionEntityFunction() {
+
 		return _versionEntityInformation.getVersionIdFunction();
 	}
 
@@ -136,8 +142,8 @@ public class ChangesetConfigurationImpl<T, U>
 
 			public VersionEntityStep<T, U> addResourceEntity(
 				Class<T> resourceEntityClass,
-				Function<T, Long> resourceEntityIdFunction,
-				Function<T, Long> versionEntityIdFunction,
+				Function<T, Serializable> resourceEntityIdFunction,
+				Function<T, Serializable> versionEntityIdFunction,
 				BaseLocalService resourceEntityLocalService) {
 
 				_changesetConfiguration._resouceEntityInformation =
@@ -155,8 +161,8 @@ public class ChangesetConfigurationImpl<T, U>
 
 			public BaseliningStep<T, U> addVersionEntity(
 				Class<U> versionEntityClass,
-				Function<U, Long> resourceEntityIdFunction,
-				Function<U, Long> versionEntityIdFunction,
+				Function<U, Serializable> resourceEntityIdFunction,
+				Function<U, Serializable> versionEntityIdFunction,
 				Function<U, ? extends Serializable>
 					versionEntityVersionFunction,
 				BaseLocalService versionEntityLocalService) {
@@ -190,8 +196,9 @@ public class ChangesetConfigurationImpl<T, U>
 	private static class EntityInformation<T> {
 
 		public EntityInformation(
-			Class<T> entityClass, Function<T, Long> resourceEntityIdFunction,
-			Function<T, Long> versionEntityIdFunction,
+			Class<T> entityClass,
+			Function<T, Serializable> resourceEntityIdFunction,
+			Function<T, Serializable> versionEntityIdFunction,
 			BaseLocalService entityLocalService) {
 
 			_class = entityClass;
@@ -212,7 +219,7 @@ public class ChangesetConfigurationImpl<T, U>
 			return _indexerFunction;
 		}
 
-		public Function<T, Long> getResourceIdFunction() {
+		public Function<T, Serializable> getResourceIdFunction() {
 			return _resourceIdFunction;
 		}
 
@@ -220,7 +227,7 @@ public class ChangesetConfigurationImpl<T, U>
 			return _versionFunction;
 		}
 
-		public Function<T, Long> getVersionIdFunction() {
+		public Function<T, Serializable> getVersionIdFunction() {
 			return _versionIdFunction;
 		}
 
@@ -239,9 +246,9 @@ public class ChangesetConfigurationImpl<T, U>
 		private final BaseLocalService _baseLocalService;
 		private final Class<T> _class;
 		private Function<Class<T>, Indexer<T>> _indexerFunction;
-		private final Function<T, Long> _resourceIdFunction;
+		private final Function<T, Serializable> _resourceIdFunction;
 		private Function<T, ? extends Serializable> _versionFunction;
-		private final Function<T, Long> _versionIdFunction;
+		private final Function<T, Serializable> _versionIdFunction;
 
 	}
 

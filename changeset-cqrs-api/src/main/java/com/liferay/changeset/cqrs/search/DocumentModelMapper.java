@@ -21,6 +21,8 @@ import com.liferay.portal.kernel.search.Document;
  */
 public interface DocumentModelMapper<T> {
 
+	public Class<T> getModelClass();
+
 	public T map(Document document);
 
 	public Document map(T baseModel);

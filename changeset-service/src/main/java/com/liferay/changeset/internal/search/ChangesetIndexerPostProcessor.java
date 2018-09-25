@@ -17,7 +17,6 @@ package com.liferay.changeset.internal.search;
 import com.liferay.changeset.configuration.ChangesetConfiguration;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.manager.ChangesetManagerUtil;
-import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
@@ -27,8 +26,6 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
-import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.GetterUtil;
 
 import java.util.Locale;
@@ -60,7 +57,6 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 		BaseModel baseModel = (BaseModel)object;
 
 		String entryClassName = baseModel.getModelClassName();
-		long entryClassPK = (long)baseModel.getPrimaryKeyObj();
 
 		ChangesetManager changesetManager =
 			ChangesetManagerUtil.getChangesetManager();
@@ -73,13 +69,15 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 			return;
 		}
 
-		ChangesetConfiguration<?, ?> changesetConfiguration =
+		ChangesetConfiguration changesetConfiguration =
 			changesetConfigurationOptional.get();
 
 		String versionClassName =
 			changesetConfiguration.getVersionEntityClass().getName();
 
-		long versionId = BeanPropertiesUtil.getLongSilent(object, "versionId");
+		long versionId =
+			(long)changesetConfiguration.
+				getVersionEntityIdFromResourceEntityFunction().apply(object);
 
 		Optional<Long> changesetCollectionIdOptional =
 			ChangesetIndexingUtil.getChangesetCollectionId(

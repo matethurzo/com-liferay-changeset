@@ -25,17 +25,28 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentImpl;
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.SearchException;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * @author Daniel Kocsis
  */
 public class ChangesetIndexingUtil {
+
+	public static boolean isRunPostProcessor() {
+		return _runPostProcessor;
+	}
+
+	public static void setRunPostProcessor(boolean runPostProcessor) {
+		_runPostProcessor = runPostProcessor;
+	}
 
 	public static final String CHANGESET_COLLECTION_ID_FIELD =
 		"changesetCollectionId";
@@ -95,6 +106,8 @@ public class ChangesetIndexingUtil {
 
 		final Document baseDocument;
 
+		_runPostProcessor = false;
+
 		try {
 			baseDocument = indexer.getDocument(baseModel);
 		}
@@ -105,6 +118,8 @@ public class ChangesetIndexingUtil {
 
 			return;
 		}
+
+		_runPostProcessor = true;
 
 		Document document = _mergeDocuments(baseDocument, mappedDocument);
 
@@ -128,8 +143,15 @@ public class ChangesetIndexingUtil {
 		baseDocument.getFields().forEach(
 			(key, field) -> resultDocument.add(field));
 
-		modelDocument.getFields().forEach(
-			(key, field) -> resultDocument.add(field));
+		Map<String, Field> fields = modelDocument.getFields();
+
+		Stream<Map.Entry<String, Field>> stream = fields.entrySet().stream();
+
+		stream.filter(
+			entry -> !resultDocument.hasField(entry.getKey())
+		).forEach(
+			e -> resultDocument.add(e.getValue())
+		);
 
 		return resultDocument;
 	}
@@ -148,5 +170,7 @@ public class ChangesetIndexingUtil {
 
 	private static final ChangesetManager _changesetManager =
 		ChangesetManagerUtil.getChangesetManager();
+
+	private static boolean _runPostProcessor = true;
 
 }

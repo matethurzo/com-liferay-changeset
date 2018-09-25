@@ -21,6 +21,7 @@ import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.model.ChangesetEntry;
 import com.liferay.changeset.service.ChangesetAwareServiceContext;
+import com.liferay.changeset.service.ChangesetEntryLocalService;
 import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntry;
 import com.liferay.commerce.user.segment.service.CommerceUserSegmentCriterionLocalService;
 import com.liferay.commerce.user.segment.service.CommerceUserSegmentEntryLocalService;
@@ -161,13 +162,22 @@ public class ChangesetTest {
 
 		// Check changeset content
 
+		long changesetCollectionId =
+			changesetCollectionOptional.get().getChangesetCollectionId();
+
 		List<ChangesetEntry> changesetEntries =
-			_changesetManager.getChangesetEntries(
-				changesetCollectionOptional.get().getChangesetCollectionId());
+			_changesetManager.getChangesetEntries(changesetCollectionId);
 
 		Assert.assertFalse(
 			"Changeset entries should not be empty",
 			changesetEntries.isEmpty());
+
+		long changesetEntriesCount =
+			_changesetEntryLocalService.getChangesetEntriesCount(
+				changesetCollectionId);
+
+		Assert.assertEquals(
+			"There should be only 1 changeset entry", 1, changesetEntriesCount);
 
 		// Read segment entry from local service - should return changeset one
 
@@ -203,6 +213,9 @@ public class ChangesetTest {
 
 	@Inject
 	private ChangesetBaselineManager _changesetBaselineManager;
+
+	@Inject
+	private ChangesetEntryLocalService _changesetEntryLocalService;
 
 	@Inject
 	private ChangesetManager _changesetManager;

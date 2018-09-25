@@ -18,11 +18,14 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
+import com.liferay.changeset.model.ChangesetBaselineEntry;
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.model.ChangesetEntry;
 import com.liferay.changeset.service.ChangesetAwareServiceContext;
+import com.liferay.changeset.service.ChangesetBaselineEntryLocalService;
 import com.liferay.changeset.service.ChangesetEntryLocalService;
 import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntry;
+import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntryVersion;
 import com.liferay.commerce.user.segment.service.CommerceUserSegmentCriterionLocalService;
 import com.liferay.commerce.user.segment.service.CommerceUserSegmentEntryLocalService;
 import com.liferay.commerce.user.segment.service.persistence.CommerceUserSegmentCriterionPersistence;
@@ -38,6 +41,7 @@ import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.Inject;
 
@@ -204,12 +208,39 @@ public class ChangesetTest {
 
 		Assert.assertNull(
 			"Production segment entry should be null", segmentEntry);
+
+		_changesetManager.publish(changesetCollectionId);
+
+		segmentEntry =
+			_commerceUserSegmentEntryLocalService.fetchCommerceUserSegmentEntry(
+				segmentEntry.getGroupId(), segmentEntry.getKey());
+
+		Assert.assertNotNull(
+			"Production segment entry should exist", segmentEntry);
+
+		long productionBaselineCollectionId =
+			productionBaselineOptional.get().getChangesetBaselineCollectionId();
+
+		ChangesetBaselineEntry productionBaselineEntry =
+			_changesetBaselineEntryLocalService.getChangesetBaselineEntry(
+				productionBaselineCollectionId,
+				_portal.getClassNameId(
+					CommerceUserSegmentEntryVersion.class.getName()),
+				segmentEntry.getVersionId());
+
+		Assert.assertNotNull(
+			"Production baseline entry was not created",
+			productionBaselineEntry);
 	}
 
 	@DeleteAfterTestRun
 	private Group _group;
 
 	private ServiceContext _serviceContext;
+
+	@Inject
+	private ChangesetBaselineEntryLocalService
+		_changesetBaselineEntryLocalService;
 
 	@Inject
 	private ChangesetBaselineManager _changesetBaselineManager;
@@ -239,5 +270,8 @@ public class ChangesetTest {
 	@Inject
 	private CommerceUserSegmentCriterionPersistence
 		_commerceUserSegmentCriterionPersistence;
+
+	@Inject
+	private Portal _portal;
 
 }

@@ -50,7 +50,9 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 
 	@Override
 	public void postProcessDocument(Document document, Object object) {
-		if (!(object instanceof BaseModel)) {
+		if (!(object instanceof BaseModel) ||
+			!ChangesetIndexingUtil.isRunPostProcessor()) {
+
 			return;
 		}
 

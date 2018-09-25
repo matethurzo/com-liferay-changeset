@@ -28,6 +28,7 @@ import com.liferay.commerce.user.segment.service.persistence.CommerceUserSegment
 import com.liferay.commerce.user.segment.service.persistence.CommerceUserSegmentEntryPersistence;
 import com.liferay.commerce.user.segment.service.persistence.CommerceUserSegmentEntryVersionPersistence;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -85,11 +86,12 @@ public class ChangesetTest {
 	public void tearDown() {
 		_changesetManager.disableChangesets();
 
-		_commerceUserSegmentCriterionPersistence.removeAll();
-
-		_commerceUserSegmentEntryPersistence.removeAll();
-
-		_commerceUserSegmentEntryVersionPersistence.removeAll();
+		try {
+			_commerceUserSegmentEntryLocalService.
+				deleteCommerceUserSegmentEntries(_group.getGroupId());
+		}
+		catch (PortalException pe) {
+		}
 	}
 
 	@Test
@@ -159,13 +161,13 @@ public class ChangesetTest {
 
 		// Check changeset content
 
-//		List<ChangesetEntry> changesetEntries =
-//			_changesetManager.getChangesetEntries(
-//				changesetCollectionOptional.get().getChangesetCollectionId());
+		List<ChangesetEntry> changesetEntries =
+			_changesetManager.getChangesetEntries(
+				changesetCollectionOptional.get().getChangesetCollectionId());
 
-//		Assert.assertFalse(
-//			"Changeset entries should not be empty",
-//			changesetEntries.isEmpty());
+		Assert.assertFalse(
+			"Changeset entries should not be empty",
+			changesetEntries.isEmpty());
 
 		// Read segment entry from local service - should return changeset one
 
@@ -177,18 +179,21 @@ public class ChangesetTest {
 
 		// Read segment entry from local service - should return production one
 
-//		changesetAwareServiceContext =
-//			(ChangesetAwareServiceContext)
-//				ServiceContextThreadLocal.popServiceContext();
+		changesetAwareServiceContext =
+			(ChangesetAwareServiceContext)
+				ServiceContextThreadLocal.popServiceContext();
 
-//		changesetAwareServiceContext.setChangesetCollectionId(0);
+		changesetAwareServiceContext.setChangesetCollectionId(0);
 
-//		ServiceContextThreadLocal.pushServiceContext(
-//			changesetAwareServiceContext);
+		ServiceContextThreadLocal.pushServiceContext(
+			changesetAwareServiceContext);
 
-//		segmentEntry =
-//			_commerceUserSegmentEntryLocalService.fetchCommerceUserSegmentEntry(
-//				segmentEntry.getGroupId(), segmentEntry.getKey());
+		segmentEntry =
+			_commerceUserSegmentEntryLocalService.fetchCommerceUserSegmentEntry(
+				segmentEntry.getGroupId(), segmentEntry.getKey());
+
+		Assert.assertNull(
+			"Production segment entry should be null", segmentEntry);
 	}
 
 	@DeleteAfterTestRun

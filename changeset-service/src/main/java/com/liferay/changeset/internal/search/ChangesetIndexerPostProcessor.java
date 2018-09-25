@@ -17,16 +17,16 @@ package com.liferay.changeset.internal.search;
 import com.liferay.changeset.configuration.ChangesetConfiguration;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.manager.ChangesetManagerUtil;
+import com.liferay.changeset.service.ChangesetAwareServiceContext;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
-import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.IndexerPostProcessor;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
-import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -115,30 +115,20 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 			SearchContext searchContext)
 		throws Exception {
 
-		String entryClassName = GetterUtil.getString(
-			searchContext.getAttribute(Field.ENTRY_CLASS_NAME));
-		long entryClassPK = GetterUtil.getLong(
-			searchContext.getAttribute(Field.ENTRY_CLASS_PK));
+		final ChangesetManager changesetManager =
+			ChangesetManagerUtil.getChangesetManager();
 
-		Optional<Long> chanegetCollectionIdOptional =
-			ChangesetIndexingUtil.getChangesetCollectionId(
-				entryClassName, entryClassPK);
+		if (!changesetManager.isChangesetEnabled()) {
+			return;
+		}
 
-		chanegetCollectionIdOptional.ifPresent(
-			chanegetCollectionId -> searchQuery.addRequiredTerm(
-				ChangesetIndexingUtil.CHANGESET_COLLECTION_ID_FIELD,
-				chanegetCollectionId)
-		);
+		ChangesetAwareServiceContext changesetAwareServiceContext =
+			new ChangesetAwareServiceContext(
+				ServiceContextThreadLocal.getServiceContext());
 
-		Optional<Long> changesetIdOptional =
-			ChangesetIndexingUtil.getChangesetEntryId(
-				entryClassName, entryClassPK);
-
-		changesetIdOptional.ifPresent(
-			changesetEntryId -> searchQuery.addRequiredTerm(
-				ChangesetIndexingUtil.CHANGESET_ENTRY_ID_FIELD,
-				changesetEntryId)
-		);
+		searchQuery.addRequiredTerm(
+			ChangesetIndexingUtil.CHANGESET_COLLECTION_ID_FIELD,
+			changesetAwareServiceContext.getChangesetCollectionId());
 	}
 
 	@Override

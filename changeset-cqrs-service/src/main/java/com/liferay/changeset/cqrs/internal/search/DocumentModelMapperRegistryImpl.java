@@ -16,21 +16,18 @@ package com.liferay.changeset.cqrs.internal.search;
 
 import com.liferay.changeset.cqrs.search.DocumentModelMapper;
 import com.liferay.changeset.cqrs.search.DocumentModelMapperRegistry;
-import com.liferay.osgi.util.StringPlus;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 /**
  * @author Daniel Kocsis
@@ -71,58 +68,22 @@ public class DocumentModelMapperRegistryImpl
 		_documentModelMappers.remove(className);
 	}
 
-	@Activate
-	private void _activate(
-		BundleContext bundleContext, Map<String, Object> properties) {
+	@Reference(
+		cardinality = ReferenceCardinality.MULTIPLE,
+		policy = ReferencePolicy.DYNAMIC, unbind = "_removeDocumentModelMapper"
+	)
+	private void _addDocumentModelMapper(
+		DocumentModelMapper<?> documentModelMapper) {
 
-		_documentModelMapperServiceTracker =
-			new ServiceTracker<>(
-				bundleContext, DocumentModelMapper.class.getName(),
-				new ServiceTrackerCustomizer
-					<DocumentModelMapper<?>, DocumentModelMapper<?>>() {
+		_documentModelMappers.put(
+			documentModelMapper.getModelClass().getName(), documentModelMapper);
+	}
 
-					@Override
-					public DocumentModelMapper<?> addingService(
-						ServiceReference<DocumentModelMapper<?>>
-							serviceReference) {
+	private void _removeDocumentModelMapper(
+		DocumentModelMapper<?> documentModelMapper) {
 
-						DocumentModelMapper<?> documentModelMapper =
-							bundleContext.getService(serviceReference);
-
-						List<String> modelClassNames = StringPlus.asList(
-							serviceReference.getProperty("model.class.name"));
-
-						modelClassNames.forEach(
-							modelClassName -> _documentModelMappers.put(
-								modelClassName, documentModelMapper));
-
-						return documentModelMapper;
-					}
-
-					@Override
-					public void modifiedService(
-						ServiceReference<DocumentModelMapper<?>>
-							serviceReference,
-						DocumentModelMapper<?> indexer) {
-					}
-
-					@Override
-					public void removedService(
-						ServiceReference<DocumentModelMapper<?>>
-							serviceReference,
-						DocumentModelMapper<?> documentModelMapper) {
-
-						List<String> modelClassNames = StringPlus.asList(
-							serviceReference.getProperty("model.class.name"));
-
-						modelClassNames.forEach(_documentModelMappers::remove);
-
-						bundleContext.ungetService(serviceReference);
-					}
-
-				});
-
-		_documentModelMapperServiceTracker.open();
+		_documentModelMappers.remove(
+			documentModelMapper.getModelClass().getName());
 	}
 
 	private final Map<String, DocumentModelMapper<?>> _documentModelMappers =

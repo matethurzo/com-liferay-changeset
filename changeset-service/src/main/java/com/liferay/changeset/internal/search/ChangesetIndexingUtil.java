@@ -40,14 +40,6 @@ import java.util.stream.Stream;
  */
 public class ChangesetIndexingUtil {
 
-	public static boolean isRunPostProcessor() {
-		return _runPostProcessor;
-	}
-
-	public static void setRunPostProcessor(boolean runPostProcessor) {
-		_runPostProcessor = runPostProcessor;
-	}
-
 	public static final String CHANGESET_COLLECTION_ID_FIELD =
 		"changesetCollectionId";
 
@@ -123,8 +115,10 @@ public class ChangesetIndexingUtil {
 
 		Document document = _mergeDocuments(baseDocument, mappedDocument);
 
-		_populateChangesetFields(
-			changesetCollectionId, changesetId, baseDocument);
+		_populateChangesetFields(changesetCollectionId, changesetId, document);
+
+		document.addUID(
+			"CHANGESET_COLLECTION_" + changesetCollectionId, document.getUID());
 
 		try {
 			IndexWriterHelperUtil.updateDocument(
@@ -133,6 +127,14 @@ public class ChangesetIndexingUtil {
 		catch (SearchException se) {
 			_log.error("Unable to update index document", se);
 		}
+	}
+
+	public static boolean isRunPostProcessor() {
+		return _runPostProcessor;
+	}
+
+	public static void setRunPostProcessor(boolean runPostProcessor) {
+		_runPostProcessor = runPostProcessor;
 	}
 
 	private static Document _mergeDocuments(
@@ -170,7 +172,6 @@ public class ChangesetIndexingUtil {
 
 	private static final ChangesetManager _changesetManager =
 		ChangesetManagerUtil.getChangesetManager();
-
 	private static boolean _runPostProcessor = true;
 
 }

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.changeset.internal;
+package com.liferay.changeset.internal.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
@@ -40,10 +40,10 @@ import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
-import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.Inject;
+import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.util.HashMap;
 import java.util.List;
@@ -51,8 +51,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.TransactionalTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -100,7 +98,7 @@ public class ChangesetTest {
 	}
 
 	@Test
-	public void criticalPath() throws Exception {
+	public void testCriticalPath() throws Exception {
 
 		// Enable changesets
 
@@ -156,13 +154,12 @@ public class ChangesetTest {
 
 		CommerceUserSegmentEntry segmentEntry =
 			_commerceUserSegmentEntryLocalService.addCommerceUserSegmentEntry(
-				nameMap, "USERSEGMENT", true, false, 1.0d,
-				_serviceContext);
+				nameMap, "USERSEGMENT", true, false, 1.0D, _serviceContext);
 
-//		_commerceUserSegmentCriterionLocalService.
-//			addCommerceUserSegmentCriterion(
-//				segmentEntry.getCommerceUserSegmentEntryId(), "user",
-//				StringPool.BLANK, 1.0, _serviceContext);
+		_commerceUserSegmentCriterionLocalService.
+			addCommerceUserSegmentCriterion(
+				segmentEntry.getCommerceUserSegmentEntryId(), "user",
+				StringPool.BLANK, 1.0, _serviceContext);
 
 		// Check changeset content
 
@@ -181,7 +178,7 @@ public class ChangesetTest {
 				changesetCollectionId);
 
 		Assert.assertEquals(
-			"There should be only 1 changeset entry", 1, changesetEntriesCount);
+			"There should be only 3 changeset entry", 3, changesetEntriesCount);
 
 		// Read segment entry from local service - should return changeset one
 
@@ -233,11 +230,6 @@ public class ChangesetTest {
 			productionBaselineEntry);
 	}
 
-	@DeleteAfterTestRun
-	private Group _group;
-
-	private ServiceContext _serviceContext;
-
 	@Inject
 	private ChangesetBaselineEntryLocalService
 		_changesetBaselineEntryLocalService;
@@ -256,6 +248,10 @@ public class ChangesetTest {
 		_commerceUserSegmentCriterionLocalService;
 
 	@Inject
+	private CommerceUserSegmentCriterionPersistence
+		_commerceUserSegmentCriterionPersistence;
+
+	@Inject
 	private CommerceUserSegmentEntryLocalService
 		_commerceUserSegmentEntryLocalService;
 
@@ -267,9 +263,10 @@ public class ChangesetTest {
 	private CommerceUserSegmentEntryVersionPersistence
 		_commerceUserSegmentEntryVersionPersistence;
 
-	@Inject
-	private CommerceUserSegmentCriterionPersistence
-		_commerceUserSegmentCriterionPersistence;
+	@DeleteAfterTestRun
+	private Group _group;
+
+	private ServiceContext _serviceContext;
 
 	@Inject
 	private Portal _portal;

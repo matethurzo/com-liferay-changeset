@@ -247,7 +247,8 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 		ClassedModel versionEntity = (ClassedModel)object;
 
 		Function<ClassedModel, Long> versionEntityIdFunction =
-			changesetConfiguration.getVersionEntityIdFunction();
+			changesetConfiguration.
+				getVersionEntityIdFromVersionEntityFunction();
 
 		long classPK = versionEntityIdFunction.apply(versionEntity);
 

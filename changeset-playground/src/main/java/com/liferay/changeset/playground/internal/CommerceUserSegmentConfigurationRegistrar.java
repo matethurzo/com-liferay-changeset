@@ -84,18 +84,19 @@ public class CommerceUserSegmentConfigurationRegistrar
 			}
 		).indexer(
 			clazz -> _commerceUserSegmentEntryIndexer
-	).build();
+		).build();
 	}
 
 	@Reference
 	private ChangesetCQRSManager _changesetCQRSManager;
 
+	@Reference(
+		target = "(model.class.name=com.liferay.commerce.user.segment.internal.search.CommerceUserSegmentEntryIndexer)"
+	)
+	private Indexer _commerceUserSegmentEntryIndexer;
+
 	@Reference
 	private CommerceUserSegmentEntryLocalService
 		_commerceUserSegmentEntryLocalService;
-
-	@Reference(
-		target = "(model.class.name=com.liferay.commerce.user.segment.internal.search.CommerceUserSegmentEntryIndexer)")
-	private Indexer _commerceUserSegmentEntryIndexer;
 
 }

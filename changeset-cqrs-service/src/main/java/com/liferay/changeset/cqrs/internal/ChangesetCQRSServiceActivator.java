@@ -16,6 +16,7 @@ package com.liferay.changeset.cqrs.internal;
 
 import com.liferay.changeset.cqrs.search.DocumentModelMapperRegistry;
 import com.liferay.changeset.cqrs.search.DocumentModelMapperRegistryUtil;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;

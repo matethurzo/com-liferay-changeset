@@ -15,6 +15,7 @@
 package com.liferay.changeset.internal.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.changeset.constants.ChangesetConstants;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
@@ -182,11 +183,12 @@ public class ChangesetTest {
 
 		// Read segment entry from local service - should return changeset one
 
-		segmentEntry =
+		CommerceUserSegmentEntry indexSegmentEntry =
 			_commerceUserSegmentEntryLocalService.fetchCommerceUserSegmentEntry(
 				segmentEntry.getGroupId(), segmentEntry.getKey());
 
-		Assert.assertNotNull("Segment entry should not be null", segmentEntry);
+		Assert.assertNotNull(
+			"Segment entry should not be null", indexSegmentEntry);
 
 		// Read segment entry from local service - should return production one
 
@@ -194,26 +196,27 @@ public class ChangesetTest {
 			(ChangesetAwareServiceContext)
 				ServiceContextThreadLocal.popServiceContext();
 
-		changesetAwareServiceContext.setChangesetCollectionId(0);
+		changesetAwareServiceContext.setChangesetCollectionId(
+			ChangesetConstants.PRODUCTION_BASELINE_COLLECTION_ID);
 
 		ServiceContextThreadLocal.pushServiceContext(
 			changesetAwareServiceContext);
 
-		segmentEntry =
+		CommerceUserSegmentEntry dbSgmentEntry =
 			_commerceUserSegmentEntryLocalService.fetchCommerceUserSegmentEntry(
 				segmentEntry.getGroupId(), segmentEntry.getKey());
 
 		Assert.assertNull(
-			"Production segment entry should be null", segmentEntry);
+			"Production segment entry should be null", dbSgmentEntry);
 
 		_changesetManager.publish(changesetCollectionId);
 
-		segmentEntry =
+		dbSgmentEntry =
 			_commerceUserSegmentEntryLocalService.fetchCommerceUserSegmentEntry(
 				segmentEntry.getGroupId(), segmentEntry.getKey());
 
 		Assert.assertNotNull(
-			"Production segment entry should exist", segmentEntry);
+			"Production segment entry should exist", dbSgmentEntry);
 
 		long productionBaselineCollectionId =
 			productionBaselineOptional.get().getChangesetBaselineCollectionId();
@@ -223,7 +226,7 @@ public class ChangesetTest {
 				productionBaselineCollectionId,
 				_portal.getClassNameId(
 					CommerceUserSegmentEntryVersion.class.getName()),
-				segmentEntry.getVersionId());
+				dbSgmentEntry.getVersionId());
 
 		Assert.assertNotNull(
 			"Production baseline entry was not created",

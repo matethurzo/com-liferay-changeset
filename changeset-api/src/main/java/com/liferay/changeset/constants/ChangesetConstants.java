@@ -24,4 +24,6 @@ public class ChangesetConstants {
 
 	public static final String PRODUCTION_BASELINE_NAME = "production-baseline";
 
+	public static final long PRODUCTION_BASELINE_COLLECTION_ID = Long.MIN_VALUE;
+
 }

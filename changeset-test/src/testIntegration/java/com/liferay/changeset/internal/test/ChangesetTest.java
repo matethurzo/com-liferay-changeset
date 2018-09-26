@@ -183,12 +183,12 @@ public class ChangesetTest {
 
 		// Read segment entry from local service - should return changeset one
 
-		CommerceUserSegmentEntry indexSegmentEntry =
+		CommerceUserSegmentEntry modifiedSegmentEntry =
 			_commerceUserSegmentEntryLocalService.fetchCommerceUserSegmentEntry(
 				segmentEntry.getGroupId(), segmentEntry.getKey());
 
 		Assert.assertNotNull(
-			"Segment entry should not be null", indexSegmentEntry);
+			"Segment entry should not be null", modifiedSegmentEntry);
 
 		// Read segment entry from local service - should return production one
 
@@ -202,21 +202,21 @@ public class ChangesetTest {
 		ServiceContextThreadLocal.pushServiceContext(
 			changesetAwareServiceContext);
 
-		CommerceUserSegmentEntry dbSgmentEntry =
+		CommerceUserSegmentEntry productionSegmentEntry =
 			_commerceUserSegmentEntryLocalService.fetchCommerceUserSegmentEntry(
 				segmentEntry.getGroupId(), segmentEntry.getKey());
 
 		Assert.assertNull(
-			"Production segment entry should be null", dbSgmentEntry);
+			"Production segment entry should be null", productionSegmentEntry);
 
 		_changesetManager.publish(changesetCollectionId);
 
-		dbSgmentEntry =
+		productionSegmentEntry =
 			_commerceUserSegmentEntryLocalService.fetchCommerceUserSegmentEntry(
 				segmentEntry.getGroupId(), segmentEntry.getKey());
 
 		Assert.assertNotNull(
-			"Production segment entry should exist", dbSgmentEntry);
+			"Production segment entry should exist", productionSegmentEntry);
 
 		long productionBaselineCollectionId =
 			productionBaselineOptional.get().getChangesetBaselineCollectionId();
@@ -226,7 +226,7 @@ public class ChangesetTest {
 				productionBaselineCollectionId,
 				_portal.getClassNameId(
 					CommerceUserSegmentEntryVersion.class.getName()),
-				dbSgmentEntry.getVersionId());
+				productionSegmentEntry.getVersionId());
 
 		Assert.assertNotNull(
 			"Production baseline entry was not created",

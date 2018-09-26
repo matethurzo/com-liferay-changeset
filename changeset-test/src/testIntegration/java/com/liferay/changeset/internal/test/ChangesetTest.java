@@ -179,7 +179,7 @@ public class ChangesetTest {
 				changesetCollectionId);
 
 		Assert.assertEquals(
-			"There should be only 3 changeset entry", 3, changesetEntriesCount);
+			"There should be only 2 changeset entry", 2, changesetEntriesCount);
 
 		// Read segment entry from local service - should return changeset one
 

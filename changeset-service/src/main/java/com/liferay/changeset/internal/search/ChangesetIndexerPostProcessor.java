@@ -21,7 +21,9 @@ import com.liferay.changeset.service.ChangesetAwareServiceContext;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.IndexerPostProcessor;
+import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
@@ -107,13 +109,6 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 	public void postProcessFullQuery(
 			BooleanQuery fullQuery, SearchContext searchContext)
 		throws Exception {
-	}
-
-	@Override
-	public void postProcessSearchQuery(
-			BooleanQuery searchQuery, BooleanFilter booleanFilter,
-			SearchContext searchContext)
-		throws Exception {
 
 		final ChangesetManager changesetManager =
 			ChangesetManagerUtil.getChangesetManager();
@@ -126,9 +121,22 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 			new ChangesetAwareServiceContext(
 				ServiceContextThreadLocal.getServiceContext());
 
-		searchQuery.addRequiredTerm(
+		fullQuery.addRequiredTerm(
 			ChangesetIndexingUtil.CHANGESET_COLLECTION_ID_FIELD,
 			changesetAwareServiceContext.getChangesetCollectionId());
+
+		// This is very important!
+
+		QueryConfig queryConfig = searchContext.getQueryConfig();
+
+		queryConfig.setSelectedFieldNames(Field.ANY);
+	}
+
+	@Override
+	public void postProcessSearchQuery(
+			BooleanQuery searchQuery, BooleanFilter booleanFilter,
+			SearchContext searchContext)
+		throws Exception {
 	}
 
 	@Override

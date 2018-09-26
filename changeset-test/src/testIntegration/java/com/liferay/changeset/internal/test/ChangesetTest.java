@@ -140,11 +140,14 @@ public class ChangesetTest {
 
 		// Create user segment entry
 
+		long changesetCollectionId =
+			changesetCollectionOptional.get().getChangesetCollectionId();
+
 		ChangesetAwareServiceContext changesetAwareServiceContext =
 			new ChangesetAwareServiceContext(_serviceContext);
 
 		changesetAwareServiceContext.setChangesetCollectionId(
-			changesetCollectionOptional.get().getChangesetCollectionId());
+			changesetCollectionId);
 
 		ServiceContextThreadLocal.pushServiceContext(
 			changesetAwareServiceContext);
@@ -163,9 +166,6 @@ public class ChangesetTest {
 				StringPool.BLANK, 1.0, _serviceContext);
 
 		// Check changeset content
-
-		long changesetCollectionId =
-			changesetCollectionOptional.get().getChangesetCollectionId();
 
 		List<ChangesetEntry> changesetEntries =
 			_changesetManager.getChangesetEntries(changesetCollectionId);

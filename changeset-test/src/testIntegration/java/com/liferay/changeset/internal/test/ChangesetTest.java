@@ -228,6 +228,8 @@ public class ChangesetTest {
 					CommerceUserSegmentEntryVersion.class.getName()),
 				productionSegmentEntry.getVersionId());
 
+		// TODO This last test fail as productionSegmentEntry is "empty"
+
 		Assert.assertNotNull(
 			"Production baseline entry was not created",
 			productionBaselineEntry);

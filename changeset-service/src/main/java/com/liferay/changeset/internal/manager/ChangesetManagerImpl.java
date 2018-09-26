@@ -19,6 +19,7 @@ import com.liferay.changeset.configuration.ChangesetConfigurationRegistrar;
 import com.liferay.changeset.constants.ChangesetConstants;
 import com.liferay.changeset.internal.configuration.ChangesetConfigurationImpl;
 import com.liferay.changeset.internal.search.ChangesetIndexerPostProcessor;
+import com.liferay.changeset.internal.search.ChangesetIndexingUtil;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
@@ -317,29 +318,11 @@ public class ChangesetManagerImpl implements ChangesetManager {
 
 	@Override
 	public void publish(long changesetCollectionId) {
-		long productionChangesetBaselineCollectionId =
-			_changesetBaselineManager.getProductionBaseline(
-			).map(
-				ChangesetBaselineCollection::getChangesetBaselineCollectionId
-			).orElseThrow(
-				() -> new IllegalStateException(
-					"Unable to determine production baseline")
-			);
-
 		List<ChangesetEntry> changesetEntries = getChangesetEntries(
 			changesetCollectionId);
 
 		changesetEntries.forEach(
-			changesetEntry ->
-				_changesetBaselineEntryLocalService.addChangesetBaselineEntry(
-					productionChangesetBaselineCollectionId,
-					changesetEntry.getClassNameId(),
-					changesetEntry.getClassPK(),
-					changesetEntry.getResourcePrimKey(), 1.0));
-
-		// TODO What version should we set here?
-		// TODO What else needs to be done during publish?
-
+			changesetEntry -> _publishChangesetEntry(changesetEntry));
 	}
 
 	@Override
@@ -389,6 +372,42 @@ public class ChangesetManagerImpl implements ChangesetManager {
 			changesetConfiguration.getResourceEntityClass());
 		_configurationsByVersionClass.remove(
 			changesetConfiguration.getVersionEntityClass());
+	}
+
+	private void _publishChangesetEntry(ChangesetEntry changesetEntry) {
+		long productionChangesetBaselineCollectionId =
+			_changesetBaselineManager.getProductionBaseline(
+			).map(
+				ChangesetBaselineCollection::getChangesetBaselineCollectionId
+			).orElseThrow(
+				() -> new IllegalStateException(
+					"Unable to determine production baseline")
+			);
+
+		_changesetBaselineEntryLocalService.addChangesetBaselineEntry(
+			productionChangesetBaselineCollectionId,
+			changesetEntry.getClassNameId(),
+			changesetEntry.getClassPK(),
+			changesetEntry.getResourcePrimKey(), 1.0);
+
+		// TODO What version should we set here? Is it needed at all?
+
+		String resourceEntityClassName =
+			getChangesetConfigurationByVersionClassName(
+				changesetEntry.getClassName())
+			.map(
+				ChangesetConfiguration::getResourceEntityClass
+			).map(
+				Class::getName
+			).get();
+
+		// TODO Add resourceClassNameId field to ChangesetEntry to avoid the above call
+
+		ChangesetIndexingUtil.index(
+			CompanyThreadLocal.getCompanyId(),
+			ChangesetConstants.PRODUCTION_BASELINE_COLLECTION_ID,
+			changesetEntry.getChangesetEntryId(),
+			resourceEntityClassName, changesetEntry.getResourcePrimKey());
 	}
 
 	private void _removeChangesetConfigurationRegistrar(

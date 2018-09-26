@@ -20,9 +20,11 @@ import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.manager.ChangesetManagerUtil;
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.model.ChangesetEntry;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
@@ -30,6 +32,8 @@ import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.SearchException;
+import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.PersistedModelLocalServiceRegistryUtil;
 
 import java.util.Map;
 import java.util.Optional;
@@ -71,7 +75,33 @@ public class ChangesetIndexingUtil {
 	}
 
 	public static void index(
-		long companyId, long changesetCollectionId, long changesetId,
+		long companyId, long changesetCollectionId, long changesetEntryId,
+		String className, long classPK) {
+
+		PersistedModelLocalService persistedModelLocalService =
+			PersistedModelLocalServiceRegistryUtil.
+				getPersistedModelLocalService(
+					className);
+
+		try {
+			PersistedModel persistedModel =
+				persistedModelLocalService.getPersistedModel(classPK);
+
+			BaseModel baseModel = (BaseModel)persistedModel;
+
+			index(
+				companyId, changesetCollectionId, changesetEntryId, baseModel);
+		}
+		catch (PortalException pe) {
+			_log.error(
+				"Unable to get model object for indexing: " + className + ", "
+					+ classPK,
+				pe);
+		}
+	}
+
+	public static void index(
+		long companyId, long changesetCollectionId, long changesetEntryId,
 		BaseModel baseModel) {
 
 		Class<?> modelClass = baseModel.getModelClass();
@@ -115,10 +145,12 @@ public class ChangesetIndexingUtil {
 
 		Document document = _mergeDocuments(baseDocument, mappedDocument);
 
-		_populateChangesetFields(changesetCollectionId, changesetId, document);
+		_populateChangesetFields(
+			changesetCollectionId, changesetEntryId, document);
 
 		document.addUID(
-			"CHANGESET_COLLECTION_" + changesetCollectionId, document.getUID());
+			"CHANGESET_COLLECTION_" + changesetCollectionId,
+			"CHANGESET_COLLECTION_" + changesetEntryId, document.getUID());
 
 		try {
 			IndexWriterHelperUtil.updateDocument(
@@ -159,12 +191,12 @@ public class ChangesetIndexingUtil {
 	}
 
 	private static void _populateChangesetFields(
-		long changesetCollectionId, long changesetId, Document document) {
+		long changesetCollectionId, long changesetEntryId, Document document) {
 
 		document.addKeyword(
 			CHANGESET_COLLECTION_ID_FIELD, changesetCollectionId);
 
-		document.addKeyword(CHANGESET_ENTRY_ID_FIELD, changesetId);
+		document.addKeyword(CHANGESET_ENTRY_ID_FIELD, changesetEntryId);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

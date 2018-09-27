@@ -135,6 +135,16 @@ public class ChangesetManagerImpl implements ChangesetManager {
 
 	@Override
 	public void disableChangesets() {
+		if (!isChangesetEnabled()) {
+			if(_log.isWarnEnabled()) {
+				_log.warn(
+					"Unable to disable changesets because it is not enabled " +
+						"currently");
+			}
+
+			return;
+		}
+
 		_changesetBaselineManager.removeAllBaselines();
 
 		List<ChangesetCollection> changesetCollections =
@@ -156,6 +166,16 @@ public class ChangesetManagerImpl implements ChangesetManager {
 
 	@Override
 	public void enableChangesets() {
+		if (isChangesetEnabled()) {
+			if(_log.isWarnEnabled()) {
+				_log.warn(
+					"Unable to enable changesets because it is already " +
+						"enabled");
+			}
+
+			return;
+		}
+
 		_changesetBaselineManager.createBaseline(
 			() -> ChangesetConstants.PRODUCTION_BASELINE_NAME);
 	}

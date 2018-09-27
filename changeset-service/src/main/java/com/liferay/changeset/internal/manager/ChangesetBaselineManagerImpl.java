@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ClassedModel;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.Portal;
 
@@ -71,23 +72,12 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 		Supplier<? extends Serializable> baselineIdSupplier,
 		ChangesetBaselineCollection copyChangesetBaselineCollection) {
 
-		User defaultUser = null;
-
-		try {
-			defaultUser = _userLocalService.getDefaultUser(
-				CompanyThreadLocal.getCompanyId());
-		}
-		catch (PortalException pe) {
-			_log.error("Unable to get default user", pe);
-
-			throw new IllegalStateException(
-				"Unable to determine default user", pe);
-		}
+		// todo: need to figure out a proper way to user handling
 
 		final ChangesetBaselineCollection changesetBaselineCollection =
 			_changesetBaselineCollectionLocalService.
 				addChangesetBaselineCollection(
-					defaultUser.getUserId(),
+					PrincipalThreadLocal.getUserId(),
 					String.valueOf(baselineIdSupplier.get()));
 
 		if (copyChangesetBaselineCollection == null) {
@@ -297,7 +287,13 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 		Collection<ChangesetConfiguration<?, ?>> values =
 			changesetConfigurations.values();
 
-		Stream<ChangesetConfiguration<?, ?>> stream = values.parallelStream();
+		// todo: _addChangesetBaselineEntry calls local services.
+		// As ParallelStream uses a ForkJoinPool behind the scenes with multiple
+		// threads and Spring transaction management uses ThreadLocals for
+		// storing transaction state.
+		// --> Calling services from parallel streams won't work :)
+
+		Stream<ChangesetConfiguration<?, ?>> stream = values.stream();
 
 		stream.filter(
 			Objects::nonNull

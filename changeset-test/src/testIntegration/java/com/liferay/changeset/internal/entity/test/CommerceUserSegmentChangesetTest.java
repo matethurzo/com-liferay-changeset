@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.changeset.internal.test;
+package com.liferay.changeset.internal.entity.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.changeset.constants.ChangesetConstants;
@@ -64,7 +64,7 @@ import org.junit.runner.RunWith;
  * @author Mate Thurzo
  */
 @RunWith(Arquillian.class)
-public class ChangesetTest {
+public class CommerceUserSegmentChangesetTest {
 
 	@ClassRule
 	@Rule

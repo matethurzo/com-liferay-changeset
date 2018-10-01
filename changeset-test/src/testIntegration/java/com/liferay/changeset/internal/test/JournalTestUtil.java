@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.changeset.internal.baseline.manager.test;
+package com.liferay.changeset.internal.test;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleConstants;

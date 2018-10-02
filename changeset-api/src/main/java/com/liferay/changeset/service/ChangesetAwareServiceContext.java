@@ -23,7 +23,10 @@ import com.liferay.portal.kernel.util.GetterUtil;
 public class ChangesetAwareServiceContext extends ServiceContext {
 
 	public ChangesetAwareServiceContext(ServiceContext serviceContext) {
-		if (serviceContext instanceof ChangesetAwareServiceContext) {
+		if (serviceContext == null) {
+			_serviceContext = new ServiceContext();
+		}
+		else if (serviceContext instanceof ChangesetAwareServiceContext) {
 			ChangesetAwareServiceContext changesetAwareServiceContext =
 				(ChangesetAwareServiceContext)serviceContext;
 

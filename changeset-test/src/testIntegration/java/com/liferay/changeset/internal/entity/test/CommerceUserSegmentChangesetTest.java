@@ -143,14 +143,9 @@ public class CommerceUserSegmentChangesetTest {
 		long changesetCollectionId =
 			changesetCollectionOptional.get().getChangesetCollectionId();
 
-		ChangesetAwareServiceContext changesetAwareServiceContext =
-			new ChangesetAwareServiceContext(_serviceContext);
+		_changesetManager.checkout(changesetCollectionId);
 
-		changesetAwareServiceContext.setChangesetCollectionId(
-			changesetCollectionId);
-
-		ServiceContextThreadLocal.pushServiceContext(
-			changesetAwareServiceContext);
+		_serviceContext = ServiceContextThreadLocal.getServiceContext();
 
 		Map<Locale, String> nameMap = new HashMap<>();
 
@@ -192,15 +187,8 @@ public class CommerceUserSegmentChangesetTest {
 
 		// Read segment entry from local service - should return production one
 
-		changesetAwareServiceContext =
-			(ChangesetAwareServiceContext)
-				ServiceContextThreadLocal.popServiceContext();
-
-		changesetAwareServiceContext.setChangesetCollectionId(
+		_changesetManager.checkout(
 			ChangesetConstants.PRODUCTION_BASELINE_COLLECTION_ID);
-
-		ServiceContextThreadLocal.pushServiceContext(
-			changesetAwareServiceContext);
 
 		CommerceUserSegmentEntry productionSegmentEntry =
 			_commerceUserSegmentEntryLocalService.fetchCommerceUserSegmentEntry(

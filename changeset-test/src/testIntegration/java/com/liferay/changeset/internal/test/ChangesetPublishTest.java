@@ -194,9 +194,9 @@ public class ChangesetPublishTest {
 		CommerceUserSegmentEntry commerceUserSegmentEntry;
 
 		try {
-			_serviceContext.setChangesetCollectionId(changesetCollectionId);
+			_changesetManager.checkout(changesetCollectionId);
 
-			ServiceContextThreadLocal.pushServiceContext(_serviceContext);
+			_serviceContext = ServiceContextThreadLocal.getServiceContext();
 
 			final Map<Locale, String> nameMap = new HashMap<>();
 
@@ -210,9 +210,9 @@ public class ChangesetPublishTest {
 						nameMap, key, true, false, 1.0D, _serviceContext);
 		}
 		finally {
-			ServiceContextThreadLocal.popServiceContext();
+			_changesetManager.checkout(0L);
 
-			_serviceContext.setChangesetCollectionId(0);
+			_serviceContext = ServiceContextThreadLocal.popServiceContext();
 		}
 
 		return commerceUserSegmentEntry;
@@ -233,6 +233,6 @@ public class ChangesetPublishTest {
 	@DeleteAfterTestRun
 	private Group _group;
 
-	private ChangesetAwareServiceContext _serviceContext;
+	private ServiceContext _serviceContext;
 
 }

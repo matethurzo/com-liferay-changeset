@@ -37,7 +37,12 @@ public interface ChangesetManager {
 		long changesetCollectionId, long resourcePrimKey, String className,
 		long classPK);
 
+	public void checkout(long changesetCollectionId);
+
 	public Optional<ChangesetCollection> create(
+		String name, String description);
+
+	public Optional<ChangesetCollection> createAndCheckout(
 		String name, String description);
 
 	public void disableChangesets();

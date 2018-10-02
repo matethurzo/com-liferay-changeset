@@ -25,6 +25,7 @@ import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.model.ChangesetEntry;
+import com.liferay.changeset.service.ChangesetAwareServiceContext;
 import com.liferay.changeset.service.ChangesetBaselineEntryLocalService;
 import com.liferay.changeset.service.ChangesetCollectionLocalService;
 import com.liferay.changeset.service.ChangesetEntryLocalService;
@@ -41,6 +42,8 @@ import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerPostProcessor;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.Portal;
 
 import java.util.Dictionary;
@@ -53,6 +56,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import com.liferay.portal.kernel.util.Validator;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -102,6 +106,23 @@ public class ChangesetManagerImpl implements ChangesetManager {
 	}
 
 	@Override
+	public void checkout(long changesetCollectionId) {
+		if (Validator.isNull(changesetCollectionId)) {
+			return;
+		}
+
+		ChangesetAwareServiceContext changesetAwareServiceContext =
+			new ChangesetAwareServiceContext(
+				ServiceContextThreadLocal.popServiceContext());
+
+		changesetAwareServiceContext.setChangesetCollectionId(
+			changesetCollectionId);
+
+		ServiceContextThreadLocal.pushServiceContext(
+			changesetAwareServiceContext);
+	}
+
+	@Override
 	public Optional<ChangesetCollection> create(
 		String name, String description) {
 
@@ -131,6 +152,21 @@ public class ChangesetManagerImpl implements ChangesetManager {
 		}
 
 		return Optional.ofNullable(changesetCollection);
+	}
+
+	public Optional<ChangesetCollection> createAndCheckout(
+		String name, String description) {
+
+		Optional<ChangesetCollection> changesetCollectionOptional = create(
+			name, description);
+
+		checkout(
+			changesetCollectionOptional
+				.map(
+					ChangesetCollection::getChangesetCollectionId
+				).get());
+
+		return changesetCollectionOptional;
 	}
 
 	@Override

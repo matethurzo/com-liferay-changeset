@@ -25,7 +25,6 @@ import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.model.ChangesetEntry;
-import com.liferay.changeset.service.ChangesetAwareServiceContext;
 import com.liferay.changeset.service.ChangesetBaselineEntryLocalService;
 import com.liferay.changeset.service.ChangesetCollectionLocalService;
 import com.liferay.changeset.service.ChangesetEntryLocalService;
@@ -44,6 +43,7 @@ import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Portal;
 
 import java.util.Dictionary;
@@ -111,15 +111,17 @@ public class ChangesetManagerImpl implements ChangesetManager {
 			return;
 		}
 
-		ChangesetAwareServiceContext changesetAwareServiceContext =
-			new ChangesetAwareServiceContext(
-				ServiceContextThreadLocal.popServiceContext());
+		ServiceContext serviceContext =
+			ServiceContextThreadLocal.popServiceContext();
 
-		changesetAwareServiceContext.setChangesetCollectionId(
-			changesetCollectionId);
+		if (serviceContext == null) {
+			serviceContext = new ServiceContext();
+		}
 
-		ServiceContextThreadLocal.pushServiceContext(
-			changesetAwareServiceContext);
+		serviceContext.setAttribute(
+			_CHANGESET_COLLECTION_ID_ATTRIBUTE, changesetCollectionId);
+
+		ServiceContextThreadLocal.pushServiceContext(serviceContext);
 	}
 
 	@Override
@@ -350,6 +352,21 @@ public class ChangesetManagerImpl implements ChangesetManager {
 	}
 
 	@Override
+	public Optional<Long> getCurrentChangesetCollectionId() {
+		ServiceContext serviceContext =
+			ServiceContextThreadLocal.popServiceContext();
+
+		if (serviceContext == null) {
+			return Optional.empty();
+		}
+
+		return Optional.of(
+			GetterUtil.getLong(
+				serviceContext.getAttribute(
+					_CHANGESET_COLLECTION_ID_ATTRIBUTE)));
+	}
+
+	@Override
 	public boolean isChangesetEnabled() {
 		Optional<ChangesetBaselineCollection> productionBaselineOptional =
 			_changesetBaselineManager.getProductionBaseline();
@@ -504,6 +521,9 @@ public class ChangesetManagerImpl implements ChangesetManager {
 			IndexerPostProcessor.class, _CHANGESET_INDEXER_POST_PROCESSOR,
 			properties);
 	}
+
+	private static final String _CHANGESET_COLLECTION_ID_ATTRIBUTE =
+		"changesetCollectionId";
 
 	private static final ChangesetIndexerPostProcessor
 		_CHANGESET_INDEXER_POST_PROCESSOR = new ChangesetIndexerPostProcessor();

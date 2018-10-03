@@ -22,7 +22,6 @@ import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.changeset.model.ChangesetBaselineEntry;
 import com.liferay.changeset.model.ChangesetCollection;
-import com.liferay.changeset.service.ChangesetAwareServiceContext;
 import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntry;
 import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntryVersion;
 import com.liferay.commerce.user.segment.service.CommerceUserSegmentEntryLocalService;
@@ -69,8 +68,7 @@ public class ChangesetPublishTest {
 
 		_group = GroupTestUtil.addGroup();
 
-		_serviceContext = new ChangesetAwareServiceContext(
-			new ServiceContext());
+		_serviceContext = new ServiceContext();
 
 		_serviceContext.setScopeGroupId(_group.getGroupId());
 		_serviceContext.setUserId(TestPropsValues.getUserId());

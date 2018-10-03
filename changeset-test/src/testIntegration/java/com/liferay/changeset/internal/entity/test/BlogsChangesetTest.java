@@ -17,7 +17,6 @@ package com.liferay.changeset.internal.entity.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.blogs.service.BlogsEntryLocalService;
 import com.liferay.changeset.manager.ChangesetManager;
-import com.liferay.changeset.service.ChangesetAwareServiceContext;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -55,8 +54,7 @@ public class BlogsChangesetTest {
 
 		_group = GroupTestUtil.addGroup();
 
-		_serviceContext = new ChangesetAwareServiceContext(
-			new ServiceContext());
+		_serviceContext = new ServiceContext();
 
 		_serviceContext.setScopeGroupId(_group.getGroupId());
 		_serviceContext.setUserId(TestPropsValues.getUserId());

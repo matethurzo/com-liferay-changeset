@@ -23,7 +23,6 @@ import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.changeset.model.ChangesetBaselineEntry;
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.model.ChangesetEntry;
-import com.liferay.changeset.service.ChangesetAwareServiceContext;
 import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntry;
 import com.liferay.commerce.user.segment.service.CommerceUserSegmentEntryLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -72,8 +71,7 @@ public class ChangesetCreationTest {
 
 		_group = GroupTestUtil.addGroup();
 
-		_serviceContext = new ChangesetAwareServiceContext(
-			new ServiceContext());
+		_serviceContext = new ServiceContext();
 
 		_serviceContext.setScopeGroupId(_group.getGroupId());
 		_serviceContext.setUserId(TestPropsValues.getUserId());

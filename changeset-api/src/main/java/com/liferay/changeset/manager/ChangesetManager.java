@@ -78,6 +78,8 @@ public interface ChangesetManager {
 	public Optional<ChangesetEntry> getChangesetEntry(
 		String className, long classPK);
 
+	public Optional<Long> getCurrentChangesetCollectionId();
+
 	public boolean isChangesetEnabled();
 
 	public boolean isChangesetSupported(Class<?> clazz);

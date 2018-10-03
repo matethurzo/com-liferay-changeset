@@ -17,7 +17,6 @@ package com.liferay.changeset.internal.search;
 import com.liferay.changeset.configuration.ChangesetConfiguration;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.manager.ChangesetManagerUtil;
-import com.liferay.changeset.service.ChangesetAwareServiceContext;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
@@ -28,7 +27,6 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
-import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -117,13 +115,9 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 			return;
 		}
 
-		ChangesetAwareServiceContext changesetAwareServiceContext =
-			new ChangesetAwareServiceContext(
-				ServiceContextThreadLocal.getServiceContext());
-
 		fullQuery.addRequiredTerm(
 			ChangesetIndexingUtil.CHANGESET_COLLECTION_ID_FIELD,
-			changesetAwareServiceContext.getChangesetCollectionId());
+			changesetManager.getCurrentChangesetCollectionId().get());
 
 		// This is very important!
 

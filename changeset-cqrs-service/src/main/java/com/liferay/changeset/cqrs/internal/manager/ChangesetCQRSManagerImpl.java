@@ -16,7 +16,6 @@ package com.liferay.changeset.cqrs.internal.manager;
 
 import com.liferay.changeset.constants.ChangesetConstants;
 import com.liferay.changeset.cqrs.manager.ChangesetCQRSManager;
-import com.liferay.changeset.service.ChangesetAwareServiceContext;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -34,8 +33,7 @@ public class ChangesetCQRSManagerImpl implements ChangesetCQRSManager {
 			ServiceContextThreadLocal.popServiceContext();
 
 		if (serviceContext == null) {
-			serviceContext = new ChangesetAwareServiceContext(
-				new ServiceContext());
+			serviceContext = new ServiceContext();
 		}
 
 		serviceContext.setAttribute(
@@ -49,8 +47,7 @@ public class ChangesetCQRSManagerImpl implements ChangesetCQRSManager {
 			ServiceContextThreadLocal.popServiceContext();
 
 		if (serviceContext == null) {
-			serviceContext = new ChangesetAwareServiceContext(
-				new ServiceContext());
+			serviceContext = new ServiceContext();
 		}
 
 		serviceContext.setAttribute(

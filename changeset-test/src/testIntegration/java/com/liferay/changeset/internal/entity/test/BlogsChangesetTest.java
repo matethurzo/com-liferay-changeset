@@ -88,6 +88,7 @@ public class BlogsChangesetTest {
 
 	@Test
 	public void testCriticalPath() throws Exception {
+
 		// Enable changesets
 
 		_changesetManager.enableChangesets();
@@ -219,9 +220,9 @@ public class BlogsChangesetTest {
 	@DeleteAfterTestRun
 	private Group _group;
 
-	private ServiceContext _serviceContext;
-
 	@Inject
 	private Portal _portal;
+
+	private ServiceContext _serviceContext;
 
 }

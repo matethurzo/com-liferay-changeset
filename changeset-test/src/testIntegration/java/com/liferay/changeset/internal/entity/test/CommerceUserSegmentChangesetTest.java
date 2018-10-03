@@ -257,9 +257,9 @@ public class CommerceUserSegmentChangesetTest {
 	@DeleteAfterTestRun
 	private Group _group;
 
-	private ServiceContext _serviceContext;
-
 	@Inject
 	private Portal _portal;
+
+	private ServiceContext _serviceContext;
 
 }

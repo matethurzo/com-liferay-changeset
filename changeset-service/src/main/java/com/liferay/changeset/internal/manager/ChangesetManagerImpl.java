@@ -354,7 +354,7 @@ public class ChangesetManagerImpl implements ChangesetManager {
 	@Override
 	public Optional<Long> getCurrentChangesetCollectionId() {
 		ServiceContext serviceContext =
-			ServiceContextThreadLocal.popServiceContext();
+			ServiceContextThreadLocal.getServiceContext();
 
 		if (serviceContext == null) {
 			return Optional.empty();

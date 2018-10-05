@@ -33,7 +33,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Gergely Mathe
  */
 @Component(immediate = true, service = ChangesetConfigurationRegistrar.class)
-public class BlogsConfigurationRegistrar
+public class BlogsChangesetConfigurationRegistrar
 	implements ChangesetConfigurationRegistrar<BlogsEntry, BlogsEntry> {
 
 	@Override

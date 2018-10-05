@@ -192,8 +192,7 @@ public class BlogsChangesetTest {
 		ChangesetBaselineEntry productionBaselineEntry =
 			_changesetBaselineEntryLocalService.getChangesetBaselineEntry(
 				productionBaselineCollectionId,
-				_portal.getClassNameId(
-					BlogsEntry.class.getName()), // TODO Replace this with BlogsEntryVersion.class.getName()
+				_portal.getClassNameId(BlogsEntry.class.getName()), // TODO Replace this with BlogsEntryVersion.class.getName()
 				0L); // TODO Replace this with productionBlogsEntry.getVersionId()
 
 		Assert.assertNotNull(

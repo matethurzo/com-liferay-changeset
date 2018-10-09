@@ -112,17 +112,8 @@ public class ChangesetIndexingUtil {
 			return;
 		}
 
-		final Indexer indexer = IndexerRegistryUtil.getIndexer(modelClass);
-
-		if (indexer == null) {
-
-			// todo: what?
-
-			return;
-		}
-
-		final DocumentModelMapper documentModelMapper =
-			DocumentModelMapperRegistryUtil.getDocumentModelMapper(modelClass);
+		final Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(
+			modelClass);
 
 		final Document baseDocument;
 
@@ -140,6 +131,9 @@ public class ChangesetIndexingUtil {
 		}
 
 		_runPostProcessor = true;
+
+		final DocumentModelMapper documentModelMapper =
+			DocumentModelMapperRegistryUtil.getDocumentModelMapper(modelClass);
 
 		final Document mappedDocument = documentModelMapper.map(baseModel);
 

@@ -16,11 +16,13 @@ package com.liferay.changeset.cqrs.internal.manager;
 
 import com.liferay.changeset.constants.ChangesetConstants;
 import com.liferay.changeset.cqrs.manager.ChangesetCQRSManager;
+import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.GetterUtil;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Gergely Mathe
@@ -57,6 +59,10 @@ public class ChangesetCQRSManagerImpl implements ChangesetCQRSManager {
 	}
 
 	public boolean isCQRSRepositoryEnabled() {
+		if (!_changesetManager.isChangesetEnabled()) {
+			return false;
+		}
+
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
 
@@ -69,5 +75,8 @@ public class ChangesetCQRSManagerImpl implements ChangesetCQRSManager {
 				ChangesetConstants.CQRS_REPOSITORY_ENABLED),
 			true);
 	}
+
+	@Reference
+	private ChangesetManager _changesetManager;
 
 }

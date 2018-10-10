@@ -196,7 +196,8 @@ public class LayoutChangesetTest {
 		ChangesetBaselineEntry productionBaselineEntry =
 			_changesetBaselineEntryLocalService.getChangesetBaselineEntry(
 				productionBaselineCollectionId,
-				_portal.getClassNameId(Layout.class.getName()), // TODO Replace this with LayoutVersion.class.getName()
+				_portal.getClassNameId(Layout.class.getName()),
+				// TODO Replace this with LayoutVersion.class.getName()
 				0L); // TODO Replace this with productionLayout.getVersionId()
 
 		Assert.assertNotNull(

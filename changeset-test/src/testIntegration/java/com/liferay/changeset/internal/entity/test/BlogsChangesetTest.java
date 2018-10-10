@@ -16,6 +16,7 @@ package com.liferay.changeset.internal.entity.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.blogs.model.BlogsEntry;
+import com.liferay.blogs.model.BlogsEntryVersion;
 import com.liferay.blogs.service.BlogsEntryLocalService;
 import com.liferay.changeset.constants.ChangesetConstants;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
@@ -192,8 +193,8 @@ public class BlogsChangesetTest {
 		ChangesetBaselineEntry productionBaselineEntry =
 			_changesetBaselineEntryLocalService.getChangesetBaselineEntry(
 				productionBaselineCollectionId,
-				_portal.getClassNameId(BlogsEntry.class.getName()), // TODO Replace this with BlogsEntryVersion.class.getName()
-				0L); // TODO Replace this with productionBlogsEntry.getVersionId()
+				_portal.getClassNameId(BlogsEntryVersion.class.getName()),
+				productionBlogsEntry.getVersionId());
 
 		Assert.assertNotNull(
 			"Production baseline entry was not created",

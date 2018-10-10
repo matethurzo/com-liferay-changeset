@@ -15,6 +15,7 @@
 package com.liferay.changeset.playground.internal;
 
 import com.liferay.blogs.model.BlogsEntry;
+import com.liferay.blogs.model.BlogsEntryVersion;
 import com.liferay.blogs.service.BlogsEntryLocalService;
 import com.liferay.changeset.configuration.ChangesetConfiguration;
 import com.liferay.changeset.configuration.ChangesetConfigurationRegistrar;
@@ -34,25 +35,21 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(immediate = true, service = ChangesetConfigurationRegistrar.class)
 public class BlogsChangesetConfigurationRegistrar
-	implements ChangesetConfigurationRegistrar<BlogsEntry, BlogsEntry> {
+	implements ChangesetConfigurationRegistrar<BlogsEntry, BlogsEntryVersion> {
 
 	@Override
 	public ChangesetConfiguration changesetConfiguration(
-		ChangesetConfiguration.Builder<BlogsEntry, BlogsEntry> builder) { // TODO Replace with <BlogsEntry, BlogsEntryVersion>
+		ChangesetConfiguration.Builder<BlogsEntry, BlogsEntryVersion> builder) {
 
 		return builder.identifier(
 			"blogs"
 		).addResourceEntity(
-			BlogsEntry.class,
-			BlogsEntry::getEntryId,
-			BlogsEntry::getEntryId, // TODO Replace with BlogsEntry::getVersionId
+			BlogsEntry.class, BlogsEntry::getEntryId, BlogsEntry::getVersionId,
 			_blogsEntryLocalService
 		).addVersionEntity(
-			BlogsEntry.class, // TODO Replace with BlogsEntryVersion.class
-			blogsEntry -> 0L, // TODO Replace with BlogsEntryVersion::getEntryId
-			blogsEntry -> 0L, // TODO Replace with BlogsEntryVersion::getVersionId
-			blogsEntry -> 1.0D, // TODO Replace with BlogsEntryVersion::getVersion
-			null
+			BlogsEntryVersion.class, BlogsEntryVersion::getEntryId,
+			BlogsEntryVersion::getBlogsEntryVersionId,
+			BlogsEntryVersion::getVersion, null
 		).baselining(
 			() -> {
 				_changesetCQRSManager.disableCQRSRepository();
@@ -70,9 +67,6 @@ public class BlogsChangesetConfigurationRegistrar
 		).build();
 	}
 
-	@Reference
-	private ChangesetCQRSManager _changesetCQRSManager;
-
 	@Reference(
 		target = "(model.class.name=com.liferay.blogs.internal.search.BlogsEntryIndexer)"
 	)
@@ -80,5 +74,8 @@ public class BlogsChangesetConfigurationRegistrar
 
 	@Reference
 	private BlogsEntryLocalService _blogsEntryLocalService;
+
+	@Reference
+	private ChangesetCQRSManager _changesetCQRSManager;
 
 }

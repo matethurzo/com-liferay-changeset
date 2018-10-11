@@ -17,10 +17,10 @@ package com.liferay.changeset.playground.internal;
 import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.blogs.model.BlogsEntryVersion;
 import com.liferay.blogs.service.BlogsEntryLocalService;
+import com.liferay.blogs.service.persistence.BlogsEntryVersionPersistence;
 import com.liferay.changeset.configuration.ChangesetConfiguration;
 import com.liferay.changeset.configuration.ChangesetConfigurationRegistrar;
 import com.liferay.changeset.cqrs.manager.ChangesetCQRSManager;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.search.Indexer;
 
 import java.util.List;
@@ -54,13 +54,12 @@ public class BlogsChangesetConfigurationRegistrar
 			() -> {
 				_changesetCQRSManager.disableCQRSRepository();
 
-				List<BlogsEntry> blogsEntries =
-					_blogsEntryLocalService.getBlogsEntries(
-						QueryUtil.ALL_POS, QueryUtil.ALL_POS); // TODO Extend with fetching and returning latest versions
+				List<BlogsEntryVersion> blogsEntryVersions =
+					_blogsEntryLocalService.getBlogsEntryVersions();
 
 				_changesetCQRSManager.enableCQRSRepository();
 
-				return blogsEntries;
+				return blogsEntryVersions;
 			}
 		).indexer(
 			clazz -> _blogsEntryIndexer
@@ -74,6 +73,9 @@ public class BlogsChangesetConfigurationRegistrar
 
 	@Reference
 	private BlogsEntryLocalService _blogsEntryLocalService;
+
+	@Reference
+	private BlogsEntryVersionPersistence _blogsEntryVersionPersistence;
 
 	@Reference
 	private ChangesetCQRSManager _changesetCQRSManager;

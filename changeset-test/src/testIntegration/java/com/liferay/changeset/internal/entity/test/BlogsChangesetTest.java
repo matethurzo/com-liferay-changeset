@@ -95,8 +95,8 @@ public class BlogsChangesetTest {
 		_changesetManager.enableChangesets();
 
 		Assert.assertTrue(
-			"Changeset support for blogs entry is needed",
-			_changesetManager.isChangesetSupported(BlogsEntry.class));
+			"Changeset support for blogs entry version is needed",
+			_changesetManager.isChangesetSupported(BlogsEntryVersion.class));
 
 		// Check production baseline
 

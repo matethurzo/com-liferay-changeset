@@ -22,8 +22,8 @@ public class ChangesetConstants {
 	public static final String CQRS_REPOSITORY_ENABLED =
 		"cqrs-repository-enabled";
 
-	public static final String PRODUCTION_BASELINE_NAME = "production-baseline";
-
 	public static final long PRODUCTION_BASELINE_COLLECTION_ID = Long.MIN_VALUE;
+
+	public static final String PRODUCTION_BASELINE_NAME = "production-baseline";
 
 }

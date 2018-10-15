@@ -57,17 +57,17 @@ public class ChangesetConfigurationImpl<T, U>
 	}
 
 	@Override
-	public Function<U, Serializable>
-		getResourceEntityIdFromVersionEntityFunction() {
-
-		return _versionEntityInformation.getResourceIdFunction();
-	}
-
-	@Override
 	public Function<T, Serializable>
 		getResourceEntityIdFromResourceEntityFunction() {
 
 		return _resouceEntityInformation.getResourceIdFunction();
+	}
+
+	@Override
+	public Function<U, Serializable>
+		getResourceEntityIdFromVersionEntityFunction() {
+
+		return _versionEntityInformation.getResourceIdFunction();
 	}
 
 	@Override

@@ -72,6 +72,8 @@ public interface ChangesetManager {
 
 	public List<ChangesetEntry> getChangesetEntries(long changesetCollectionId);
 
+	public Optional<ChangesetEntry> getChangesetEntry(long changesetEntryId);
+
 	public Optional<ChangesetEntry> getChangesetEntry(
 		long classNameId, long classPK);
 

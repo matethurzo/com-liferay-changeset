@@ -45,6 +45,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -56,7 +57,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import com.liferay.portal.kernel.util.Validator;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -163,10 +163,9 @@ public class ChangesetManagerImpl implements ChangesetManager {
 			name, description);
 
 		checkout(
-			changesetCollectionOptional
-				.map(
-					ChangesetCollection::getChangesetCollectionId
-				).get());
+			changesetCollectionOptional.map(
+				ChangesetCollection::getChangesetCollectionId
+			).get());
 
 		return changesetCollectionOptional;
 	}
@@ -174,7 +173,7 @@ public class ChangesetManagerImpl implements ChangesetManager {
 	@Override
 	public void disableChangesets() {
 		if (!isChangesetEnabled()) {
-			if(_log.isWarnEnabled()) {
+			if (_log.isWarnEnabled()) {
 				_log.warn(
 					"Unable to disable changesets because it is not enabled " +
 						"currently");
@@ -205,7 +204,7 @@ public class ChangesetManagerImpl implements ChangesetManager {
 	@Override
 	public void enableChangesets() {
 		if (isChangesetEnabled()) {
-			if(_log.isWarnEnabled()) {
+			if (_log.isWarnEnabled()) {
 				_log.warn(
 					"Unable to enable changesets because it is already " +
 						"enabled");
@@ -319,6 +318,12 @@ public class ChangesetManagerImpl implements ChangesetManager {
 
 		return _changesetEntryLocalService.getChangesetEntries(
 			changesetCollectionId);
+	}
+
+	@Override
+	public Optional<ChangesetEntry> getChangesetEntry(long changesetEntryId) {
+		return Optional.ofNullable(
+			_changesetEntryLocalService.fetchChangesetEntry(changesetEntryId));
 	}
 
 	@Override
@@ -436,17 +441,6 @@ public class ChangesetManagerImpl implements ChangesetManager {
 		_wrapIndexer(changesetConfiguration);
 	}
 
-	private void _removeChangesetConfiguration(
-		ChangesetConfiguration<?, ?> changesetConfiguration) {
-
-		_configurationsByIdentifier.remove(
-			changesetConfiguration.getIdentifier());
-		_configurationsByResourceClass.remove(
-			changesetConfiguration.getResourceEntityClass());
-		_configurationsByVersionClass.remove(
-			changesetConfiguration.getVersionEntityClass());
-	}
-
 	private void _publishChangesetEntry(ChangesetEntry changesetEntry) {
 		long productionChangesetBaselineCollectionId =
 			_changesetBaselineManager.getProductionBaseline(
@@ -459,16 +453,15 @@ public class ChangesetManagerImpl implements ChangesetManager {
 
 		_changesetBaselineEntryLocalService.addChangesetBaselineEntry(
 			productionChangesetBaselineCollectionId,
-			changesetEntry.getClassNameId(),
-			changesetEntry.getClassPK(),
+			changesetEntry.getClassNameId(), changesetEntry.getClassPK(),
 			changesetEntry.getResourcePrimKey(), 1.0);
 
 		// TODO What version should we set here? Is it needed at all?
 
 		String resourceEntityClassName =
 			getChangesetConfigurationByVersionClassName(
-				changesetEntry.getClassName())
-			.map(
+				changesetEntry.getClassName()
+			).map(
 				ChangesetConfiguration::getResourceEntityClass
 			).map(
 				Class::getName
@@ -479,8 +472,19 @@ public class ChangesetManagerImpl implements ChangesetManager {
 		ChangesetIndexingUtil.index(
 			CompanyThreadLocal.getCompanyId(),
 			ChangesetConstants.PRODUCTION_BASELINE_COLLECTION_ID,
-			changesetEntry.getChangesetEntryId(),
-			resourceEntityClassName, changesetEntry.getResourcePrimKey());
+			changesetEntry.getChangesetEntryId(), resourceEntityClassName,
+			changesetEntry.getResourcePrimKey());
+	}
+
+	private void _removeChangesetConfiguration(
+		ChangesetConfiguration<?, ?> changesetConfiguration) {
+
+		_configurationsByIdentifier.remove(
+			changesetConfiguration.getIdentifier());
+		_configurationsByResourceClass.remove(
+			changesetConfiguration.getResourceEntityClass());
+		_configurationsByVersionClass.remove(
+			changesetConfiguration.getVersionEntityClass());
 	}
 
 	private void _removeChangesetConfigurationRegistrar(

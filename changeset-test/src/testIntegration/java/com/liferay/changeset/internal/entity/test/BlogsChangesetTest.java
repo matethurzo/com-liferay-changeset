@@ -15,10 +15,15 @@
 package com.liferay.changeset.internal.entity.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetTag;
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
+import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.blogs.model.BlogsEntryVersion;
 import com.liferay.blogs.service.BlogsEntryLocalService;
 import com.liferay.changeset.constants.ChangesetConstants;
+import com.liferay.changeset.cqrs.manager.ChangesetCQRSManager;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
@@ -36,11 +41,15 @@ import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.After;
@@ -135,14 +144,54 @@ public class BlogsChangesetTest {
 
 		_serviceContext = ServiceContextThreadLocal.getServiceContext();
 
+		_serviceContext.setAttribute(
+			"cqrs-repository-enabled", Boolean.FALSE);
+		_changesetCQRSManager.disableCQRSRepository();
+
 		BlogsEntry blogsEntry = _blogsEntryLocalService.addEntry(
 			_serviceContext.getUserId(), "Test Blogs Entry",
 			"Test Blogs Entry Content", _serviceContext);
 
-		_blogsEntryLocalService.updateEntry(
+		// Add extra asset tag
+
+		AssetTag assetTag = _assetTagLocalService.addTag(
+			_serviceContext.getUserId(), _group.getGroupId(),
+			"tag 1", _serviceContext);
+
+		_serviceContext.setAssetTagNames(new String[] {assetTag.getName()});
+
+		blogsEntry = _blogsEntryLocalService.updateEntry(
 			_serviceContext.getUserId(), blogsEntry.getEntryId(),
 			"Test Blogs Entry Modified", "Test Blogs Entry Modified Content",
 			_serviceContext);
+
+		Map<String, Serializable> workflowContext = new HashMap<>();
+
+		workflowContext.put(WorkflowConstants.CONTEXT_URL, "http://localhost");
+		workflowContext.put(
+			WorkflowConstants.CONTEXT_USER_PORTRAIT_URL, "http://localhost");
+		workflowContext.put(
+			WorkflowConstants.CONTEXT_USER_URL, "http://localhost");
+
+		blogsEntry = _blogsEntryLocalService.updateStatus(
+			blogsEntry.getUserId(), blogsEntry.getEntryId(),
+			WorkflowConstants.STATUS_APPROVED, _serviceContext,
+			workflowContext);
+
+		_serviceContext.setAttribute(
+			"cqrs-repository-enabled", Boolean.TRUE);
+		_changesetCQRSManager.enableCQRSRepository();
+
+		AssetEntry assetEntry = _assetEntryLocalService.fetchEntry(
+			BlogsEntryVersion.class.getName(), blogsEntry.getVersionId());
+
+		List<AssetTag> tags = assetEntry.getTags();
+
+		Assert.assertNotNull("Tags should not be null", tags);
+
+		Assert.assertTrue(
+			"Tags should contain at least one",
+			tags.size() == 1);
 
 		// Check changeset content
 
@@ -158,7 +207,7 @@ public class BlogsChangesetTest {
 				changesetCollectionId);
 
 		Assert.assertEquals(
-			"There should be only 2 changeset entry", 2, changesetEntriesCount);
+			"There should be only 3 changeset entry", 3, changesetEntriesCount);
 
 		// Read blogs entry from local service - should return changeset one
 
@@ -187,6 +236,19 @@ public class BlogsChangesetTest {
 		Assert.assertNotNull(
 			"Production blogs entry should exist", productionBlogsEntry);
 
+		assetEntry = _assetEntryLocalService.fetchEntry(
+			BlogsEntryVersion.class.getName(),
+			productionBlogsEntry.getVersionId());
+
+		tags = assetEntry.getTags();
+
+		Assert.assertNotNull(
+			"Production tags should not be null", tags);
+
+		Assert.assertTrue(
+			"Production tags should contain at least 1 tag",
+			tags.size() == 1);
+
 		long productionBaselineCollectionId =
 			productionBaselineOptional.get().getChangesetBaselineCollectionId();
 
@@ -200,6 +262,15 @@ public class BlogsChangesetTest {
 			"Production baseline entry was not created",
 			productionBaselineEntry);
 	}
+
+	@Inject
+	private ChangesetCQRSManager _changesetCQRSManager;
+
+	@Inject
+	private AssetTagLocalService _assetTagLocalService;
+
+	@Inject
+	private AssetEntryLocalService _assetEntryLocalService;
 
 	@Inject
 	private BlogsEntryLocalService _blogsEntryLocalService;

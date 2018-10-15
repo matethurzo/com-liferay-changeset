@@ -20,6 +20,7 @@ import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.manager.ChangesetManagerUtil;
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.model.ChangesetEntry;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -76,32 +77,6 @@ public class ChangesetIndexingUtil {
 
 	public static void index(
 		long companyId, long changesetCollectionId, long changesetEntryId,
-		String className, long classPK) {
-
-		PersistedModelLocalService persistedModelLocalService =
-			PersistedModelLocalServiceRegistryUtil.
-				getPersistedModelLocalService(
-					className);
-
-		try {
-			PersistedModel persistedModel =
-				persistedModelLocalService.getPersistedModel(classPK);
-
-			BaseModel baseModel = (BaseModel)persistedModel;
-
-			index(
-				companyId, changesetCollectionId, changesetEntryId, baseModel);
-		}
-		catch (PortalException pe) {
-			_log.error(
-				"Unable to get model object for indexing: " + className + ", "
-					+ classPK,
-				pe);
-		}
-	}
-
-	public static void index(
-		long companyId, long changesetCollectionId, long changesetEntryId,
 		BaseModel baseModel) {
 
 		Class<?> modelClass = baseModel.getModelClass();
@@ -142,9 +117,22 @@ public class ChangesetIndexingUtil {
 		_populateChangesetFields(
 			changesetCollectionId, changesetEntryId, document);
 
+		Optional<ChangesetEntry> changesetEntryOptional =
+			_changesetManager.getChangesetEntry(changesetEntryId);
+
+		if (!changesetEntryOptional.isPresent()) {
+			_log.error(
+				"Unable to find changeset entry with id " + changesetEntryId);
+
+			return;
+		}
+
+		ChangesetEntry changesetEntry = changesetEntryOptional.get();
+
 		document.addUID(
 			"CHANGESET_COLLECTION_" + changesetCollectionId,
-			"CHANGESET_COLLECTION_" + changesetEntryId, document.getUID());
+			"RESOURCE_PRIM_KEY_" + changesetEntry.getResourcePrimKey(),
+			document.getUID());
 
 		try {
 			IndexWriterHelperUtil.updateDocument(
@@ -152,6 +140,35 @@ public class ChangesetIndexingUtil {
 		}
 		catch (SearchException se) {
 			_log.error("Unable to update index document", se);
+		}
+	}
+
+	public static void index(
+		long companyId, long changesetCollectionId, long changesetEntryId,
+		String className, long classPK) {
+
+		PersistedModelLocalService persistedModelLocalService =
+			PersistedModelLocalServiceRegistryUtil.
+				getPersistedModelLocalService(className);
+
+		try {
+			PersistedModel persistedModel =
+				persistedModelLocalService.getPersistedModel(classPK);
+
+			BaseModel baseModel = (BaseModel)persistedModel;
+
+			index(
+				companyId, changesetCollectionId, changesetEntryId, baseModel);
+		}
+		catch (PortalException pe) {
+			StringBundler sb = new StringBundler(4);
+
+			sb.append("Unable to get model object for indexing: ");
+			sb.append(className);
+			sb.append(", ");
+			sb.append(classPK);
+
+			_log.error(sb.toString(), pe);
 		}
 	}
 

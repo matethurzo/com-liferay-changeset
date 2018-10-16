@@ -90,10 +90,12 @@ public class BlogsChangesetTest {
 	public void tearDown() {
 		_changesetManager.disableChangesets();
 
+		_blogsEntryLocalService.purgeBlogsEntries(_group.getGroupId());
+
 		try {
-			_blogsEntryLocalService.deleteEntries(_group.getGroupId());
+			_assetTagLocalService.deleteTag(_assetTag);
 		}
-		catch (PortalException pe) {
+		catch (Exception e) {
 		}
 	}
 
@@ -164,11 +166,11 @@ public class BlogsChangesetTest {
 
 		// Add extra asset tag
 
-		AssetTag assetTag = _assetTagLocalService.addTag(
+		_assetTag = _assetTagLocalService.addTag(
 			_serviceContext.getUserId(), _group.getGroupId(), "tag 1",
 			_serviceContext);
 
-		_serviceContext.setAssetTagNames(new String[] {assetTag.getName()});
+		_serviceContext.setAssetTagNames(new String[] {_assetTag.getName()});
 
 		blogsEntry = _blogsEntryLocalService.updateEntry(
 			_serviceContext.getUserId(), blogsEntry.getEntryId(),
@@ -300,5 +302,7 @@ public class BlogsChangesetTest {
 	private Portal _portal;
 
 	private ServiceContext _serviceContext;
+
+	private AssetTag _assetTag;
 
 }

@@ -220,6 +220,13 @@ public class ChangesetEntryLocalServiceWrapper
 	}
 
 	@Override
+	public com.liferay.changeset.model.ChangesetEntry fetchLatestChangesetEntry(
+		long changesetCollectionId, long resourcePrimKey) {
+		return _changesetEntryLocalService.fetchLatestChangesetEntry(changesetCollectionId,
+			resourcePrimKey);
+	}
+
+	@Override
 	public com.liferay.changeset.model.ChangesetEntry fetchOrAddChangesetEntry(
 		long changesetCollectionId, long resourcePrimKey, long classNameId,
 		long classPK)

@@ -213,6 +213,13 @@ public class ChangesetEntryLocalServiceUtil {
 			classPK);
 	}
 
+	public static com.liferay.changeset.model.ChangesetEntry fetchLatestChangesetEntry(
+		long changesetCollectionId, long resourcePrimKey) {
+		return getService()
+				   .fetchLatestChangesetEntry(changesetCollectionId,
+			resourcePrimKey);
+	}
+
 	public static com.liferay.changeset.model.ChangesetEntry fetchOrAddChangesetEntry(
 		long changesetCollectionId, long resourcePrimKey, long classNameId,
 		long classPK)

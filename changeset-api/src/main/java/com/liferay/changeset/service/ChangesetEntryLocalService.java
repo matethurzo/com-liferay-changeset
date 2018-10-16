@@ -188,6 +188,10 @@ public interface ChangesetEntryLocalService extends BaseLocalService,
 		long classNameId, long classPK);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ChangesetEntry fetchLatestChangesetEntry(
+		long changesetCollectionId, long resourcePrimKey);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ChangesetEntry fetchOrAddChangesetEntry(long changesetCollectionId,
 		long resourcePrimKey, long classNameId, long classPK)
 		throws PortalException;

@@ -468,7 +468,8 @@ public class ChangesetManagerImpl implements ChangesetManager {
 				Class::getName
 			).get();
 
-		// TODO Add resourceClassNameId field to ChangesetEntry to avoid the above call
+		// TODO Add resourceClassNameId field to ChangesetEntry to avoid the
+		// above call
 
 		_changesetCQRSManager.disableCQRSRepository();
 
@@ -522,7 +523,8 @@ public class ChangesetManagerImpl implements ChangesetManager {
 
 		Dictionary<String, Object> properties = new Hashtable<>();
 
-		// todo: it won't work this way, indexer class name will be the same if we move forward with wrapping
+		// todo: it won't work this way, indexer class name will be the same if
+		// we move forward with wrapping
 
 		properties.put("indexer.class.name", indexerClassName);
 
@@ -545,13 +547,13 @@ public class ChangesetManagerImpl implements ChangesetManager {
 		_changesetBaselineEntryLocalService;
 
 	@Reference
-	private ChangesetCQRSManager _changesetCQRSManager;
-
-	@Reference
 	private ChangesetBaselineManager _changesetBaselineManager;
 
 	@Reference
 	private ChangesetCollectionLocalService _changesetCollectionLocalService;
+
+	@Reference
+	private ChangesetCQRSManager _changesetCQRSManager;
 
 	@Reference
 	private ChangesetEntryLocalService _changesetEntryLocalService;

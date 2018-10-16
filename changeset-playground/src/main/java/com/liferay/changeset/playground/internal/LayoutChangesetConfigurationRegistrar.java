@@ -45,20 +45,27 @@ public class LayoutChangesetConfigurationRegistrar
 		).addResourceEntity(
 			Layout.class,
 			Layout::getPlid,
-			layout -> 0L, // TODO Replace with Layout::getVersionId
+			layout -> 0L,
+			// TODO Replace with Layout::getVersionId
 			_layoutLocalService
 		).addVersionEntity(
-			Layout.class, // TODO Replace with LayoutVersion.class
-			layout -> 0L, // TODO Replace with LayoutVersion::getPlid
-			layout -> 0L, // TODO Replace with LayoutVersion::getVersionId
-			layout -> 1.0D, // TODO Replace with LayoutVersion::getVersion
+			Layout.class,
+			// TODO Replace with LayoutVersion.class
+			layout -> 0L,
+			// TODO Replace with LayoutVersion::getPlid
+			layout -> 0L,
+			// TODO Replace with LayoutVersion::getVersionId
+			layout -> 1.0D,
+			// TODO Replace with LayoutVersion::getVersion
 			null
 		).baselining(
 			() -> {
 				_changesetCQRSManager.disableCQRSRepository();
 
 				List<Layout> layouts = _layoutLocalService.getLayouts(
-					QueryUtil.ALL_POS, QueryUtil.ALL_POS); // TODO Extend with fetching and returning latest versions
+					QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+				// TODO Extend with fetching and returning latest versions
 
 				_changesetCQRSManager.enableCQRSRepository();
 
@@ -73,7 +80,8 @@ public class LayoutChangesetConfigurationRegistrar
 	private ChangesetCQRSManager _changesetCQRSManager;
 
 	@Reference(
-		target = "(model.class.name=)" // TODO This does not seem to exist for Layout... we may need to create it
+		// TODO This does not seem to exist for Layout, we may need to create it
+		target = "(model.class.name=)"
 	)
 	private Indexer _layoutIndexer;
 

@@ -34,7 +34,8 @@ public class ChangesetPortalInstanceLifecycleListener
 	@Override
 	public void portalInstanceRegistered(Company company) throws Exception {
 
-		// todo: changeset should be added as well and its ID must be out into the ServiceContext
+		// todo: changeset should be added as well and its ID must be out into
+		// the ServiceContext
 
 		if (!_changesetManager.isChangesetEnabled()) {
 

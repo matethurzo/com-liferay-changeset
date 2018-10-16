@@ -62,26 +62,26 @@ public class CommerceUserSegmentConfigurationRegistrar
 			// TODO extract this to some helper
 
 			() -> {
-				List<CommerceUserSegmentEntryVersion>
-					commerceUserSegmentEntryVersions = new ArrayList<>();
+			List<CommerceUserSegmentEntryVersion>
+				commerceUserSegmentEntryVersions = new ArrayList<>();
 
-				_changesetCQRSManager.disableCQRSRepository();
+			_changesetCQRSManager.disableCQRSRepository();
 
-				List<CommerceUserSegmentEntry> commerceUserSegmentEntries =
-					_commerceUserSegmentEntryLocalService.
-						getCommerceUserSegmentEntries(
-							QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+			List<CommerceUserSegmentEntry> commerceUserSegmentEntries =
+				_commerceUserSegmentEntryLocalService.
+					getCommerceUserSegmentEntries(
+						QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
-				commerceUserSegmentEntries.forEach(
-					commerceUserSegmentEntry ->
-						commerceUserSegmentEntryVersions.add(
-							_commerceUserSegmentEntryLocalService.
-								getLatestVersion(commerceUserSegmentEntry)));
+			commerceUserSegmentEntries.forEach(
+				commerceUserSegmentEntry ->
+					commerceUserSegmentEntryVersions.add(
+						_commerceUserSegmentEntryLocalService.getLatestVersion(
+							commerceUserSegmentEntry)));
 
-				_changesetCQRSManager.enableCQRSRepository();
+			_changesetCQRSManager.enableCQRSRepository();
 
-				return commerceUserSegmentEntryVersions;
-			}
+			return commerceUserSegmentEntryVersions;
+		}
 		).indexer(
 			clazz -> _commerceUserSegmentEntryIndexer
 		).build();

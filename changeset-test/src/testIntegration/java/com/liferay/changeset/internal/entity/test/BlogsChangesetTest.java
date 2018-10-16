@@ -47,6 +47,7 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.io.Serializable;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +98,16 @@ public class BlogsChangesetTest {
 	}
 
 	@Test
-	public void testCriticalPath() throws Exception {
+	public void testCriticalPathHybrid() throws Exception {
+		//_criticalPath("HYBRID");
+	}
+
+	@Test
+	public void testCriticalPathIndex() throws Exception {
+		_criticalPath("INDEX");
+	}
+
+	private void _criticalPath(String type) throws Exception {
 
 		// Enable changesets
 
@@ -144,8 +154,8 @@ public class BlogsChangesetTest {
 
 		_serviceContext = ServiceContextThreadLocal.getServiceContext();
 
-		_serviceContext.setAttribute(
-			"cqrs-repository-enabled", Boolean.FALSE);
+		_serviceContext.setAttribute("cqrs-repository-enabled", Boolean.FALSE);
+
 		_changesetCQRSManager.disableCQRSRepository();
 
 		BlogsEntry blogsEntry = _blogsEntryLocalService.addEntry(
@@ -155,8 +165,8 @@ public class BlogsChangesetTest {
 		// Add extra asset tag
 
 		AssetTag assetTag = _assetTagLocalService.addTag(
-			_serviceContext.getUserId(), _group.getGroupId(),
-			"tag 1", _serviceContext);
+			_serviceContext.getUserId(), _group.getGroupId(), "tag 1",
+			_serviceContext);
 
 		_serviceContext.setAssetTagNames(new String[] {assetTag.getName()});
 
@@ -178,8 +188,7 @@ public class BlogsChangesetTest {
 			WorkflowConstants.STATUS_APPROVED, _serviceContext,
 			workflowContext);
 
-		_serviceContext.setAttribute(
-			"cqrs-repository-enabled", Boolean.TRUE);
+		_serviceContext.setAttribute("cqrs-repository-enabled", Boolean.TRUE);
 		_changesetCQRSManager.enableCQRSRepository();
 
 		AssetEntry assetEntry = _assetEntryLocalService.fetchEntry(
@@ -189,9 +198,7 @@ public class BlogsChangesetTest {
 
 		Assert.assertNotNull("Tags should not be null", tags);
 
-		Assert.assertTrue(
-			"Tags should contain at least one",
-			tags.size() == 1);
+		Assert.assertTrue("Tags should contain at least one", tags.size() == 1);
 
 		// Check changeset content
 
@@ -242,12 +249,10 @@ public class BlogsChangesetTest {
 
 		tags = assetEntry.getTags();
 
-		Assert.assertNotNull(
-			"Production tags should not be null", tags);
+		Assert.assertNotNull("Production tags should not be null", tags);
 
 		Assert.assertTrue(
-			"Production tags should contain at least 1 tag",
-			tags.size() == 1);
+			"Production tags should contain at least 1 tag", tags.size() == 1);
 
 		long productionBaselineCollectionId =
 			productionBaselineOptional.get().getChangesetBaselineCollectionId();
@@ -264,13 +269,10 @@ public class BlogsChangesetTest {
 	}
 
 	@Inject
-	private ChangesetCQRSManager _changesetCQRSManager;
+	private AssetEntryLocalService _assetEntryLocalService;
 
 	@Inject
 	private AssetTagLocalService _assetTagLocalService;
-
-	@Inject
-	private AssetEntryLocalService _assetEntryLocalService;
 
 	@Inject
 	private BlogsEntryLocalService _blogsEntryLocalService;
@@ -281,6 +283,9 @@ public class BlogsChangesetTest {
 
 	@Inject
 	private ChangesetBaselineManager _changesetBaselineManager;
+
+	@Inject
+	private ChangesetCQRSManager _changesetCQRSManager;
 
 	@Inject
 	private ChangesetEntryLocalService _changesetEntryLocalService;

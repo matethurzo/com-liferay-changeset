@@ -17,6 +17,7 @@ package com.liferay.changeset.internal.manager;
 import com.liferay.changeset.configuration.ChangesetConfiguration;
 import com.liferay.changeset.configuration.ChangesetConfigurationRegistrar;
 import com.liferay.changeset.constants.ChangesetConstants;
+import com.liferay.changeset.cqrs.manager.ChangesetCQRSManager;
 import com.liferay.changeset.internal.configuration.ChangesetConfigurationImpl;
 import com.liferay.changeset.internal.search.ChangesetIndexerPostProcessor;
 import com.liferay.changeset.internal.search.ChangesetIndexingUtil;
@@ -469,11 +470,15 @@ public class ChangesetManagerImpl implements ChangesetManager {
 
 		// TODO Add resourceClassNameId field to ChangesetEntry to avoid the above call
 
+		_changesetCQRSManager.disableCQRSRepository();
+
 		ChangesetIndexingUtil.index(
 			CompanyThreadLocal.getCompanyId(),
 			ChangesetConstants.PRODUCTION_BASELINE_COLLECTION_ID,
 			changesetEntry.getChangesetEntryId(), resourceEntityClassName,
 			changesetEntry.getResourcePrimKey());
+
+		_changesetCQRSManager.enableCQRSRepository();
 	}
 
 	private void _removeChangesetConfiguration(
@@ -538,6 +543,9 @@ public class ChangesetManagerImpl implements ChangesetManager {
 	@Reference
 	private ChangesetBaselineEntryLocalService
 		_changesetBaselineEntryLocalService;
+
+	@Reference
+	private ChangesetCQRSManager _changesetCQRSManager;
 
 	@Reference
 	private ChangesetBaselineManager _changesetBaselineManager;

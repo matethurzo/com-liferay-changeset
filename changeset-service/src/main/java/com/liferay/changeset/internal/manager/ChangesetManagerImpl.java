@@ -373,6 +373,17 @@ public class ChangesetManagerImpl implements ChangesetManager {
 	}
 
 	@Override
+	public Optional<ChangesetEntry> getLatestChangesetEntry(
+		long changesetCollectionId, long resourcePrimKey) {
+
+		ChangesetEntry latestChangesetEntry =
+			_changesetEntryLocalService.fetchLatestChangesetEntry(
+				changesetCollectionId, resourcePrimKey);
+
+		return Optional.ofNullable(latestChangesetEntry);
+	}
+
+	@Override
 	public boolean isChangesetEnabled() {
 		Optional<ChangesetBaselineCollection> productionBaselineOptional =
 			_changesetBaselineManager.getProductionBaseline();

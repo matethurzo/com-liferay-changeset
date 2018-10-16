@@ -77,6 +77,9 @@ public interface ChangesetManager {
 	public Optional<ChangesetEntry> getChangesetEntry(
 		long classNameId, long classPK);
 
+	public Optional<ChangesetEntry> getLatestChangesetEntry(
+		long changesetCollectionId, long resourcePrimKey);
+
 	public Optional<ChangesetEntry> getChangesetEntry(
 		String className, long classPK);
 

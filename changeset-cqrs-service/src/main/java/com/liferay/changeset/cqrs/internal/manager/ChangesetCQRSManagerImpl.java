@@ -17,6 +17,7 @@ package com.liferay.changeset.cqrs.internal.manager;
 import com.liferay.changeset.constants.ChangesetConstants;
 import com.liferay.changeset.cqrs.manager.ChangesetCQRSManager;
 import com.liferay.changeset.manager.ChangesetManager;
+import com.liferay.changeset.manager.ChangesetManagerUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -59,7 +60,10 @@ public class ChangesetCQRSManagerImpl implements ChangesetCQRSManager {
 	}
 
 	public boolean isCQRSRepositoryEnabled() {
-		if (!_changesetManager.isChangesetEnabled()) {
+		ChangesetManager changesetManager =
+			ChangesetManagerUtil.getChangesetManager();
+
+		if (!changesetManager.isChangesetEnabled()) {
 			return false;
 		}
 
@@ -75,8 +79,5 @@ public class ChangesetCQRSManagerImpl implements ChangesetCQRSManager {
 				ChangesetConstants.CQRS_REPOSITORY_ENABLED),
 			true);
 	}
-
-	@Reference
-	private ChangesetManager _changesetManager;
 
 }

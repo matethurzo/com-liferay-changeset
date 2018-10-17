@@ -201,6 +201,13 @@ public class ChangesetBaselineEntryLocalServiceWrapper
 	}
 
 	@Override
+	public com.liferay.changeset.model.ChangesetBaselineEntry fetchLatestChangesetBaselineEntry(
+		long changesetBaselineCollectionId, long resourcePrimKey) {
+		return _changesetBaselineEntryLocalService.fetchLatestChangesetBaselineEntry(changesetBaselineCollectionId,
+			resourcePrimKey);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
 		return _changesetBaselineEntryLocalService.getActionableDynamicQuery();
 	}

@@ -182,6 +182,10 @@ public interface ChangesetBaselineEntryLocalService extends BaseLocalService,
 		long changesetBaselineEntryId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ChangesetBaselineEntry fetchLatestChangesetBaselineEntry(
+		long changesetBaselineCollectionId, long resourcePrimKey);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
 	/**

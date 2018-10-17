@@ -197,6 +197,13 @@ public class ChangesetBaselineEntryLocalServiceUtil {
 		return getService().fetchChangesetBaselineEntry(changesetBaselineEntryId);
 	}
 
+	public static com.liferay.changeset.model.ChangesetBaselineEntry fetchLatestChangesetBaselineEntry(
+		long changesetBaselineCollectionId, long resourcePrimKey) {
+		return getService()
+				   .fetchLatestChangesetBaselineEntry(changesetBaselineCollectionId,
+			resourcePrimKey);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
 		return getService().getActionableDynamicQuery();
 	}

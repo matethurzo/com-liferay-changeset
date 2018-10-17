@@ -469,86 +469,6 @@ public class ChangesetBaselineEntryUtil {
 	}
 
 	/**
-	* Returns the changeset baseline entry where changesetBaselineCollectionId = &#63; and classNameId = &#63; and classPK = &#63; or throws a {@link NoSuchBaselineEntryException} if it could not be found.
-	*
-	* @param changesetBaselineCollectionId the changeset baseline collection ID
-	* @param classNameId the class name ID
-	* @param classPK the class pk
-	* @return the matching changeset baseline entry
-	* @throws NoSuchBaselineEntryException if a matching changeset baseline entry could not be found
-	*/
-	public static ChangesetBaselineEntry findByC_C_C(
-		long changesetBaselineCollectionId, long classNameId, long classPK)
-		throws com.liferay.changeset.exception.NoSuchBaselineEntryException {
-		return getPersistence()
-				   .findByC_C_C(changesetBaselineCollectionId, classNameId,
-			classPK);
-	}
-
-	/**
-	* Returns the changeset baseline entry where changesetBaselineCollectionId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	*
-	* @param changesetBaselineCollectionId the changeset baseline collection ID
-	* @param classNameId the class name ID
-	* @param classPK the class pk
-	* @return the matching changeset baseline entry, or <code>null</code> if a matching changeset baseline entry could not be found
-	*/
-	public static ChangesetBaselineEntry fetchByC_C_C(
-		long changesetBaselineCollectionId, long classNameId, long classPK) {
-		return getPersistence()
-				   .fetchByC_C_C(changesetBaselineCollectionId, classNameId,
-			classPK);
-	}
-
-	/**
-	* Returns the changeset baseline entry where changesetBaselineCollectionId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
-	*
-	* @param changesetBaselineCollectionId the changeset baseline collection ID
-	* @param classNameId the class name ID
-	* @param classPK the class pk
-	* @param retrieveFromCache whether to retrieve from the finder cache
-	* @return the matching changeset baseline entry, or <code>null</code> if a matching changeset baseline entry could not be found
-	*/
-	public static ChangesetBaselineEntry fetchByC_C_C(
-		long changesetBaselineCollectionId, long classNameId, long classPK,
-		boolean retrieveFromCache) {
-		return getPersistence()
-				   .fetchByC_C_C(changesetBaselineCollectionId, classNameId,
-			classPK, retrieveFromCache);
-	}
-
-	/**
-	* Removes the changeset baseline entry where changesetBaselineCollectionId = &#63; and classNameId = &#63; and classPK = &#63; from the database.
-	*
-	* @param changesetBaselineCollectionId the changeset baseline collection ID
-	* @param classNameId the class name ID
-	* @param classPK the class pk
-	* @return the changeset baseline entry that was removed
-	*/
-	public static ChangesetBaselineEntry removeByC_C_C(
-		long changesetBaselineCollectionId, long classNameId, long classPK)
-		throws com.liferay.changeset.exception.NoSuchBaselineEntryException {
-		return getPersistence()
-				   .removeByC_C_C(changesetBaselineCollectionId, classNameId,
-			classPK);
-	}
-
-	/**
-	* Returns the number of changeset baseline entries where changesetBaselineCollectionId = &#63; and classNameId = &#63; and classPK = &#63;.
-	*
-	* @param changesetBaselineCollectionId the changeset baseline collection ID
-	* @param classNameId the class name ID
-	* @param classPK the class pk
-	* @return the number of matching changeset baseline entries
-	*/
-	public static int countByC_C_C(long changesetBaselineCollectionId,
-		long classNameId, long classPK) {
-		return getPersistence()
-				   .countByC_C_C(changesetBaselineCollectionId, classNameId,
-			classPK);
-	}
-
-	/**
 	* Returns all the changeset baseline entries where changesetBaselineCollectionId = &#63; and resourcePrimKey = &#63;.
 	*
 	* @param changesetBaselineCollectionId the changeset baseline collection ID
@@ -739,6 +659,86 @@ public class ChangesetBaselineEntryUtil {
 		long resourcePrimKey) {
 		return getPersistence()
 				   .countByC_R(changesetBaselineCollectionId, resourcePrimKey);
+	}
+
+	/**
+	* Returns the changeset baseline entry where changesetBaselineCollectionId = &#63; and classNameId = &#63; and classPK = &#63; or throws a {@link NoSuchBaselineEntryException} if it could not be found.
+	*
+	* @param changesetBaselineCollectionId the changeset baseline collection ID
+	* @param classNameId the class name ID
+	* @param classPK the class pk
+	* @return the matching changeset baseline entry
+	* @throws NoSuchBaselineEntryException if a matching changeset baseline entry could not be found
+	*/
+	public static ChangesetBaselineEntry findByC_C_C(
+		long changesetBaselineCollectionId, long classNameId, long classPK)
+		throws com.liferay.changeset.exception.NoSuchBaselineEntryException {
+		return getPersistence()
+				   .findByC_C_C(changesetBaselineCollectionId, classNameId,
+			classPK);
+	}
+
+	/**
+	* Returns the changeset baseline entry where changesetBaselineCollectionId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param changesetBaselineCollectionId the changeset baseline collection ID
+	* @param classNameId the class name ID
+	* @param classPK the class pk
+	* @return the matching changeset baseline entry, or <code>null</code> if a matching changeset baseline entry could not be found
+	*/
+	public static ChangesetBaselineEntry fetchByC_C_C(
+		long changesetBaselineCollectionId, long classNameId, long classPK) {
+		return getPersistence()
+				   .fetchByC_C_C(changesetBaselineCollectionId, classNameId,
+			classPK);
+	}
+
+	/**
+	* Returns the changeset baseline entry where changesetBaselineCollectionId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param changesetBaselineCollectionId the changeset baseline collection ID
+	* @param classNameId the class name ID
+	* @param classPK the class pk
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the matching changeset baseline entry, or <code>null</code> if a matching changeset baseline entry could not be found
+	*/
+	public static ChangesetBaselineEntry fetchByC_C_C(
+		long changesetBaselineCollectionId, long classNameId, long classPK,
+		boolean retrieveFromCache) {
+		return getPersistence()
+				   .fetchByC_C_C(changesetBaselineCollectionId, classNameId,
+			classPK, retrieveFromCache);
+	}
+
+	/**
+	* Removes the changeset baseline entry where changesetBaselineCollectionId = &#63; and classNameId = &#63; and classPK = &#63; from the database.
+	*
+	* @param changesetBaselineCollectionId the changeset baseline collection ID
+	* @param classNameId the class name ID
+	* @param classPK the class pk
+	* @return the changeset baseline entry that was removed
+	*/
+	public static ChangesetBaselineEntry removeByC_C_C(
+		long changesetBaselineCollectionId, long classNameId, long classPK)
+		throws com.liferay.changeset.exception.NoSuchBaselineEntryException {
+		return getPersistence()
+				   .removeByC_C_C(changesetBaselineCollectionId, classNameId,
+			classPK);
+	}
+
+	/**
+	* Returns the number of changeset baseline entries where changesetBaselineCollectionId = &#63; and classNameId = &#63; and classPK = &#63;.
+	*
+	* @param changesetBaselineCollectionId the changeset baseline collection ID
+	* @param classNameId the class name ID
+	* @param classPK the class pk
+	* @return the number of matching changeset baseline entries
+	*/
+	public static int countByC_C_C(long changesetBaselineCollectionId,
+		long classNameId, long classPK) {
+		return getPersistence()
+				   .countByC_C_C(changesetBaselineCollectionId, classNameId,
+			classPK);
 	}
 
 	/**

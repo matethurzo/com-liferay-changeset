@@ -15,6 +15,7 @@
 package com.liferay.changeset.service.impl;
 
 import com.liferay.changeset.exception.NoSuchBaselineEntryException;
+import com.liferay.changeset.internal.comparator.ChangesetBaselineEntryCreateDateComparator;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.changeset.model.ChangesetBaselineEntry;
 import com.liferay.changeset.service.base.ChangesetBaselineEntryLocalServiceBaseImpl;
@@ -83,6 +84,15 @@ public class ChangesetBaselineEntryLocalServiceImpl
 
 		changesetBaselineEntryPersistence.removeByChangesetBaselineCollectionId(
 			changesetBaselineCollectionId);
+	}
+
+	@Override
+	public ChangesetBaselineEntry fetchLatestChangesetBaselineEntry(
+		long changesetBaselineCollectionId, long resourcePrimKey) {
+
+		return changesetBaselineEntryPersistence.fetchByC_R_Last(
+			changesetBaselineCollectionId, resourcePrimKey,
+			new ChangesetBaselineEntryCreateDateComparator());
 	}
 
 	@Override

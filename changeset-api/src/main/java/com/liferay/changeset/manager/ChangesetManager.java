@@ -15,6 +15,7 @@
 package com.liferay.changeset.manager;
 
 import com.liferay.changeset.configuration.ChangesetConfiguration;
+import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.model.ChangesetEntry;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -49,6 +50,9 @@ public interface ChangesetManager {
 
 	public void enableChangesets();
 
+	public Optional<ChangesetBaselineCollection> getChangesetBaselineCollection(
+		long changesetCollectionId);
+
 	public Optional<ChangesetCollection> getChangesetCollection(
 		long classNameId, long classPK);
 
@@ -77,13 +81,13 @@ public interface ChangesetManager {
 	public Optional<ChangesetEntry> getChangesetEntry(
 		long classNameId, long classPK);
 
-	public Optional<ChangesetEntry> getLatestChangesetEntry(
-		long changesetCollectionId, long resourcePrimKey);
-
 	public Optional<ChangesetEntry> getChangesetEntry(
 		String className, long classPK);
 
 	public Optional<Long> getCurrentChangesetCollectionId();
+
+	public Optional<ChangesetEntry> getLatestChangesetEntry(
+		long changesetCollectionId, long resourcePrimKey);
 
 	public boolean isChangesetEnabled();
 

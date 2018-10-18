@@ -219,6 +219,28 @@ public class ChangesetManagerImpl implements ChangesetManager {
 	}
 
 	@Override
+	public Optional<ChangesetBaselineCollection> getChangesetBaselineCollection(
+		long changesetCollectionId) {
+
+		if (ChangesetConstants.PRODUCTION_BASELINE_COLLECTION_ID ==
+				changesetCollectionId) {
+
+			return _changesetBaselineManager.getProductionBaseline();
+		}
+
+		ChangesetCollection changesetCollection =
+			_changesetCollectionLocalService.fetchChangesetCollection(
+				changesetCollectionId);
+
+		if (changesetCollection == null) {
+			return Optional.empty();
+		}
+
+		return _changesetBaselineManager.getChangesetBaselineCollection(
+			changesetCollection::getName);
+	}
+
+	@Override
 	public Optional<ChangesetCollection> getChangesetCollection(
 		long classNameId, long classPK) {
 
@@ -454,9 +476,11 @@ public class ChangesetManagerImpl implements ChangesetManager {
 	}
 
 	private void _publishChangesetEntry(ChangesetEntry changesetEntry) {
+		Optional<ChangesetBaselineCollection> productionBaselineOptional =
+			_changesetBaselineManager.getProductionBaseline();
+
 		long productionChangesetBaselineCollectionId =
-			_changesetBaselineManager.getProductionBaseline(
-			).map(
+			productionBaselineOptional.map(
 				ChangesetBaselineCollection::getChangesetBaselineCollectionId
 			).orElseThrow(
 				() -> new IllegalStateException(

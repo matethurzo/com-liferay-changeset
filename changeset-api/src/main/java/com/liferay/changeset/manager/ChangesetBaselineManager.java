@@ -50,6 +50,9 @@ public interface ChangesetBaselineManager {
 	public List<ChangesetBaselineEntry> getChangesetBaselineEntries(
 		Supplier<Long> baselineCollectionIdSupplier);
 
+	public Optional<ChangesetBaselineEntry> getLatestBaselineEntry(
+		long changesetBaselineCollectionId, long resourcePrimKey);
+
 	public Optional<ChangesetBaselineCollection> getProductionBaseline();
 
 	public void removeAllBaselines();

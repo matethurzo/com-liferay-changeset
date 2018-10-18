@@ -178,6 +178,18 @@ public class ChangesetBaselineManagerImpl implements ChangesetBaselineManager {
 	}
 
 	@Override
+	public Optional<ChangesetBaselineEntry> getLatestBaselineEntry(
+		long changesetBaselineCollectionId, long resourcePrimKey) {
+
+		ChangesetBaselineEntry changesetBaselineEntry =
+			_changesetBaselineEntryLocalService.
+				fetchLatestChangesetBaselineEntry(
+					changesetBaselineCollectionId, resourcePrimKey);
+
+		return Optional.ofNullable(changesetBaselineEntry);
+	}
+
+	@Override
 	public Optional<ChangesetBaselineCollection> getProductionBaseline() {
 		return getChangesetBaselineCollection(
 			() -> ChangesetConstants.PRODUCTION_BASELINE_NAME);

@@ -32,7 +32,6 @@ import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.model.ChangesetEntry;
 import com.liferay.changeset.service.ChangesetBaselineEntryLocalService;
 import com.liferay.changeset.service.ChangesetEntryLocalService;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -57,6 +56,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -82,8 +82,6 @@ public class BlogsChangesetTest {
 
 		_serviceContext.setScopeGroupId(_group.getGroupId());
 		_serviceContext.setUserId(TestPropsValues.getUserId());
-
-		ServiceContextThreadLocal.pushServiceContext(_serviceContext);
 	}
 
 	@After
@@ -101,15 +99,18 @@ public class BlogsChangesetTest {
 
 	@Test
 	public void testCriticalPathHybrid() throws Exception {
-		//_criticalPath("HYBRID");
+		_criticalPath("HYBRID");
 	}
 
 	@Test
 	public void testCriticalPathIndex() throws Exception {
-		_criticalPath("INDEX");
+		_criticalPath("CQRS");
 	}
 
 	private void _criticalPath(String type) throws Exception {
+		_serviceContext.setAttribute("repository-type", type);
+
+		ServiceContextThreadLocal.pushServiceContext(_serviceContext);
 
 		// Enable changesets
 
@@ -160,38 +161,46 @@ public class BlogsChangesetTest {
 
 		_changesetCQRSManager.disableCQRSRepository();
 
-		BlogsEntry blogsEntry = _blogsEntryLocalService.addEntry(
-			_serviceContext.getUserId(), "Test Blogs Entry",
-			"Test Blogs Entry Content", _serviceContext);
+		BlogsEntry blogsEntry;
 
-		// Add extra asset tag
+		try {
+			blogsEntry = _blogsEntryLocalService.addEntry(
+				_serviceContext.getUserId(), "Test Blogs Entry",
+				"Test Blogs Entry Content", _serviceContext);
 
-		_assetTag = _assetTagLocalService.addTag(
-			_serviceContext.getUserId(), _group.getGroupId(), "tag 1",
-			_serviceContext);
+			// Add extra asset tag
 
-		_serviceContext.setAssetTagNames(new String[] {_assetTag.getName()});
+			_assetTag = _assetTagLocalService.addTag(
+				_serviceContext.getUserId(), _group.getGroupId(), "tag 1",
+				_serviceContext);
 
-		blogsEntry = _blogsEntryLocalService.updateEntry(
-			_serviceContext.getUserId(), blogsEntry.getEntryId(),
-			"Test Blogs Entry Modified", "Test Blogs Entry Modified Content",
-			_serviceContext);
+			_serviceContext.setAssetTagNames(new String[]{_assetTag.getName()});
 
-		Map<String, Serializable> workflowContext = new HashMap<>();
+			blogsEntry = _blogsEntryLocalService.updateEntry(
+				_serviceContext.getUserId(), blogsEntry.getEntryId(),
+				"Test Blogs Entry Modified",
+				"Test Blogs Entry Modified Content", _serviceContext);
 
-		workflowContext.put(WorkflowConstants.CONTEXT_URL, "http://localhost");
-		workflowContext.put(
-			WorkflowConstants.CONTEXT_USER_PORTRAIT_URL, "http://localhost");
-		workflowContext.put(
-			WorkflowConstants.CONTEXT_USER_URL, "http://localhost");
+			Map<String, Serializable> workflowContext = new HashMap<>();
 
-		blogsEntry = _blogsEntryLocalService.updateStatus(
-			blogsEntry.getUserId(), blogsEntry.getEntryId(),
-			WorkflowConstants.STATUS_APPROVED, _serviceContext,
-			workflowContext);
+			workflowContext.put(
+				WorkflowConstants.CONTEXT_URL, "http://localhost");
+			workflowContext.put(
+				WorkflowConstants.CONTEXT_USER_PORTRAIT_URL,
+				"http://localhost");
+			workflowContext.put(
+				WorkflowConstants.CONTEXT_USER_URL, "http://localhost");
 
-		_serviceContext.setAttribute("cqrs-repository-enabled", Boolean.TRUE);
-		_changesetCQRSManager.enableCQRSRepository();
+			blogsEntry = _blogsEntryLocalService.updateStatus(
+				blogsEntry.getUserId(), blogsEntry.getEntryId(),
+				WorkflowConstants.STATUS_APPROVED, _serviceContext,
+				workflowContext);
+		}
+		finally {
+			_serviceContext.setAttribute(
+				"cqrs-repository-enabled", Boolean.TRUE);
+			_changesetCQRSManager.enableCQRSRepository();
+		}
 
 		AssetEntry assetEntry = _assetEntryLocalService.fetchEntry(
 			BlogsEntryVersion.class.getName(), blogsEntry.getVersionId());
@@ -199,8 +208,7 @@ public class BlogsChangesetTest {
 		List<AssetTag> tags = assetEntry.getTags();
 
 		Assert.assertNotNull("Tags should not be null", tags);
-
-		Assert.assertTrue("Tags should contain at least one", tags.size() == 1);
+		Assert.assertEquals("Tags should contain at least one", 1, tags.size());
 
 		// Check changeset content
 
@@ -273,6 +281,8 @@ public class BlogsChangesetTest {
 	@Inject
 	private AssetEntryLocalService _assetEntryLocalService;
 
+	private AssetTag _assetTag;
+
 	@Inject
 	private AssetTagLocalService _assetTagLocalService;
 
@@ -302,7 +312,5 @@ public class BlogsChangesetTest {
 	private Portal _portal;
 
 	private ServiceContext _serviceContext;
-
-	private AssetTag _assetTag;
 
 }

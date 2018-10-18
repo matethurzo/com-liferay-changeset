@@ -129,7 +129,7 @@ public class ChangesetEntryLocalServiceImpl
 	public ChangesetEntry fetchLatestChangesetEntry(
 		long changesetCollectionId, long resourcePrimKey) {
 
-		return changesetEntryPersistence.fetchByC_R_First(
+		return changesetEntryPersistence.fetchByC_R_Last(
 			changesetCollectionId, resourcePrimKey,
 			new ChangesetEntryCreateDateComparator());
 	}

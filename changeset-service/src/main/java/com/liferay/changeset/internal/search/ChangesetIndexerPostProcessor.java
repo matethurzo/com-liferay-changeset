@@ -27,8 +27,13 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.Validator;
+
+import java.io.Serializable;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -74,8 +79,7 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 		ChangesetConfiguration changesetConfiguration =
 			changesetConfigurationOptional.get();
 
-		String versionClassName =
-			changesetConfiguration.getVersionEntityClass().getName();
+		Class<?> versionClass = changesetConfiguration.getVersionEntityClass();
 
 		long versionId =
 			(long)changesetConfiguration.
@@ -83,7 +87,7 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 
 		Optional<Long> changesetCollectionIdOptional =
 			ChangesetIndexingUtil.getChangesetCollectionId(
-				versionClassName, versionId);
+				versionClass.getName(), versionId);
 
 		if (!changesetCollectionIdOptional.isPresent()) {
 			return;
@@ -91,7 +95,7 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 
 		Optional<Long> changesetEntryIdOptional =
 			ChangesetIndexingUtil.getChangesetEntryId(
-				versionClassName, versionId);
+				versionClass.getName(), versionId);
 
 		if (!changesetEntryIdOptional.isPresent()) {
 			return;
@@ -115,9 +119,21 @@ public class ChangesetIndexerPostProcessor implements IndexerPostProcessor {
 			return;
 		}
 
+		// todo: this hack should be removed!
+
+		Map<String, Serializable> searchContextAttributes =
+			searchContext.getAttributes();
+
+		searchContextAttributes.forEach(
+			(key, value) -> {
+				if (Validator.isNotNull(value)) {
+					fullQuery.addRequiredTerm(key, GetterUtil.getString(value));
+				}
+			});
+
 		fullQuery.addRequiredTerm(
 			ChangesetIndexingUtil.CHANGESET_COLLECTION_ID_FIELD,
-			changesetManager.getCurrentChangesetCollectionId().get());
+			changesetManager.getCurrentChangesetCollectionId().orElse(0L));
 
 		// This is very important!
 

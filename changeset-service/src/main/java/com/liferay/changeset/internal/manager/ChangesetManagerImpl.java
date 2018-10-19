@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Indexer;
@@ -110,6 +111,16 @@ public class ChangesetManagerImpl implements ChangesetManager {
 	public void checkout(long changesetCollectionId) {
 		if (Validator.isNull(changesetCollectionId)) {
 			return;
+		}
+
+		ChangesetCollection changesetCollection =
+			_changesetCollectionLocalService.fetchChangesetCollection(
+				changesetCollectionId);
+
+		if (changesetCollection == null) {
+			throw new SystemException(
+				"Unable to checkout changeset collection with id " +
+					changesetCollectionId);
 		}
 
 		ServiceContext serviceContext =
@@ -190,13 +201,6 @@ public class ChangesetManagerImpl implements ChangesetManager {
 				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 		for (ChangesetCollection changesetCollection : changesetCollections) {
-			List<ChangesetEntry> changesetEntries =
-				_changesetEntryLocalService.getChangesetEntries(
-					changesetCollection.getChangesetCollectionId());
-
-			changesetEntries.forEach(
-				_changesetEntryLocalService::deleteChangesetEntry);
-
 			_changesetCollectionLocalService.deleteChangesetCollection(
 				changesetCollection);
 		}

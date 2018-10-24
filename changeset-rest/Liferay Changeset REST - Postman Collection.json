@@ -14,6 +14,11 @@
 						"key": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -31,6 +36,12 @@
 						"o",
 						"changeset",
 						"status"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": ""
+						}
 					]
 				}
 			},
@@ -44,6 +55,11 @@
 					{
 						"key": "Content-Type",
 						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					}
 				],
@@ -76,6 +92,11 @@
 						"key": "Content-Type",
 						"value": "application/json ",
 						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -93,6 +114,13 @@
 						"o",
 						"changeset",
 						"40101"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
 					]
 				}
 			},
@@ -114,7 +142,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://{{host}}:{{port}}/o/oauth2/token?grant_type=client_credentials&client_id={{clientId}}&client_secret={{clientSecret}}",
+					"raw": "http://{{host}}:{{port}}/o/oauth2/token?grant_type=password&client_id={{clientId}}&client_secret={{clientSecret}}&username=test@liferay.com&password=test",
 					"protocol": "http",
 					"host": [
 						"{{host}}"
@@ -128,7 +156,7 @@
 					"query": [
 						{
 							"key": "grant_type",
-							"value": "client_credentials"
+							"value": "password"
 						},
 						{
 							"key": "client_id",
@@ -137,6 +165,14 @@
 						{
 							"key": "client_secret",
 							"value": "{{clientSecret}}"
+						},
+						{
+							"key": "username",
+							"value": "test@liferay.com"
+						},
+						{
+							"key": "password",
+							"value": "test"
 						}
 					]
 				}
@@ -152,6 +188,11 @@
 						"key": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -159,7 +200,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://{{host}}:{{port}}/o/changeset/?name=alma",
+					"raw": "http://{{host}}:{{port}}/o/changeset/?name=korte",
 					"protocol": "http",
 					"host": [
 						"{{host}}"
@@ -173,7 +214,7 @@
 					"query": [
 						{
 							"key": "name",
-							"value": "alma"
+							"value": "korte"
 						}
 					]
 				}
@@ -184,7 +225,13 @@
 			"name": "Disable changeset",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
@@ -209,7 +256,13 @@
 			"name": "Enable changeset",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
@@ -234,13 +287,19 @@
 			"name": "Checkout changeset",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://{{host}}:{{port}}/o/changeset/checkout/40001",
+					"raw": "http://{{host}}:{{port}}/o/changeset/checkout/36201",
 					"protocol": "http",
 					"host": [
 						"{{host}}"
@@ -250,7 +309,7 @@
 						"o",
 						"changeset",
 						"checkout",
-						"40001"
+						"36201"
 					]
 				}
 			},

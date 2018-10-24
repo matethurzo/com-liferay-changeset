@@ -17,6 +17,7 @@ package com.liferay.changeset.internal.manager;
 import com.liferay.changeset.configuration.ChangesetConfiguration;
 import com.liferay.changeset.configuration.ChangesetConfigurationRegistrar;
 import com.liferay.changeset.constants.ChangesetConstants;
+import com.liferay.changeset.constants.ChangesetPortletKeys;
 import com.liferay.changeset.cqrs.manager.ChangesetCQRSManager;
 import com.liferay.changeset.internal.configuration.ChangesetConfigurationImpl;
 import com.liferay.changeset.internal.search.ChangesetIndexerPostProcessor;
@@ -39,12 +40,17 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.portlet.PortalPreferences;
+import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerPostProcessor;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.service.PortalPreferencesLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
@@ -122,6 +128,19 @@ public class ChangesetManagerImpl implements ChangesetManager {
 				"Unable to checkout changeset collection with id " +
 					changesetCollectionId);
 		}
+
+		long userId = PrincipalThreadLocal.getUserId();
+
+		User user = _userLocalService.fetchUser(userId);
+
+		PortalPreferences portalPreferences =
+			PortletPreferencesFactoryUtil.getPortalPreferences(
+				userId, !user.isDefaultUser());
+
+		portalPreferences.setValue(
+			ChangesetPortletKeys.CHANGESET_ADMIN,
+			_RECENT_CHANGESET_COLLECTION_ID,
+			String.valueOf(changesetCollectionId));
 
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.popServiceContext();
@@ -385,17 +404,29 @@ public class ChangesetManagerImpl implements ChangesetManager {
 
 	@Override
 	public Optional<Long> getCurrentChangesetCollectionId() {
-		ServiceContext serviceContext =
-			ServiceContextThreadLocal.getServiceContext();
+		long userId = PrincipalThreadLocal.getUserId();
 
-		if (serviceContext == null) {
-			return Optional.empty();
+		User user = _userLocalService.fetchUser(userId);
+
+		PortalPreferences portalPreferences =
+			PortletPreferencesFactoryUtil.getPortalPreferences(
+				userId, !user.isDefaultUser());
+
+		long recentChangesetCollectionId = GetterUtil.getLong(
+			portalPreferences.getValue(
+				ChangesetPortletKeys.CHANGESET_ADMIN,
+				_RECENT_CHANGESET_COLLECTION_ID));
+
+		if (recentChangesetCollectionId == 0L) {
+			ServiceContext serviceContext =
+				ServiceContextThreadLocal.getServiceContext();
+
+			recentChangesetCollectionId = GetterUtil.getLong(
+				serviceContext.getAttribute(
+					_CHANGESET_COLLECTION_ID_ATTRIBUTE));
 		}
 
-		return Optional.of(
-			GetterUtil.getLong(
-				serviceContext.getAttribute(
-					_CHANGESET_COLLECTION_ID_ATTRIBUTE)));
+		return Optional.of(recentChangesetCollectionId);
 	}
 
 	@Override
@@ -437,8 +468,7 @@ public class ChangesetManagerImpl implements ChangesetManager {
 		List<ChangesetEntry> changesetEntries = getChangesetEntries(
 			changesetCollectionId);
 
-		changesetEntries.forEach(
-			changesetEntry -> _publishChangesetEntry(changesetEntry));
+		changesetEntries.forEach(this::_publishChangesetEntry);
 	}
 
 	@Override
@@ -578,6 +608,9 @@ public class ChangesetManagerImpl implements ChangesetManager {
 	private static final ChangesetIndexerPostProcessor
 		_CHANGESET_INDEXER_POST_PROCESSOR = new ChangesetIndexerPostProcessor();
 
+	private static final String _RECENT_CHANGESET_COLLECTION_ID =
+		"recentChangesetCollectionId";
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		ChangesetManagerImpl.class);
 
@@ -606,5 +639,11 @@ public class ChangesetManagerImpl implements ChangesetManager {
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private PortalPreferencesLocalService _portalPreferencesLocalService;
+
+	@Reference
+	private UserLocalService _userLocalService;
 
 }

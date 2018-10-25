@@ -17,7 +17,6 @@ package com.liferay.changeset.internal.entity.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.blogs.service.BlogsEntryLocalService;
-import com.liferay.blogs.service.persistence.BlogsEntryFinder;
 import com.liferay.changeset.cqrs.manager.ChangesetCQRSManager;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.model.ChangesetCollection;
@@ -71,8 +70,11 @@ public class BlogsSQLTest {
 
 		_serviceContext.setScopeGroupId(_group.getGroupId());
 		_serviceContext.setUserId(TestPropsValues.getUserId());
+		_serviceContext.setAttribute("repository-type", "SQL");
 
 		ServiceContextThreadLocal.pushServiceContext(_serviceContext);
+
+		_changesetManager.enableChangesets();
 	}
 
 	@After
@@ -83,17 +85,19 @@ public class BlogsSQLTest {
 	}
 
 	@Test
-	public void testFindByEntryId() throws PortalException {
-		_changesetManager.enableChangesets();
+	public void testFetchBlogsEntry() throws PortalException {
 
-		Optional<ChangesetCollection> changesetCollectionOptional =
+		// Create and checkout Changeset 1
+
+		Optional<ChangesetCollection> changesetCollection1Optional =
 			_changesetManager.create(
-				"testFindByEntryId", "testFindByEntryId description");
+				"testFetchBlogsEntry Changeset 1",
+				"testFetchBlogsEntry Changeset 1 Description");
 
-		long changesetCollectionId =
-			changesetCollectionOptional.get().getChangesetCollectionId();
+		_changesetManager.checkout(
+			changesetCollection1Optional.get().getChangesetCollectionId());
 
-		_changesetManager.checkout(changesetCollectionId);
+		// Add and update blogs entry
 
 		_serviceContext = ServiceContextThreadLocal.getServiceContext();
 
@@ -106,11 +110,41 @@ public class BlogsSQLTest {
 
 		blogsEntry = _blogsEntryLocalService.updateEntry(
 			_serviceContext.getUserId(), blogsEntry.getEntryId(),
-			"Test Blogs Entry Modified", "Test Blogs Entry Modified Content",
+			"Test Blogs Entry Modified 1", "Test Blogs Entry Content",
 			_serviceContext);
 
 		_serviceContext.setAttribute("cqrs-repository-enabled", Boolean.TRUE);
 		_changesetCQRSManager.enableCQRSRepository();
+
+		// Create and checkout Changeset 2
+
+		Optional<ChangesetCollection> changesetCollection2Optional =
+			_changesetManager.create(
+				"testFetchBlogsEntry Changeset 2",
+				"testFetchBlogsEntry Changeset 2 Description");
+
+		_changesetManager.checkout(
+			changesetCollection2Optional.get().getChangesetCollectionId());
+
+		// Update blogs entry again
+
+		_serviceContext = ServiceContextThreadLocal.getServiceContext();
+
+		_serviceContext.setAttribute("cqrs-repository-enabled", Boolean.FALSE);
+		_changesetCQRSManager.disableCQRSRepository();
+
+		blogsEntry = _blogsEntryLocalService.updateEntry(
+			_serviceContext.getUserId(), blogsEntry.getEntryId(),
+			"Test Blogs Entry Modified 2", "Test Blogs Entry Content",
+			_serviceContext);
+
+		_serviceContext.setAttribute("cqrs-repository-enabled", Boolean.TRUE);
+		_changesetCQRSManager.enableCQRSRepository();
+
+		// Switch back to Changeset 1 to perform test
+
+		_changesetManager.checkout(
+			changesetCollection1Optional.get().getChangesetCollectionId());
 
 		BlogsEntry modifiedBlogsEntry = _blogsEntryLocalService.fetchBlogsEntry(
 			blogsEntry.getEntryId());
@@ -123,17 +157,21 @@ public class BlogsSQLTest {
 	}
 
 	@Test
-	public void testFindByGroupIds() throws PortalException {
-		_changesetManager.enableChangesets();
+	public void testGetGroupsEntries() throws PortalException {
 
-		Optional<ChangesetCollection> changesetCollectionOptional =
+		// Create and checkout Changeset 1
+
+		Optional<ChangesetCollection> changesetCollection1Optional =
 			_changesetManager.create(
-				"testFindByGroupIds", "testFindByGroupIds description");
+				"testGetGroupsEntries Changeset 1",
+				"testGetGroupsEntries Changeset 1 Description");
 
 		long changesetCollectionId =
-			changesetCollectionOptional.get().getChangesetCollectionId();
+			changesetCollection1Optional.get().getChangesetCollectionId();
 
 		_changesetManager.checkout(changesetCollectionId);
+
+		// Add and update blogs entry
 
 		_serviceContext = ServiceContextThreadLocal.getServiceContext();
 
@@ -146,17 +184,47 @@ public class BlogsSQLTest {
 
 		blogsEntry = _blogsEntryLocalService.updateEntry(
 			_serviceContext.getUserId(), blogsEntry.getEntryId(),
-			"Test Blogs Entry Modified", "Test Blogs Entry Modified Content",
+			"Test Blogs Entry Modified 1", "Test Blogs Entry Content",
 			_serviceContext);
 
 		_serviceContext.setAttribute("cqrs-repository-enabled", Boolean.TRUE);
 		_changesetCQRSManager.enableCQRSRepository();
 
-		QueryDefinition<BlogsEntry> queryDefinition = new QueryDefinition<>();
+		// Create and checkout Changeset 2
 
-		List<BlogsEntry> blogsEntries = _blogsEntryFinder.findByGroupIds(
-			_serviceContext.getCompanyId(), _serviceContext.getScopeGroupId(),
-			new Date(), queryDefinition);
+		Optional<ChangesetCollection> changesetCollection2Optional =
+			_changesetManager.create(
+				"testGetGroupsEntries Changeset 2",
+				"testGetGroupsEntries Changeset 2 Description");
+
+		_changesetManager.checkout(
+			changesetCollection2Optional.get().getChangesetCollectionId());
+
+		// Update blogs entry again
+
+		_serviceContext = ServiceContextThreadLocal.getServiceContext();
+
+		_serviceContext.setAttribute("cqrs-repository-enabled", Boolean.FALSE);
+		_changesetCQRSManager.disableCQRSRepository();
+
+		blogsEntry = _blogsEntryLocalService.updateEntry(
+			_serviceContext.getUserId(), blogsEntry.getEntryId(),
+			"Test Blogs Entry Modified 2", "Test Blogs Entry Content",
+			_serviceContext);
+
+		_serviceContext.setAttribute("cqrs-repository-enabled", Boolean.TRUE);
+		_changesetCQRSManager.enableCQRSRepository();
+
+		// Switch back to Changeset 1 to perform test
+
+		_changesetManager.checkout(
+			changesetCollection1Optional.get().getChangesetCollectionId());
+
+		List<BlogsEntry> blogsEntries =
+			_blogsEntryLocalService.getGroupsEntries(
+				_serviceContext.getCompanyId(),
+				_serviceContext.getScopeGroupId(), new Date(),
+				new QueryDefinition<>());
 
 		Assert.assertEquals(1, blogsEntries.size());
 
@@ -168,9 +236,6 @@ public class BlogsSQLTest {
 		Assert.assertEquals(
 			modifiedBlogsEntry.getVersionId(), blogsEntry.getVersionId());
 	}
-
-	@Inject
-	private BlogsEntryFinder _blogsEntryFinder;
 
 	@Inject
 	private BlogsEntryLocalService _blogsEntryLocalService;

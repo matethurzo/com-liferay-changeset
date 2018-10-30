@@ -56,7 +56,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -174,7 +173,8 @@ public class BlogsChangesetTest {
 				_serviceContext.getUserId(), _group.getGroupId(), "tag 1",
 				_serviceContext);
 
-			_serviceContext.setAssetTagNames(new String[]{_assetTag.getName()});
+			_serviceContext.setAssetTagNames(
+				new String[] {_assetTag.getName()});
 
 			blogsEntry = _blogsEntryLocalService.updateEntry(
 				_serviceContext.getUserId(), blogsEntry.getEntryId(),

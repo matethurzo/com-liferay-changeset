@@ -36,6 +36,10 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.TransactionalTestRule;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -43,10 +47,6 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Gergely Mathe

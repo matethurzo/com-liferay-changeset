@@ -204,6 +204,27 @@ public class ChangesetResource {
 		return statusDTO;
 	}
 
+	@Path("/publish/{changesetId}")
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response publish(@PathParam("changesetId") long changesetId) {
+		try {
+			if (!_changesetManager.isChangesetEnabled()) {
+				throw new WebApplicationException("Changeset is not enabled!");
+			}
+
+			_changesetManager.publish(changesetId);
+
+			return Response.ok(
+				new ResponseDTO(
+					"Changeset with id " + changesetId + " is published...")
+			).build();
+		}
+		catch (Exception e) {
+			throw new WebApplicationException(e.getMessage(), e);
+		}
+	}
+
 	@Reference
 	private ChangesetCollectionLocalService _changesetCollectionLocalService;
 

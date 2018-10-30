@@ -45,6 +45,7 @@ import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
  * @author Daniel Kocsis
  */
 @Component(
+	immediate = true,
 	property = {
 		JaxrsWhiteboardConstants.JAX_RS_APPLICATION_SELECT + "=(osgi.jaxrs.name=Changeset.Rest)",
 		JaxrsWhiteboardConstants.JAX_RS_RESOURCE + "=true"

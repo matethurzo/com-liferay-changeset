@@ -123,7 +123,10 @@ public class ChangesetManagerImpl implements ChangesetManager {
 			_changesetCollectionLocalService.fetchChangesetCollection(
 				changesetCollectionId);
 
-		if (changesetCollection == null) {
+		if ((changesetCollectionId !=
+				ChangesetConstants.PRODUCTION_BASELINE_COLLECTION_ID) &&
+			(changesetCollection == null)) {
+
 			throw new SystemException(
 				"Unable to checkout changeset collection with id " +
 					changesetCollectionId);

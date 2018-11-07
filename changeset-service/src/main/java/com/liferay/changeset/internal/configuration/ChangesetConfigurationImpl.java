@@ -36,6 +36,11 @@ public class ChangesetConfigurationImpl<T, U>
 	implements ChangesetConfiguration<T, U> {
 
 	@Override
+	public Integer[] getAllowedStatuses() {
+		return _versionEntityInformation.getAllowedStatuses();
+	}
+
+	@Override
 	public List<Supplier<? extends Collection<U>>> getBaselining() {
 		return _baseliningSuppliers;
 	}
@@ -57,6 +62,11 @@ public class ChangesetConfigurationImpl<T, U>
 	}
 
 	@Override
+	public Function<Long, T> getResourceEntityFunction() {
+		return _resouceEntityInformation.getResourceEntityFunction();
+	}
+
+	@Override
 	public Function<T, Serializable>
 		getResourceEntityIdFromResourceEntityFunction() {
 
@@ -71,8 +81,17 @@ public class ChangesetConfigurationImpl<T, U>
 	}
 
 	@Override
+	public Function<U, Integer> getStatusFunction() {
+		return _versionEntityInformation.getStatusFunction();
+	}
+
+	@Override
 	public Class<U> getVersionEntityClass() {
 		return _versionEntityInformation.getEntityClass();
+	}
+
+	public Function<Long, U> getVersionEntityFunction() {
+		return _versionEntityInformation.getVersionEntityFunction();
 	}
 
 	@Override
@@ -144,14 +163,16 @@ public class ChangesetConfigurationImpl<T, U>
 
 			public VersionEntityStep<T, U> addResourceEntity(
 				Class<T> resourceEntityClass,
+				Function<Long, T> resourceEntityFunction,
 				Function<T, Serializable> resourceEntityIdFunction,
 				Function<T, Serializable> versionEntityIdFunction,
 				BaseLocalService resourceEntityLocalService) {
 
 				_changesetConfiguration._resouceEntityInformation =
 					new EntityInformation<>(
-						resourceEntityClass, resourceEntityIdFunction,
-						versionEntityIdFunction, resourceEntityLocalService);
+						resourceEntityClass, resourceEntityFunction,
+						resourceEntityIdFunction, null, versionEntityIdFunction,
+						resourceEntityLocalService, null, null);
 
 				return new VersionEntityStepImpl<>();
 			}
@@ -164,15 +185,20 @@ public class ChangesetConfigurationImpl<T, U>
 			public BaseliningStep<T, U> addVersionEntity(
 				Class<U> versionEntityClass,
 				Function<U, Serializable> resourceEntityIdFunction,
+				Function<Long, U> versionEntityFunction,
 				Function<U, Serializable> versionEntityIdFunction,
 				Function<U, ? extends Serializable>
 					versionEntityVersionFunction,
-				BaseLocalService versionEntityLocalService) {
+				BaseLocalService versionEntityLocalService,
+				Integer[] allowedStatuses,
+				Function<U, Integer> statusFunction) {
 
 				_changesetConfiguration._versionEntityInformation =
 					new EntityInformation<>(
-						versionEntityClass, resourceEntityIdFunction,
-						versionEntityIdFunction, versionEntityLocalService);
+						versionEntityClass, null, resourceEntityIdFunction,
+						versionEntityFunction, versionEntityIdFunction,
+						versionEntityLocalService, allowedStatuses,
+						statusFunction);
 
 				_changesetConfiguration._versionEntityInformation.
 					setVersionFunction(versionEntityVersionFunction);
@@ -198,15 +224,25 @@ public class ChangesetConfigurationImpl<T, U>
 	private static class EntityInformation<T> {
 
 		public EntityInformation(
-			Class<T> entityClass,
+			Class<T> entityClass, Function<Long, T> resourceEntityFunction,
 			Function<T, Serializable> resourceEntityIdFunction,
+			Function<Long, T> versionEntityFunction,
 			Function<T, Serializable> versionEntityIdFunction,
-			BaseLocalService entityLocalService) {
+			BaseLocalService entityLocalService, Integer[] allowedStatuses,
+			Function<T, Integer> statusFunction) {
 
 			_class = entityClass;
+			_resourceEntityFunction = resourceEntityFunction;
 			_resourceIdFunction = resourceEntityIdFunction;
+			_versionEntityFunction = versionEntityFunction;
 			_versionIdFunction = versionEntityIdFunction;
 			_baseLocalService = entityLocalService;
+			_allowedStatuses = allowedStatuses;
+			_statusFunction = statusFunction;
+		}
+
+		public Integer[] getAllowedStatuses() {
+			return _allowedStatuses;
 		}
 
 		public BaseLocalService getBaseLocalService() {
@@ -221,8 +257,20 @@ public class ChangesetConfigurationImpl<T, U>
 			return _indexerFunction;
 		}
 
+		public Function<Long, T> getResourceEntityFunction() {
+			return _resourceEntityFunction;
+		}
+
 		public Function<T, Serializable> getResourceIdFunction() {
 			return _resourceIdFunction;
+		}
+
+		public Function<T, Integer> getStatusFunction() {
+			return _statusFunction;
+		}
+
+		public Function<Long, T> getVersionEntityFunction() {
+			return _versionEntityFunction;
 		}
 
 		public Function<T, ? extends Serializable> getVersionFunction() {
@@ -245,10 +293,14 @@ public class ChangesetConfigurationImpl<T, U>
 			_versionFunction = versionFunction;
 		}
 
+		private final Integer[] _allowedStatuses;
 		private final BaseLocalService _baseLocalService;
 		private final Class<T> _class;
 		private Function<Class<T>, Indexer<T>> _indexerFunction;
+		private final Function<Long, T> _resourceEntityFunction;
 		private final Function<T, Serializable> _resourceIdFunction;
+		private final Function<T, Integer> _statusFunction;
+		private final Function<Long, T> _versionEntityFunction;
 		private Function<T, ? extends Serializable> _versionFunction;
 		private final Function<T, Serializable> _versionIdFunction;
 

@@ -17,18 +17,18 @@ package com.liferay.changeset.playground.internal;
 import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.blogs.model.BlogsEntryVersion;
 import com.liferay.blogs.service.BlogsEntryLocalService;
-import com.liferay.blogs.service.persistence.BlogsEntryVersionPersistence;
+import com.liferay.blogs.service.persistence.BlogsEntryUtil;
+import com.liferay.blogs.service.persistence.BlogsEntryVersionUtil;
 import com.liferay.changeset.configuration.ChangesetConfiguration;
 import com.liferay.changeset.configuration.ChangesetConfigurationRegistrar;
 import com.liferay.changeset.cqrs.manager.ChangesetCQRSManager;
 import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-// TODO Replace at marked places, once versioning code is created
 
 /**
  * @author Gergely Mathe
@@ -44,12 +44,18 @@ public class BlogsChangesetConfigurationRegistrar
 		return builder.identifier(
 			"blogs"
 		).addResourceEntity(
-			BlogsEntry.class, BlogsEntry::getEntryId, BlogsEntry::getVersionId,
+			BlogsEntry.class, BlogsEntryUtil::fetchByPrimaryKey,
+			BlogsEntry::getEntryId, BlogsEntry::getVersionId,
 			_blogsEntryLocalService
 		).addVersionEntity(
 			BlogsEntryVersion.class, BlogsEntryVersion::getEntryId,
+			BlogsEntryVersionUtil::fetchByPrimaryKey,
 			BlogsEntryVersion::getBlogsEntryVersionId,
-			BlogsEntryVersion::getVersion, null
+			BlogsEntryVersion::getVersion, null,
+			new Integer[]
+				{WorkflowConstants.STATUS_APPROVED,
+				 WorkflowConstants.STATUS_DRAFT},
+			BlogsEntryVersion::getStatus
 		).baselining(
 			() -> {
 				_changesetCQRSManager.disableCQRSRepository();
@@ -73,9 +79,6 @@ public class BlogsChangesetConfigurationRegistrar
 
 	@Reference
 	private BlogsEntryLocalService _blogsEntryLocalService;
-
-	@Reference
-	private BlogsEntryVersionPersistence _blogsEntryVersionPersistence;
 
 	@Reference
 	private ChangesetCQRSManager _changesetCQRSManager;

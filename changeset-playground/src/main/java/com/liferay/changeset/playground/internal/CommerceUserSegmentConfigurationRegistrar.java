@@ -21,8 +21,11 @@ import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntry;
 import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntryVersion;
 import com.liferay.commerce.user.segment.model.CommerceUserSegmentEntryVersionModel;
 import com.liferay.commerce.user.segment.service.CommerceUserSegmentEntryLocalService;
+import com.liferay.commerce.user.segment.service.persistence.CommerceUserSegmentEntryUtil;
+import com.liferay.commerce.user.segment.service.persistence.CommerceUserSegmentEntryVersionUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,15 +51,19 @@ public class CommerceUserSegmentConfigurationRegistrar
 			"commerce-user-segment"
 		).addResourceEntity(
 			CommerceUserSegmentEntry.class,
+			CommerceUserSegmentEntryUtil::fetchByPrimaryKey,
 			CommerceUserSegmentEntry::getCommerceUserSegmentEntryId,
 			CommerceUserSegmentEntry::getVersionId,
 			_commerceUserSegmentEntryLocalService
 		).addVersionEntity(
 			CommerceUserSegmentEntryVersion.class,
 			CommerceUserSegmentEntryVersion::getCommerceUserSegmentEntryId,
+			CommerceUserSegmentEntryVersionUtil::fetchByPrimaryKey,
 			CommerceUserSegmentEntryVersion::
 				getCommerceUserSegmentEntryVersionId,
-			CommerceUserSegmentEntryVersionModel::getVersion, null
+			CommerceUserSegmentEntryVersionModel::getVersion, null,
+			new Integer[] {WorkflowConstants.STATUS_APPROVED},
+			CommerceUserSegmentEntryVersion::getStatus
 		).baselining(
 
 			// TODO extract this to some helper

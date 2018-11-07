@@ -22,6 +22,8 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 
+import com.liferay.portal.kernel.service.persistence.LayoutUtil;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -43,7 +45,7 @@ public class LayoutChangesetConfigurationRegistrar
 		return builder.identifier(
 			"layout"
 		).addResourceEntity(
-			Layout.class,
+			Layout.class, LayoutUtil::fetchByPrimaryKey,
 			Layout::getPlid,
 			layout -> 0L,
 			// TODO Replace with Layout::getVersionId
@@ -53,11 +55,15 @@ public class LayoutChangesetConfigurationRegistrar
 			// TODO Replace with LayoutVersion.class
 			layout -> 0L,
 			// TODO Replace with LayoutVersion::getPlid
+			serializable -> null,
+			// TODO Replace with LayoutVersionUtil::fetchByPrimaryKey
 			layout -> 0L,
 			// TODO Replace with LayoutVersion::getVersionId
 			layout -> 1.0D,
 			// TODO Replace with LayoutVersion::getVersion
-			null
+			null, new Integer[] {WorkflowConstants.STATUS_APPROVED},
+			layout -> 0
+			// TODO Replace with LayoutVersion::getStatus
 		).baselining(
 			() -> {
 				_changesetCQRSManager.disableCQRSRepository();

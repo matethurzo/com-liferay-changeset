@@ -20,7 +20,10 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleResource;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.service.JournalArticleResourceLocalService;
+import com.liferay.journal.service.persistence.JournalArticleResourceUtil;
+import com.liferay.journal.service.persistence.JournalArticleUtil;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -42,13 +45,16 @@ public class JournalChangesetConfigurationRegistrar
 			"journal"
 		).addResourceEntity(
 			JournalArticleResource.class,
+			JournalArticleResourceUtil::fetchByPrimaryKey,
 			JournalArticleResource::getResourcePrimKey,
 			JournalArticleResource::getArticleId,
 			_journalArticleResourceLocalService
 		).addVersionEntity(
 			JournalArticle.class, JournalArticle::getResourcePrimKey,
-			JournalArticle::getId, JournalArticle::getVersion,
-			_journalArticleLocalService
+			JournalArticleUtil::fetchByPrimaryKey, JournalArticle::getId,
+			JournalArticle::getVersion, _journalArticleLocalService,
+			new Integer[] {WorkflowConstants.STATUS_APPROVED},
+			JournalArticle::getStatus
 		).baselining(
 			_journalArticleLocalService::getArticles
 		).indexer(

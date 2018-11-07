@@ -32,6 +32,8 @@ import java.util.function.Supplier;
 @ProviderType
 public interface ChangesetConfiguration<T, U> {
 
+	public Integer[] getAllowedStatuses();
+
 	public List<Supplier<? extends Collection<U>>> getBaselining();
 
 	public String getIdentifier();
@@ -40,13 +42,19 @@ public interface ChangesetConfiguration<T, U> {
 
 	public Class<T> getResourceEntityClass();
 
+	public Function<Long, T> getResourceEntityFunction();
+
 	public Function<T, Serializable>
 		getResourceEntityIdFromResourceEntityFunction();
 
 	public Function<U, Serializable>
 		getResourceEntityIdFromVersionEntityFunction();
 
+	public Function<U, Integer> getStatusFunction();
+
 	public Class<U> getVersionEntityClass();
+
+	public Function<Long, U> getVersionEntityFunction();
 
 	public Function<T, Serializable>
 		getVersionEntityIdFromResourceEntityFunction();
@@ -85,6 +93,7 @@ public interface ChangesetConfiguration<T, U> {
 
 		public VersionEntityStep<T, U> addResourceEntity(
 			Class<T> resourceEntityClass,
+			Function<Long, T> resourceEntityFunction,
 			Function<T, Serializable> resourceEntityIdFunction,
 			Function<T, Serializable> versionEntityIdFunction,
 			BaseLocalService resourceEntityLocalService);
@@ -96,9 +105,11 @@ public interface ChangesetConfiguration<T, U> {
 		public BaseliningStep<T, U> addVersionEntity(
 			Class<U> versionEntityClass,
 			Function<U, Serializable> resourceEntityIdFunction,
+			Function<Long, U> versionEntityFunction,
 			Function<U, Serializable> versionEntityIdFunction,
 			Function<U, ? extends Serializable> versionEntityVersionFunction,
-			BaseLocalService versionEntityLocalService);
+			BaseLocalService versionEntityLocalService,
+			Integer[] allowedStatuses, Function<U, Integer> statusFunction);
 
 	}
 

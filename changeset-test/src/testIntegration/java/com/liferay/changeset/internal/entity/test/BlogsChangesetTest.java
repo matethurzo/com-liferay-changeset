@@ -45,11 +45,7 @@ import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
-import java.io.Serializable;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.junit.After;
@@ -163,6 +159,8 @@ public class BlogsChangesetTest {
 		BlogsEntry blogsEntry;
 
 		try {
+			_serviceContext.setWorkflowAction(WorkflowConstants.ACTION_PUBLISH);
+
 			blogsEntry = _blogsEntryLocalService.addEntry(
 				_serviceContext.getUserId(), "Test Blogs Entry",
 				"Test Blogs Entry Content", _serviceContext);
@@ -180,21 +178,6 @@ public class BlogsChangesetTest {
 				_serviceContext.getUserId(), blogsEntry.getEntryId(),
 				"Test Blogs Entry Modified",
 				"Test Blogs Entry Modified Content", _serviceContext);
-
-			Map<String, Serializable> workflowContext = new HashMap<>();
-
-			workflowContext.put(
-				WorkflowConstants.CONTEXT_URL, "http://localhost");
-			workflowContext.put(
-				WorkflowConstants.CONTEXT_USER_PORTRAIT_URL,
-				"http://localhost");
-			workflowContext.put(
-				WorkflowConstants.CONTEXT_USER_URL, "http://localhost");
-
-			blogsEntry = _blogsEntryLocalService.updateStatus(
-				blogsEntry.getUserId(), blogsEntry.getEntryId(),
-				WorkflowConstants.STATUS_APPROVED, _serviceContext,
-				workflowContext);
 		}
 		finally {
 			_serviceContext.setAttribute(
@@ -224,7 +207,7 @@ public class BlogsChangesetTest {
 				changesetCollectionId);
 
 		Assert.assertEquals(
-			"There should be only 3 changeset entry", 3, changesetEntriesCount);
+			"There should be only 2 changeset entry", 2, changesetEntriesCount);
 
 		// Read blogs entry from local service - should return changeset one
 

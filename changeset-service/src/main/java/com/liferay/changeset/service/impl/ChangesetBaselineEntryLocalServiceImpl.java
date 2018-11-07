@@ -90,7 +90,7 @@ public class ChangesetBaselineEntryLocalServiceImpl
 	public ChangesetBaselineEntry fetchLatestChangesetBaselineEntry(
 		long changesetBaselineCollectionId, long resourcePrimKey) {
 
-		return changesetBaselineEntryPersistence.fetchByC_R_Last(
+		return changesetBaselineEntryPersistence.fetchByC_R_First(
 			changesetBaselineCollectionId, resourcePrimKey,
 			new ChangesetBaselineEntryCreateDateComparator());
 	}

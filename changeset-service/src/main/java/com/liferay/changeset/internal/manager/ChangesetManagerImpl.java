@@ -460,6 +460,10 @@ public class ChangesetManagerImpl implements ChangesetManager {
 
 	@Override
 	public boolean isChangesetSupported(Class<?> clazz) {
+		if (!isChangesetEnabled()) {
+			return false;
+		}
+
 		if (_configurationsByResourceClass.containsKey(clazz) ||
 			_configurationsByVersionClass.containsKey(clazz)) {
 
@@ -470,6 +474,10 @@ public class ChangesetManagerImpl implements ChangesetManager {
 	}
 
 	public boolean isChangesetSupported(String identifier) {
+		if (!isChangesetEnabled()) {
+			return false;
+		}
+
 		return _configurationsByIdentifier.containsKey(identifier);
 	}
 

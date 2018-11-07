@@ -18,6 +18,8 @@ import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.manager.ChangesetBaselineManagerUtil;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.manager.ChangesetManagerUtil;
+import com.liferay.changeset.util.ResourceEntityPopulatorRegistry;
+import com.liferay.changeset.util.ResourceEntityPopulatorRegistryUtil;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -74,17 +76,48 @@ public class ChangesetServiceActivator implements BundleActivator {
 			};
 
 		_changesetManagerServiceTracker.open();
+
+		_resourceEntityPopulatorRegistryServiceTracker =
+			new ServiceTracker
+				<ResourceEntityPopulatorRegistry,
+				 ResourceEntityPopulatorRegistry>(
+					bundleContext,
+					ResourceEntityPopulatorRegistry.class.getName(), null) {
+
+				@Override
+				public ResourceEntityPopulatorRegistry addingService(
+					ServiceReference<ResourceEntityPopulatorRegistry>
+						serviceReference) {
+
+					ResourceEntityPopulatorRegistry
+						resourceEntityPopulatorRegistry =
+							bundleContext.getService(serviceReference);
+
+					ResourceEntityPopulatorRegistryUtil.
+						setResourceEntityPopulatorRegistry(
+							resourceEntityPopulatorRegistry);
+
+					return resourceEntityPopulatorRegistry;
+				}
+
+			};
+
+		_resourceEntityPopulatorRegistryServiceTracker.open();
 	}
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		_changesetBaselineManagerServiceTracker.close();
 		_changesetManagerServiceTracker.close();
+		_resourceEntityPopulatorRegistryServiceTracker.close();
 	}
 
 	private ServiceTracker<ChangesetBaselineManager, ChangesetBaselineManager>
 		_changesetBaselineManagerServiceTracker;
 	private ServiceTracker<ChangesetManager, ChangesetManager>
 		_changesetManagerServiceTracker;
+	private ServiceTracker
+		<ResourceEntityPopulatorRegistry, ResourceEntityPopulatorRegistry>
+			_resourceEntityPopulatorRegistryServiceTracker;
 
 }

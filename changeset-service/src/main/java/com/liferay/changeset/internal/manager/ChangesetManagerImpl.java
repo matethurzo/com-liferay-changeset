@@ -429,6 +429,13 @@ public class ChangesetManagerImpl implements ChangesetManager {
 					_CHANGESET_COLLECTION_ID_ATTRIBUTE));
 		}
 
+		if (recentChangesetCollectionId == 0L) {
+			checkout(ChangesetConstants.PRODUCTION_BASELINE_COLLECTION_ID);
+
+			return Optional.of(
+				ChangesetConstants.PRODUCTION_BASELINE_COLLECTION_ID);
+		}
+
 		return Optional.of(recentChangesetCollectionId);
 	}
 

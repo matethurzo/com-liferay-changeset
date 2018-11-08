@@ -30,9 +30,7 @@ import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
 @Component(
 	property = {
 		JaxrsWhiteboardConstants.JAX_RS_APPLICATION_BASE + "=/changeset",
-		JaxrsWhiteboardConstants.JAX_RS_NAME + "=Changeset.Rest",
-		"auth.verifier.auth.verifier.BasicAuthHeaderAuthVerifier.urls.includes=\"*\"",
-		"auth.verifier.auth.verifier.OAuth2RestAuthVerifier.urls.includes=\"*\""
+		JaxrsWhiteboardConstants.JAX_RS_NAME + "=Changeset.Rest"
 	},
 	service = Application.class
 )

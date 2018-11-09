@@ -14,6 +14,7 @@
 
 package com.liferay.changeset.rest.internal.resource;
 
+import com.liferay.changeset.constants.ChangesetConstants;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.model.ChangesetCollection;
 import com.liferay.changeset.rest.internal.dto.ChangesetCollectionDTO;
@@ -89,6 +90,25 @@ public class ChangesetResource {
 				new ResponseDTO(
 					"The currently active changeset is " +
 						currentChangesetCollectionId.orElse(0L))
+			).build();
+		}
+		catch (Exception e) {
+			throw new WebApplicationException(e.getMessage(), e);
+		}
+	}
+
+	@Path("/checkout-production")
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response checkoutProd() {
+		try {
+			_changesetManager.checkout(
+				ChangesetConstants.PRODUCTION_BASELINE_COLLECTION_ID);
+
+			return Response.ok(
+				new ResponseDTO(
+					"The currently active changeset is the Production " +
+						"environment")
 			).build();
 		}
 		catch (Exception e) {
@@ -215,9 +235,15 @@ public class ChangesetResource {
 
 			_changesetManager.publish(changesetId);
 
+			ChangesetCollection changesetCollection =
+				_changesetCollectionLocalService.getChangesetCollection(
+					changesetId);
+
 			return Response.ok(
 				new ResponseDTO(
-					"Changeset with id " + changesetId + " is published...")
+					changesetCollection.getName() +
+						" has been successfully published to the Production " +
+							"environment")
 			).build();
 		}
 		catch (Exception e) {

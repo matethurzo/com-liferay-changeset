@@ -21,11 +21,13 @@ import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.changeset.model.ChangesetEntry;
 import com.liferay.changeset.util.ResourceEntityPopulator;
 import com.liferay.changeset.util.ResourceEntityPopulatorRegistry;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -69,6 +71,8 @@ public class ChangesetAwareResourceEntityPopulator<T, U>
 
 		return resourceEntitiesStream.map(
 			this::populate
+		).filter(
+			Objects::nonNull
 		).collect(
 			Collectors.toList()
 		);
@@ -122,12 +126,19 @@ public class ChangesetAwareResourceEntityPopulator<T, U>
 			_changesetManager.getChangesetConfigurationByResourceClass(
 				resourceEntity.getClass());
 
-		ChangesetConfiguration<T, U> changesetConfiguration =
-			(ChangesetConfiguration<T, U>)changesetConfigurationOptional.get();
-
-		return (long)changesetConfiguration.
-			getResourceEntityIdFromResourceEntityFunction().apply(
-				resourceEntity);
+		return changesetConfigurationOptional.map(
+			changesetConfiguration ->
+				(ChangesetConfiguration<T, U>) changesetConfiguration
+		).map(
+			changesetConfiguration -> changesetConfiguration.
+				getResourceEntityIdFromResourceEntityFunction().apply(
+				resourceEntity)
+		).map(
+			GetterUtil::getLong
+		)
+		.orElse(
+			0L
+		);
 	}
 
 	private U _getVersionEntityByClassNameIdClassPK(
@@ -137,11 +148,17 @@ public class ChangesetAwareResourceEntityPopulator<T, U>
 			_changesetManager.getChangesetConfigurationByVersionClassName(
 				_portal.getClassName(versionEntityClassNameId));
 
-		ChangesetConfiguration<T, U> changesetConfiguration =
-			(ChangesetConfiguration<T, U>)changesetConfigurationOptional.get();
-
-		return changesetConfiguration.getVersionEntityFunction().apply(
-			versionEntityId);
+		return changesetConfigurationOptional.map(
+			changesetConfiguration ->
+				(ChangesetConfiguration<T, U>)changesetConfiguration
+		).map(
+			changesetConfiguration ->
+				changesetConfiguration.getVersionEntityFunction().apply(
+					versionEntityId)
+		)
+		.orElse(
+			null
+		);
 	}
 
 	private Optional<U> _getVersionEntityFromBaseline(
@@ -186,6 +203,10 @@ public class ChangesetAwareResourceEntityPopulator<T, U>
 		Optional<ChangesetConfiguration<?, ?>> changesetConfigurationOptional =
 			_changesetManager.getChangesetConfigurationByResourceClass(
 				versionEntity.getClass());
+
+		if (!changesetConfigurationOptional.isPresent()) {
+			return false;
+		}
 
 		ChangesetConfiguration<T, U> changesetConfiguration =
 			(ChangesetConfiguration<T, U>)changesetConfigurationOptional.get();

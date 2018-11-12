@@ -53,8 +53,10 @@ public class BlogsChangesetConfigurationRegistrar
 			BlogsEntryVersion::getBlogsEntryVersionId,
 			BlogsEntryVersion::getVersion, null,
 			new Integer[]
-				{WorkflowConstants.STATUS_APPROVED,
-				 WorkflowConstants.STATUS_DRAFT},
+				{
+					WorkflowConstants.STATUS_APPROVED,
+					WorkflowConstants.STATUS_DRAFT
+				},
 			BlogsEntryVersion::getStatus
 		).baselining(
 			() -> {

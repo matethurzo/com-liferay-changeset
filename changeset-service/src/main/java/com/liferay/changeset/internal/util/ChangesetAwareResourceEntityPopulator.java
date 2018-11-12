@@ -53,7 +53,7 @@ public class ChangesetAwareResourceEntityPopulator
 	}
 
 	public String getResourceEntityClassName() {
-		return this.getClass().getName();
+		return getClass().getName();
 	}
 
 	public List<T> populate(List<T> resourceEntities) {
@@ -130,15 +130,14 @@ public class ChangesetAwareResourceEntityPopulator
 
 		return changesetConfigurationOptional.map(
 			changesetConfiguration ->
-				(ChangesetConfiguration<T, U>) changesetConfiguration
+				(ChangesetConfiguration<T, U>)changesetConfiguration
 		).map(
 			changesetConfiguration -> changesetConfiguration.
 				getResourceEntityIdFromResourceEntityFunction().apply(
-				resourceEntity)
+					resourceEntity)
 		).map(
 			GetterUtil::getLong
-		)
-		.orElse(
+		).orElse(
 			0L
 		);
 	}
@@ -154,11 +153,9 @@ public class ChangesetAwareResourceEntityPopulator
 			changesetConfiguration ->
 				(ChangesetConfiguration<T, U>)changesetConfiguration
 		).map(
-			changesetConfiguration ->
-				changesetConfiguration.getVersionEntityFunction().apply(
-					versionEntityId)
-		)
-		.orElse(
+			changesetConfiguration -> changesetConfiguration.
+				getVersionEntityFunction().apply(versionEntityId)
+		).orElse(
 			null
 		);
 	}

@@ -36,12 +36,6 @@
 						"o",
 						"changeset",
 						"status"
-					],
-					"query": [
-						{
-							"key": "",
-							"value": ""
-						}
 					]
 				}
 			},
@@ -310,6 +304,79 @@
 						"changeset",
 						"checkout",
 						"36201"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Checkout production environment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{host}}:{{port}}/o/changeset/checkout-production",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"o",
+						"changeset",
+						"checkout-production"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Publish changeset",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{host}}:{{port}}/o/changeset/publish/12",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"o",
+						"changeset",
+						"publish",
+						"12"
 					]
 				}
 			},

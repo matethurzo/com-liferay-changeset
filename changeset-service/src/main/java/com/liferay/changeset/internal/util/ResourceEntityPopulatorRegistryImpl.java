@@ -37,11 +37,6 @@ import org.osgi.util.tracker.ServiceTracker;
 public class ResourceEntityPopulatorRegistryImpl
 	implements ResourceEntityPopulatorRegistry {
 
-	@Deactivate
-	public void deactivate() {
-		_resourceEntityPopulatorServiceTracker.close();
-	}
-
 	@Override
 	public <T extends BaseModel, U extends BaseModel>
 		ResourceEntityPopulator<T, U>
@@ -100,8 +95,5 @@ public class ResourceEntityPopulatorRegistryImpl
 
 	private final Map<String, ResourceEntityPopulator<?, ?>>
 		_resourceEntityPopulators = new ConcurrentHashMap<>();
-	private ServiceTracker
-		<ResourceEntityPopulator<?, ?>, ResourceEntityPopulator<?, ?>>
-			_resourceEntityPopulatorServiceTracker;
 
 }

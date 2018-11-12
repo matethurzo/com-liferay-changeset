@@ -36,11 +36,6 @@ import org.osgi.util.tracker.ServiceTracker;
 public class DocumentModelMapperRegistryImpl
 	implements DocumentModelMapperRegistry {
 
-	@Deactivate
-	public void deactivate() {
-		_documentModelMapperServiceTracker.close();
-	}
-
 	@Override
 	public <T> DocumentModelMapper<T> getDocumentModelMapper(Class<T> clazz) {
 		return getDocumentModelMapper(clazz.getName());
@@ -88,7 +83,5 @@ public class DocumentModelMapperRegistryImpl
 
 	private final Map<String, DocumentModelMapper<?>> _documentModelMappers =
 		new ConcurrentHashMap<>();
-	private ServiceTracker<DocumentModelMapper<?>, DocumentModelMapper<?>>
-		_documentModelMapperServiceTracker;
 
 }

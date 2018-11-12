@@ -14,6 +14,8 @@
 
 package com.liferay.changeset.util;
 
+import com.liferay.portal.kernel.model.BaseModel;
+
 import java.util.Set;
 
 /**
@@ -21,15 +23,17 @@ import java.util.Set;
  */
 public class ResourceEntityPopulatorRegistryUtil {
 
-	public static <T, U> ResourceEntityPopulator<T, U>
-		getResourceEntityPopulator(Class<T> resourceEntityClass) {
+	public static <T extends BaseModel, U extends BaseModel>
+		ResourceEntityPopulator<T, U>
+			getResourceEntityPopulator(Class<T> resourceEntityClass) {
 
 		return _resourceEntityPopulatorRegistry.getResourceEntityPopulator(
 			resourceEntityClass);
 	}
 
-	public static <T, U> ResourceEntityPopulator<T, U>
-		getResourceEntityPopulator(String resourceEntityClassName) {
+	public static <T extends BaseModel, U extends BaseModel>
+		ResourceEntityPopulator<T, U>
+			getResourceEntityPopulator(String resourceEntityClassName) {
 
 		return _resourceEntityPopulatorRegistry.getResourceEntityPopulator(
 			resourceEntityClassName);

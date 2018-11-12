@@ -14,12 +14,15 @@
 
 package com.liferay.changeset.util;
 
+import com.liferay.portal.kernel.model.BaseModel;
+
 import java.util.List;
 
 /**
  * @author Gergely Mathe
  */
-public interface ResourceEntityPopulator<T, U> {
+public interface ResourceEntityPopulator
+	<T extends BaseModel, U extends BaseModel> {
 
 	public Class<T> getResourceEntityClass();
 

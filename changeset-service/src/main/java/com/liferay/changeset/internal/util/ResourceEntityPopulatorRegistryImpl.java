@@ -16,6 +16,7 @@ package com.liferay.changeset.internal.util;
 
 import com.liferay.changeset.util.ResourceEntityPopulator;
 import com.liferay.changeset.util.ResourceEntityPopulatorRegistry;
+import com.liferay.portal.kernel.model.BaseModel;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -42,15 +43,17 @@ public class ResourceEntityPopulatorRegistryImpl
 	}
 
 	@Override
-	public <T, U> ResourceEntityPopulator<T, U> getResourceEntityPopulator(
-		Class<T> resourceEntityClass) {
+	public <T extends BaseModel, U extends BaseModel>
+		ResourceEntityPopulator<T, U>
+			getResourceEntityPopulator(Class<T> resourceEntityClass) {
 
 		return getResourceEntityPopulator(resourceEntityClass.getName());
 	}
 
 	@Override
-	public <T, U> ResourceEntityPopulator<T, U> getResourceEntityPopulator(
-		String resourceEntityClassName) {
+	public <T extends BaseModel, U extends BaseModel>
+		ResourceEntityPopulator<T, U>
+			getResourceEntityPopulator(String resourceEntityClassName) {
 
 		return (ResourceEntityPopulator<T, U>)_resourceEntityPopulators.get(
 			resourceEntityClassName);

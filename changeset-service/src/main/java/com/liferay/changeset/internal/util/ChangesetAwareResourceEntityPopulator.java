@@ -21,6 +21,7 @@ import com.liferay.changeset.model.ChangesetBaselineCollection;
 import com.liferay.changeset.model.ChangesetEntry;
 import com.liferay.changeset.util.ResourceEntityPopulator;
 import com.liferay.changeset.util.ResourceEntityPopulatorRegistry;
+import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -43,8 +44,9 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true, property = "changeset.aware=true",
 	service = ResourceEntityPopulator.class
 )
-public class ChangesetAwareResourceEntityPopulator<T, U>
-	implements ResourceEntityPopulator<T, U> {
+public class ChangesetAwareResourceEntityPopulator
+	<T extends BaseModel, U extends BaseModel>
+		implements ResourceEntityPopulator<T, U> {
 
 	public Class<T> getResourceEntityClass() {
 		return null;
@@ -62,7 +64,7 @@ public class ChangesetAwareResourceEntityPopulator<T, U>
 		T resourceEntity = resourceEntities.get(0);
 
 		if (!_changesetManager.isChangesetSupported(
-				resourceEntity.getClass())) {
+				resourceEntity.getModelClass())) {
 
 			return resourceEntities;
 		}
@@ -80,7 +82,7 @@ public class ChangesetAwareResourceEntityPopulator<T, U>
 
 	public T populate(T resourceEntity) {
 		if (!_changesetManager.isChangesetSupported(
-				resourceEntity.getClass())) {
+				resourceEntity.getModelClass())) {
 
 			return resourceEntity;
 		}
@@ -116,7 +118,7 @@ public class ChangesetAwareResourceEntityPopulator<T, U>
 	public T populate(T resourceEntity, U versionEntity) {
 		ResourceEntityPopulator<T, U> resourceEntityPopulator =
 			_resourceEntityPopulatorRegistry.getResourceEntityPopulator(
-				resourceEntity.getClass().getName());
+				resourceEntity.getModelClassName());
 
 		return resourceEntityPopulator.populate(resourceEntity, versionEntity);
 	}
@@ -124,7 +126,7 @@ public class ChangesetAwareResourceEntityPopulator<T, U>
 	private long _getResourcePrimKey(T resourceEntity) {
 		Optional<ChangesetConfiguration<?, ?>> changesetConfigurationOptional =
 			_changesetManager.getChangesetConfigurationByResourceClass(
-				resourceEntity.getClass());
+				resourceEntity.getModelClass());
 
 		return changesetConfigurationOptional.map(
 			changesetConfiguration ->
@@ -201,8 +203,8 @@ public class ChangesetAwareResourceEntityPopulator<T, U>
 		}
 
 		Optional<ChangesetConfiguration<?, ?>> changesetConfigurationOptional =
-			_changesetManager.getChangesetConfigurationByResourceClass(
-				versionEntity.getClass());
+			_changesetManager.getChangesetConfigurationByVersionClass(
+				versionEntity.getModelClass());
 
 		if (!changesetConfigurationOptional.isPresent()) {
 			return false;

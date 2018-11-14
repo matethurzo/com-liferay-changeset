@@ -20,6 +20,7 @@ import com.liferay.changeset.cqrs.manager.ChangesetCQRSManager;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 
 import com.liferay.portal.kernel.service.persistence.LayoutUtil;
@@ -78,18 +79,12 @@ public class LayoutChangesetConfigurationRegistrar
 				return layouts;
 			}
 		).indexer(
-			clazz -> _layoutIndexer
+			IndexerRegistryUtil::nullSafeGetIndexer
 		).build();
 	}
 
 	@Reference
 	private ChangesetCQRSManager _changesetCQRSManager;
-
-	@Reference(
-		// TODO This does not seem to exist for Layout, we may need to create it
-		target = "(model.class.name=)"
-	)
-	private Indexer _layoutIndexer;
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;

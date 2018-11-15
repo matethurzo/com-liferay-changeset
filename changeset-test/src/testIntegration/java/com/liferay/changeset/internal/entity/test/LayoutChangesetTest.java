@@ -16,6 +16,7 @@ package com.liferay.changeset.internal.entity.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.changeset.constants.ChangesetConstants;
+import com.liferay.changeset.cqrs.manager.ChangesetCQRSManager;
 import com.liferay.changeset.manager.ChangesetBaselineManager;
 import com.liferay.changeset.manager.ChangesetManager;
 import com.liferay.changeset.model.ChangesetBaselineCollection;
@@ -29,6 +30,7 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.LayoutVersion;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -37,6 +39,7 @@ import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -74,8 +77,6 @@ public class LayoutChangesetTest {
 
 		_serviceContext.setScopeGroupId(_group.getGroupId());
 		_serviceContext.setUserId(TestPropsValues.getUserId());
-
-		ServiceContextThreadLocal.pushServiceContext(_serviceContext);
 	}
 
 	@After
@@ -83,25 +84,46 @@ public class LayoutChangesetTest {
 		_changesetManager.disableChangesets();
 
 		try {
-			_layoutLocalService.deleteLayouts(
-				_group.getGroupId(), true, _serviceContext);
-			_layoutLocalService.deleteLayouts(
-				_group.getGroupId(), false, _serviceContext);
+			List<Layout> layouts = _layoutLocalService.getLayouts(
+				_group.getGroupId(), true);
+
+			for (Layout layout : layouts) {
+				_layoutLocalService.purgeLayout(layout, false, _serviceContext);
+			}
+
+			layouts = _layoutLocalService.getLayouts(
+				_group.getGroupId(), false);
+
+			for (Layout layout : layouts) {
+				_layoutLocalService.purgeLayout(layout, false, _serviceContext);
+			}
 		}
 		catch (PortalException pe) {
 		}
 	}
 
 	@Test
-	public void testCriticalPath() throws Exception {
+	public void testCriticalPathHybrid() throws Exception {
+		_criticalPath("HYBRID");
+	}
+
+	@Test
+	public void testCriticalPathIndex() throws Exception {
+		_criticalPath("CQRS");
+	}
+
+	private void _criticalPath(String type) throws Exception {
+		_serviceContext.setAttribute("repository-type", type);
+
+		ServiceContextThreadLocal.pushServiceContext(_serviceContext);
 
 		// Enable changesets
 
 		_changesetManager.enableChangesets();
 
 		Assert.assertTrue(
-			"Changeset support for layout is needed",
-			_changesetManager.isChangesetSupported(Layout.class));
+			"Changeset support for layout version is needed",
+			_changesetManager.isChangesetSupported(LayoutVersion.class));
 
 		// Check production baseline
 
@@ -140,15 +162,30 @@ public class LayoutChangesetTest {
 
 		_serviceContext = ServiceContextThreadLocal.getServiceContext();
 
-		Layout layout = _layoutLocalService.addLayout(
-			_serviceContext.getUserId(), _group.getGroupId(), false,
-			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, "testLayout",
-			"Test Layout", "Test Layout Description",
-			LayoutConstants.TYPE_PORTLET, false, "/testlayout",
-			_serviceContext);
+		_serviceContext.setAttribute("cqrs-repository-enabled", Boolean.FALSE);
 
-		_layoutLocalService.updateName(
-			layout, "testLayout2", LanguageUtil.getLanguageId(Locale.US));
+		_changesetCQRSManager.disableCQRSRepository();
+
+		Layout layout;
+
+		try {
+			_serviceContext.setWorkflowAction(WorkflowConstants.ACTION_PUBLISH);
+
+			layout = _layoutLocalService.addLayout(
+				_serviceContext.getUserId(), _group.getGroupId(), false,
+				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, "testLayout",
+				"Test Layout", "Test Layout Description",
+				LayoutConstants.TYPE_PORTLET, false, "/testlayout",
+				_serviceContext);
+
+			layout = _layoutLocalService.updateName(
+				layout, "testLayout2", LanguageUtil.getLanguageId(Locale.US));
+		}
+		finally {
+			_serviceContext.setAttribute(
+				"cqrs-repository-enabled", Boolean.TRUE);
+			_changesetCQRSManager.enableCQRSRepository();
+		}
 
 		// Check changeset content
 
@@ -196,9 +233,8 @@ public class LayoutChangesetTest {
 		ChangesetBaselineEntry productionBaselineEntry =
 			_changesetBaselineEntryLocalService.getChangesetBaselineEntry(
 				productionBaselineCollectionId,
-				_portal.getClassNameId(Layout.class.getName()),
-				// TODO Replace this with LayoutVersion.class.getName()
-				0L); // TODO Replace this with productionLayout.getVersionId()
+				_portal.getClassNameId(LayoutVersion.class.getName()),
+				productionLayout.getVersionId());
 
 		Assert.assertNotNull(
 			"Production baseline entry was not created",
@@ -211,6 +247,9 @@ public class LayoutChangesetTest {
 
 	@Inject
 	private ChangesetBaselineManager _changesetBaselineManager;
+
+	@Inject
+	private ChangesetCQRSManager _changesetCQRSManager;
 
 	@Inject
 	private ChangesetEntryLocalService _changesetEntryLocalService;

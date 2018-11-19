@@ -81,6 +81,10 @@ public class ChangesetAwareResourceEntityPopulator
 	}
 
 	public T populate(T resourceEntity) {
+		if (resourceEntity == null) {
+			return null;
+		}
+
 		if (!_changesetManager.isChangesetSupported(
 				resourceEntity.getModelClass())) {
 

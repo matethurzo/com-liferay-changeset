@@ -110,6 +110,10 @@ public class ChangesetIndexingUtil {
 		final DocumentModelMapper documentModelMapper =
 			DocumentModelMapperRegistryUtil.getDocumentModelMapper(modelClass);
 
+		if (documentModelMapper == null) {
+			return;
+		}
+
 		final Document mappedDocument = documentModelMapper.map(baseModel);
 
 		Document document = _mergeDocuments(baseDocument, mappedDocument);
@@ -154,6 +158,10 @@ public class ChangesetIndexingUtil {
 		try {
 			PersistedModel persistedModel =
 				persistedModelLocalService.getPersistedModel(classPK);
+
+			if (persistedModel == null) {
+				return;
+			}
 
 			BaseModel baseModel = (BaseModel)persistedModel;
 

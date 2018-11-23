@@ -74,6 +74,11 @@ public class LayoutSetChangesetTest {
 
 		_serviceContext.setScopeGroupId(_group.getGroupId());
 		_serviceContext.setUserId(TestPropsValues.getUserId());
+
+		_layoutSetLocalService.purgeLayoutSet(
+			_group.getGroupId(), true, _serviceContext);
+		_layoutSetLocalService.purgeLayoutSet(
+			_group.getGroupId(), false, _serviceContext);
 	}
 
 	@After
@@ -174,7 +179,7 @@ public class LayoutSetChangesetTest {
 				_group.getGroupId(), false);
 
 			layoutSet = _layoutSetLocalService.updateVirtualHost(
-				_group.getGroupId(), false, "http://www.mydomain.com");
+				_group.getGroupId(), false, "www.mydomain.com");
 		}
 		finally {
 			_serviceContext.setAttribute(

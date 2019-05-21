@@ -1,4 +1,4 @@
-# Liferay Changeset Framework
+# Liferay Changeset Framework - TEST
 
 [![Build Status](https://travis-ci.com/matethurzo/com-liferay-changeset.svg?branch=develop)](https://travis-ci.com/matethurzo/com-liferay-changeset)
 
